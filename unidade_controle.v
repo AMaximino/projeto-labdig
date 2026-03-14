@@ -1,22 +1,3 @@
- /*---------------Laboratorio Digital-------------------------------------
- * Arquivo   : unidade_controle.v
- * Projeto   : Experiencia 6 - Projeto do
- *             Jogo do Desafio da Memória
- *---------------------------------------------------------------------------------------------------------------------
- * Descricao : Unidade de controle do circuito para um jogo de memória.
- *             
- *---------------------------------------------------------------------------------------------------------------------
- * Revisoes  :
- *     Data        Versao  Autor                                                  Descricao
- *     29/01/2026  1.0     André Maximino                                         criacao
- *     04/02/2026  2.0     André Maximino, Gabriel Prodossimo e Sophia Mariano    implementação do Modo
- *     04/02/2026  3.0     André Maximino, Gabriel Prodossimo e Sophia Mariano    implementação do Timeout
- *     10/02/2026  4.0     André Maximino, Gabriel Prodossimo e Sophia Mariano    implementação da lógica de rodadas
- *     21/02/2026  5.0     André Maximino                                         mudanças para a funcionalidade 
- *                                                                                "Voce inventa a sequencia
- *---------------------------------------------------------------------------------------------------------------------
- */
-
 
 module unidade_controle (
     input      clock,

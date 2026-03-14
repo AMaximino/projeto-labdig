@@ -39,7 +39,7 @@ module sync_ram_16x4_file #(
     begin : INICIA_RAM
         // leitura do conteudo a partir de um arquivo
         $readmemb(BINFILE, ram);
-    end 
+    end
 
     always @ (posedge clk)
     begin

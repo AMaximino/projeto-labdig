@@ -17,6 +17,11 @@ module circuito_jogo_financeiro (
 );
     wire [23:0] dinheiro;
 
+    wire w_zeraCJ;
+    wire w_contaCJ;
+    wire w_zeraCR;
+    wire w_contaCR;
+    
     fluxo_dados fd (
         .clock ( clock ),
         .config_display ( config_display ),
@@ -24,7 +29,7 @@ module circuito_jogo_financeiro (
         .contaCJ ( w_contaCJ ),
         .zeraCR ( w_zeraCR ),
         .contaCR ( w_contaCR ),
-    
+
         .dinheiro ( dinheiro )
     );
 
