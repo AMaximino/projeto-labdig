@@ -6,7 +6,7 @@ module circuito_jogo_financeiro (
     input trabalhar,
     input investir,
     input resgatar,
-    input compra,
+    input comprar,
     input vender,
     input [2:0] itens,
     input [5:0] config_display,
@@ -21,16 +21,22 @@ module circuito_jogo_financeiro (
     wire w_contaCJ;
     wire w_zeraCR;
     wire w_contaCR;
-    
-    fluxo_dados fd (
-        .clock ( clock ),
-        .config_display ( config_display ),
-        .zeraCJ ( w_zeraCJ ),
-        .contaCJ ( w_contaCJ ),
-        .zeraCR ( w_zeraCR ),
-        .contaCR ( w_contaCR ),
 
-        .dinheiro ( dinheiro )
+    fluxo_dados fd (
+        .clock          ( clock ),
+        .estudar        ( estudar ),
+        .trabalhar      ( trabalhar ),
+        .investir       ( investir ),
+        .resgatar       ( resgatar ),
+        .comprar        ( comprar ),
+        .vender         ( vender ),
+        .config_display ( config_display ),
+        .zeraCJ         ( w_zeraCJ ),
+        .contaCJ        ( w_contaCJ ),
+        .zeraCR         ( w_zeraCR ),
+        .contaCR        ( w_contaCR ),
+
+        .dinheiro       ( dinheiro )
     );
 
     unidade_controle uc (
@@ -46,43 +52,13 @@ module circuito_jogo_financeiro (
     );
 
 
-
-
-    hexa7seg d6 (
-        .hexa ( dinheiro[23:20] ),
+    display6digitos disp6dig (
+        .dinheiro ( dinheiro ),
         .enable ( 1'b1 ),
-        .display ( display_dinheiro[41:35] )
+        .display ( display_dinheiro )
     );
 
-    hexa7seg d5 (
-        .hexa ( dinheiro[19:16] ),
-        .enable ( 1'b1 ),
-        .display ( display_dinheiro[34:28] )
-    );
 
-    hexa7seg d4 (
-        .hexa ( dinheiro[15:12] ),
-        .enable ( 1'b1 ),
-        .display ( display_dinheiro[27:21] )
-    );
-
-    hexa7seg d3 (
-        .hexa ( dinheiro[11:8] ),
-        .enable ( 1'b1 ),
-        .display ( display_dinheiro[20:14] )
-    );
-
-    hexa7seg d2 (
-        .hexa ( dinheiro[7:4] ),
-        .enable ( 1'b1 ),
-        .display ( display_dinheiro[13:7] )
-    );
-
-    hexa7seg d1 (
-        .hexa ( dinheiro[3:0] ),
-        .enable ( 1'b1 ),
-        .display ( display_dinheiro[6:0] )
-    );
 
     
 
