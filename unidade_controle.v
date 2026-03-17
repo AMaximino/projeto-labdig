@@ -16,7 +16,7 @@ module unidade_controle ( //provisoria
     output reg registraD,
 
     output reg terminou,
-    output reg perdeu,
+    output reg perdeu
 );
 
     // Define estados
@@ -81,7 +81,7 @@ module unidade_controle ( //provisoria
     always @* begin
         rstED            = (Eatual == inicial) ? 1'b1 : 1'b0;
         we               = 1'b0;
-        zeraCJ           = (Eatual == preparacao || Eatual = novaRodada) ? 1'b1 : 1'b0;
+        zeraCJ           = (Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
         contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
         zeraCR           = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaCR          = (Eatual == novaRodada) ? 1'b1 : 1'b0;
@@ -90,7 +90,7 @@ module unidade_controle ( //provisoria
         perdeu           = (Eatual == fimPerdeu) ? 1'b1 : 1'b0;
         
         // Saida de depuracao (estado)
-        estado           = Eatual;
+        //estado           = Eatual;
     end
 
 endmodule

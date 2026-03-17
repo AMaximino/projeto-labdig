@@ -6,7 +6,7 @@ module fluxo_dados (
     input resgatar,
     input comprar,
     input vender,
-    input [5:0] config_display;
+    input [5:0] config_display,
 
     input jogada,
 
@@ -96,7 +96,6 @@ module fluxo_dados (
 ///////////////////////////////////////////////////////////////////////////////
 //////////////jogada/////////////////////////////////////////////////////////
 
-    wire jogada_pulso;
     edge_detector acao_ED (
         .clock ( clock ),
         .reset ( rstED ),

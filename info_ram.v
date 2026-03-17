@@ -31,7 +31,7 @@ module info_ram (
             ram[addr_write] <= data;
 
         // Leitura da memoria
-        data_out <= ram[addr_read]
+        data_out <= ram[addr_read];
     end
 
 endmodule
