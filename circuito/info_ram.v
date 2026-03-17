@@ -7,21 +7,22 @@
 //ram[5]: gastos unicos
 
 module info_ram (
-    input        clock,
-    input        we,
-    input  [23:0] data,
-    input  [2:0] addr_read,
-    input  [2:0] addr_write,
-    output [23:0] data_out
+    input             clock,
+    input             we,
+    input      [23:0] data,
+    input      [2:0]  addr_read,
+    input      [2:0]  addr_write,
+    output reg [23:0] data_out
 );
-
+    integer i;
 
     // Variavel RAM (armazena dados)
-    reg [2:0] ram[23:0];
+    reg [23:0] ram[0:7];
 
+    // inicialização
     initial begin
-        for (i = 0; i < 256; i = i + 1)
-            mem[i] = 8'b0;
+        for (i = 0; i < 8; i = i + 1)
+            ram[i] = 24'b0;
     end
 
     always @ (posedge clock)

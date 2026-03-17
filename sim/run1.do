@@ -1,7 +1,13 @@
 vlib work
 vmap work work
-vlog *.v
+
+vlog ../rtl/*.v
+vlog ../tb/*.v
+
 vsim jogo_desafio_memoria_tb1
+
+add wave *
+
 
 onerror {resume}
 quietly WaveActivateNextPane {} 0

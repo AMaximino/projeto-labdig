@@ -38,6 +38,31 @@ sim/*
 build/
 
 # =========================
+# Quartus (arquivos gerados)
+# =========================
+
+quartus/db/
+quartus/incremental_db/
+quartus/output_files/
+
+# Arquivos temporários e logs
+quartus/*.log
+quartus/*.rpt
+quartus/*.summary
+quartus/*.smsg
+
+# Arquivos de sessão
+quartus/*.qws
+quartus/*.jdi
+
+# Outros gerados
+quartus/*.pin
+quartus/*.sof
+quartus/*.pof
+quartus/*.hex
+quartus/*.elf
+
+# =========================
 # Outros
 # =========================
 
