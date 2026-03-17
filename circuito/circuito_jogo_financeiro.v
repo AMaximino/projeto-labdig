@@ -11,7 +11,7 @@ module circuito_jogo_financeiro (
     input [2:0] itens,
     input [5:0] config_display,
 
-    input jogada //
+    input jogada, //
 
     output [6:0] contagem, //
     output [6:0] rodada, //
@@ -55,10 +55,10 @@ module circuito_jogo_financeiro (
         .contaCR        ( w_contaCR ),
         .registraD      ( w_registraD ),
 
-        .fim_jogo       ( w_fim_jogo )
+        .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
         .fim_rodada     ( w_fim_rodada ),
-        .jogada_pulso   ( w_jogada_pulso )
+        .jogada_pulso   ( w_jogada_pulso ),
         .contagem       ( w_contagem ),
         .rodada         ( w_rodada ),
 
@@ -70,7 +70,7 @@ module circuito_jogo_financeiro (
         .reset        ( reset ),
         .iniciar      ( iniciar ),
         .jogada_pulso ( w_jogada_pulso ),
-        .fim_jogo     ( w_fim_jogo )
+        .fim_jogo     ( w_fim_jogo ),
         .fim_perdeu   ( w_fim_perdeu ),
         .fim_rodada   ( w_fim_rodada ),
 

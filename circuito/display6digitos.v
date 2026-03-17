@@ -2,7 +2,7 @@ module display6digitos (
     input [23:0] dinheiro,
     input enable,
     input [41:0] display
-)
+);
 
     hexa7seg d6 (
         .hexa ( dinheiro[23:20] ),
