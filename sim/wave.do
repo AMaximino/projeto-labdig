@@ -1,12 +1,3 @@
-vlib work
-vmap work work
-
-vlog ../circuito/*.v
-vlog ../tb/*.v
-
-vsim circuito_jogo_financeiro_tb1
-
-
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/clock_in
@@ -54,6 +45,3 @@ configure wave -timeline 0
 configure wave -timelineunits ns
 update
 WaveRestoreZoom {0 ns} {29864 ns}
-
-
-run -all

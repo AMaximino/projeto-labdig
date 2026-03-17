@@ -1,5 +1,5 @@
 //------------------------------------------------------------------
-// Arquivo   : registrador_m.v
+// Arquivo   : registrador_n.v
 // Projeto   : Experiencia 6 - Projeto do
 //             Jogo do Desafio da Memória
 //------------------------------------------------------------------

@@ -15,7 +15,7 @@ module circuito_jogo_financeiro_tb1;
     reg        vender_in = 0;
     reg  [2:0] itens_in = 3'b000;
     reg  [5:0] config_display_in = 4'b0000;
-    reg        jogada_in;
+    reg        jogada_in = 0;
 
     wire [6:0]  contagem_out;
     wire [6:0]  rodada_out;
@@ -48,7 +48,7 @@ module circuito_jogo_financeiro_tb1;
       .vender           ( vender_in),
       .itens            ( itens_in ),
       .config_display   ( config_display_in ),
-      .jogada           ( leds_rgb_out ),
+      .jogada           ( jogada_in ),
       .contagem         ( contagem_out ),
       .rodada           ( rodada_out ),
       .display_rodadas  ( display_rodadas_out ),
