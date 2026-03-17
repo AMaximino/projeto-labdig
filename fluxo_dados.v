@@ -7,7 +7,10 @@ module fluxo_dados (
     input comprar,
     input vender,
     input [5:0] config_display;
-    input rst_ED,
+
+    input jogada,
+
+    input rstED,
     input we,
     input zeraCJ,
     input contaCJ,
@@ -15,10 +18,17 @@ module fluxo_dados (
     input contaCR,
     input registraD,
 
+    output fim_jogo,
+    output fim_perdeu,
+    output fim_rodada,
+    output jogada_pulso, //
+    output [3:0] contagem, //
+    output [3:0] rodada, //
+
     output [23:0] dinheiro
 );
 
-
+/*
 /////////////display/////////////////////////////////
     wire sel_display;
     wire sel_display_pulso;
@@ -27,7 +37,7 @@ module fluxo_dados (
 
     edge_detector sel_display_ED (
         .clock ( clock ),
-        .reset ( rst_ED ),
+        .reset ( rstED ),
         .sinal ( sel_display ),
         .pulso ( display_pulso )
     );
@@ -57,16 +67,17 @@ module fluxo_dados (
         .addr_write ( ),
         .data_out   ( dinheiro )
     );
+*/
 //////////////////////////////////////////////////////////////////
 ////////////////acao//////////////////////////////////////////////
-
+/*
     wire [5:0] acoes;
     wire tem_acao;
     wire acao_pulso;
 
     edge_detector acao_ED (
         .clock ( clock ),
-        .reset ( rst_ED ),
+        .reset ( rstED ),
         .sinal ( tem_acao ),
         .pulso ( acao_pulso )
     );
@@ -81,38 +92,48 @@ module fluxo_dados (
         .D      ( acoes ),
         .Q      ( acoes_out )
     );
-
+*/
 ///////////////////////////////////////////////////////////////////////////////
+//////////////jogada/////////////////////////////////////////////////////////
 
-
-
-
-
-    // contador_163_modo contadorJogada
-    contador_163_modo contadorJogada (
-      .clock ( clock ),
-      .clr   ( ~zeraCJ ),
-      .ld    ( 1'b1 ),
-      .ent   ( 1'b1 ),
-      .enp   ( contaCJ ),
-      .modo  ( 1'b1/*configuracao_out[0]*/ ),  
-      .D     ( 4'b0000 ),     
-      .Q     ( contagem ),
-      .rco   ( )
+    wire jogada_pulso;
+    edge_detector acao_ED (
+        .clock ( clock ),
+        .reset ( rstED ),
+        .sinal ( jogada ),
+        .pulso ( jogada_pulso )
     );
 
 
-    // contador_163_modo contadorRodada
-    contador_163_modo contadorRodada (
-      .clock ( clock ),
-      .clr   ( ~zeraCR ),
-      .ld    ( 1'b1 ),
-      .ent   ( 1'b1 ),
-      .enp   ( contaCR ),
-      .modo  ( 1'b1/*configuracao_out[0]*/ ),  
-      .D     ( 4'b0000 ),     
-      .Q     ( rodada ),
-      .rco   ( ultima_rodada )
+    // contador_modulo_n contadorJogada
+    contador_modulo_n #(.N(4)) contadorJogada (
+      .clock  ( clock ),
+      .clr    ( ~zeraCJ ),
+      .ld     ( 1'b1 ),
+      .ent    ( 1'b1 ),
+      .enp    ( contaCJ ),
+      .modulo ( 4'b0110 ),  
+      .D      ( 4'b0000 ),     
+      .Q      ( contagem ),
+      .rco    ( fim_rodada )
     );
+
+
+    // contador_modulo_n contadorRodada
+    contador_modulo_n #(.N(4)) contadorRodada (
+      .clock  ( clock ),
+      .clr    ( ~zeraCR ),
+      .ld     ( 1'b1 ),
+      .ent    ( 1'b1 ),
+      .enp    ( contaCR ),
+      .modulo ( 4'b1010 ),  
+      .D      ( 4'b0000 ),     
+      .Q      ( rodada ),
+      .rco    ( ultima_rodada )
+    );
+
+
+    assign fim_jogo = fim_rodada && ultima_rodada;
+    assign fim_perdeu = 1'b0; //provisorio
 
 endmodule

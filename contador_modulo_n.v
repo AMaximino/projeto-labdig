@@ -1,6 +1,6 @@
 //------------------------------------------------------------------
-// Arquivo   : contador_163_var.v
-// Projeto   : Experiencia 4 - Um Fluxo de Dados Simples
+// Arquivo   : contador_modulo_n.v
+// Projeto   : Projeto LabDig
 //------------------------------------------------------------------
 // Descricao : Contador binario de 4 bits, modulo variavel
 //             similar ao componente 74163
@@ -12,19 +12,17 @@
 //     Data        Versao  Autor             Descricao
 //     14/12/2023  1.0     Edson Midorikawa  versao inicial
 //     04/02/2026  1.1     André Maximino    versao com modulo variavel
+//     17/03/2026  1.2     André Maximino    versao com input modulo (mais flexivel)
 //------------------------------------------------------------------
 //
-module contador_163_modo ( clock, clr, ld, ent, enp, modo, D, Q, rco );
-    input clock, clr, ld, ent, enp, modo;
-    input [3:0] D;
-    output reg [3:0] Q;
+module contador_modulo_n #(parameter N=4) ( clock, clr, ld, ent, enp, modulo, D, Q, rco );
+    input clock, clr, ld, ent, enp;
+    input [N-1:0] modulo, D;
+    output reg [N-1:0] Q;
     output reg rco;
 
-    wire [4:0] modulo;
-    assign modulo = modo ? 5'd4 : 5'd16;    // assign modulo = modo ? 5'd5 : 5'd16;
-
     always @ (posedge clock)
-        if (~clr)               Q <= 4'd0;
+        if (~clr)               Q <= {N{1'b0}};
         else if (~ld)           Q <= D;
         else if (ent && enp)    Q <= Q + 1'b1;
         else                    Q <= Q;
