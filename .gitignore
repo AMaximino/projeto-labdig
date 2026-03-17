@@ -1,1 +1,46 @@
+# =========================
+# ModelSim / QuestaSim
+# =========================
+
+# Biblioteca compilada
+work/
+sim/work/
+
+# Arquivos de execução
+transcript
+vsim.wlf
+*.wlf
+*.log
+*.jou
+
+# Configurações locais (opcional ignorar)
+modelsim.ini
+
+# =========================
+# Waveforms
+# =========================
+
+*.vcd
+*.fst
+
+# =========================
+# Pastas de simulação (mantém scripts .do)
+# =========================
+
+sim/*
+!sim/*.do
+!sim/**/*.do
+
+# =========================
+# Build genérico
+# =========================
+
+build/
+
+# =========================
+# Outros
+# =========================
+
+*.out
+*.vvp
 .history/

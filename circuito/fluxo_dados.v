@@ -112,7 +112,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
-      .modulo ( 4'b0110 ),  
+      .modulo ( 4'b0100 ),  
       .D      ( 4'b0000 ),     
       .Q      ( contagem ),
       .rco    ( fim_rodada )
@@ -126,7 +126,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b1010 ),  
+      .modulo ( 4'b0011 ),  
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )
