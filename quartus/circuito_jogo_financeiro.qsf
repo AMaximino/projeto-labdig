@@ -42,7 +42,7 @@ set_global_assignment -name DEVICE 5CEBA4F23C7
 set_global_assignment -name TOP_LEVEL_ENTITY circuito_jogo_financeiro
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:20:34  MARCH 17, 2026"
-set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "24.1std.0 Lite Edition"
 set_global_assignment -name VERILOG_FILE ../circuito/unidade_controle.v
 set_global_assignment -name VERILOG_FILE ../circuito/sync_ram_16x4_file.v
 set_global_assignment -name VERILOG_FILE ../circuito/registrador_n.v
@@ -65,4 +65,22 @@ set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_location_assignment PIN_B16 -to clock
+set_location_assignment PIN_C16 -to reset
+set_location_assignment PIN_K20 -to iniciar
+set_location_assignment PIN_U20 -to rodada[0]
+set_location_assignment PIN_Y20 -to rodada[1]
+set_location_assignment PIN_V20 -to rodada[2]
+set_location_assignment PIN_U16 -to rodada[3]
+set_location_assignment PIN_U15 -to rodada[4]
+set_location_assignment PIN_Y15 -to rodada[5]
+set_location_assignment PIN_P9 -to rodada[6]
+set_location_assignment PIN_B12 -to perdeu
+set_location_assignment PIN_U21 -to contagem[0]
+set_location_assignment PIN_V21 -to contagem[1]
+set_location_assignment PIN_W22 -to contagem[2]
+set_location_assignment PIN_W21 -to contagem[3]
+set_location_assignment PIN_Y22 -to contagem[4]
+set_location_assignment PIN_Y21 -to contagem[5]
+set_location_assignment PIN_AA22 -to contagem[6]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
