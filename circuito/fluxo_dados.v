@@ -25,6 +25,7 @@ module fluxo_dados (
     output [3:0] contagem, //
     output [3:0] rodada, //
 
+    output ultima_rodada,
     output [23:0] dinheiro
 );
 
@@ -111,7 +112,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
-      .modulo ( 4'b0100 ),  
+      .modulo ( 4'b0100 ),  //(modulo +1) jogadas
       .D      ( 4'b0000 ),     
       .Q      ( contagem ),
       .rco    ( fim_rodada )
@@ -125,7 +126,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b0011 ),  
+      .modulo ( 4'b0011 ),  //(modulo + 1) rodadas
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )

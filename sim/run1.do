@@ -19,6 +19,8 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/jogada_in
 add wave -noupdate -divider Saidas
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_rodada_out
 add wave -noupdate -divider FD
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/iniciar
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/jogada

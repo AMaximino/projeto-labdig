@@ -19,9 +19,17 @@ module circuito_jogo_financeiro (
     output [11:0] display_rodadas,
     output [11:0] display_jogadas,
     output [41:0] display_dinheiro,
+    output ultima_rodada,
+    output ultima_jogada,
     output terminou,
     output perdeu
 );
+
+    wire w_fim_jogo;
+    wire w_fim_perdeu;
+    wire w_fim_rodada;
+
+    assign ultima_jogada = w_fim_rodada;
     wire [23:0] dinheiro;
 
     wire w_rstED;
@@ -62,6 +70,7 @@ module circuito_jogo_financeiro (
         .contagem       ( w_contagem ),
         .rodada         ( w_rodada ),
 
+        .ultima_rodada  ( ultima_rodada ),
         .dinheiro       ( dinheiro )
     );
 

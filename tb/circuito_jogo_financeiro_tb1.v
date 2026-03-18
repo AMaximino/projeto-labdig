@@ -22,6 +22,8 @@ module circuito_jogo_financeiro_tb1;
     wire [11:0] display_rodadas_out;
     wire [11:0] display_jogadas_out;
     wire [41:0] display_dinheiro_out;
+    wire        ultima_jogada_out;
+    wire        ultima_rodada_out;
     wire        terminou_out;
     wire        perdeu_out;
     
@@ -54,6 +56,8 @@ module circuito_jogo_financeiro_tb1;
       .display_rodadas  ( display_rodadas_out ),
       .display_jogadas  ( display_jogadas_out ),
       .display_dinheiro ( display_dinheiro_out ),
+      .ultima_jogada    ( ultima_jogada_out ),
+      .ultima_rodada    ( ultima_rodada_out ),
       .terminou         ( terminou_out ),
       .perdeu           ( perdeu_out )
       );
@@ -94,7 +98,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 4. jogada #1
+      // Teste 4. jogada #2
       caso = 4;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -102,7 +106,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 5. jogada #1
+      // Teste 5. jogada #3
       caso = 5;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -110,7 +114,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 6. jogada #1
+      // Teste 6. jogada #4
       caso = 6;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -118,7 +122,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 7. jogada #1
+      // Teste 7. jogada #5
       caso = 7;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -134,7 +138,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 9. jogada #1
+      // Teste 9. jogada #2
       caso = 9;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -142,7 +146,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 10. jogada #1
+      // Teste 10. jogada #3
       caso = 10;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -150,7 +154,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 11. jogada #1
+      // Teste 11. jogada #4
       caso = 11;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -158,7 +162,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 12. jogada #1
+      // Teste 12. jogada #5
       caso = 12;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -174,7 +178,7 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 14. jogada #1
+      // Teste 14. jogada #2
       caso = 14;
       @(negedge clock_in);
       jogada_in = 1'b1;
@@ -182,80 +186,80 @@ module circuito_jogo_financeiro_tb1;
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 15. jogada #3
+      caso = 15;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 16. jogada #4
+      caso = 16;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 17. jogada #5
+      caso = 17;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 18. jogada #1
+      caso = 18;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 19. jogada #2
+      caso = 19;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 20. jogada #3
+      caso = 20;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 21. jogada #4
+      caso = 21;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 22. jogada #5
+      caso = 22;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 23. jogada #1
+      caso = 23;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
       jogada_in = 1'b0;
       #(10*clockPeriod);
 
-      // Teste 3. jogada #1
-      caso = 3;
+      // Teste 24. jogada #1
+      caso = 24;
       @(negedge clock_in);
       jogada_in = 1'b1;
       #(10*clockPeriod);
