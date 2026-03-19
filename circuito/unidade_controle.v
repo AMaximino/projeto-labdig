@@ -2,7 +2,8 @@ module unidade_controle ( //provisoria
     input      clock,
     input      reset,
     input      iniciar,
-    input      jogada_pulso,
+    input      acao_pulso,
+    input      eh_jogada,
     input      fim_jogo,
     input      fim_perdeu,
     input      fim_rodada,
@@ -31,6 +32,10 @@ module unidade_controle ( //provisoria
     parameter proximaJogada     = 5'b01000;  // 8
     parameter fim               = 5'b01001;  // 9
     parameter fimPerdeu         = 5'b01010;  // A
+    parameter registraAcao      = 5'b01011;
+    parameter processarAcao     = 5'b01100;
+    parameter jogadaOuAcao      = 5'b01101;
+    parameter resgistraDisplay  = 5'b01110;
 
     // Variaveis de estado
     reg [4:0] Eatual, Eprox;
@@ -65,15 +70,19 @@ module unidade_controle ( //provisoria
                 else
                     Eprox = preparacao;
             end
-            espera:            Eprox = (jogada_pulso) ? verificaPerdeu : espera;
-            verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : verificaFim;
+            espera:            Eprox = (acao_pulso) ? registraAcao : espera;
+            verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
             verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
             verificaFimRodada: Eprox = (fim_rodada) ? novaRodada : proximaJogada;
             novaRodada:        Eprox = espera;
             proximaJogada:     Eprox = espera;
             fim:               Eprox = (iniciar) ? preparacao : fim;
             fimPerdeu:         Eprox = (iniciar) ? preparacao : fimPerdeu;
-            default:         Eprox = inicial;
+            registraAcao:      Eprox = processarAcao;
+            processarAcao:     Eprox = verificaPerdeu;
+            jogadaOuAcao:      Eprox = (eh_jogada) ? verificaFim : espera;
+            resgistraDisplay:  Eprox = espera;
+            default:           Eprox = inicial;
         endcase
     end
 

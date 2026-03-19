@@ -11,14 +11,14 @@ module circuito_jogo_financeiro (
     input [2:0] itens,
     input [5:0] config_display,
 
-    input jogada, //
-
     output [6:0] contagem, //
     output [6:0] rodada, //
 
     output [11:0] display_rodadas,
     output [11:0] display_jogadas,
     output [41:0] display_dinheiro,
+    output ultima_jogada,
+    output ultima_rodada,
     output terminou,
     output perdeu
 );
@@ -32,7 +32,8 @@ module circuito_jogo_financeiro (
     wire w_contaCR;
     wire w_registraD;
 
-    wire w_jogada_pulso;
+    wire w_acao_pulso;
+    wire w_eh_jogada;
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
 
@@ -46,7 +47,6 @@ module circuito_jogo_financeiro (
         .vender         ( vender ),
         .config_display ( config_display ),
 
-        .jogada         ( jogada ),
         .rstED          ( w_rstED ),
         .we             ( w_we ),
         .zeraCJ         ( w_zeraCJ ),
@@ -58,7 +58,8 @@ module circuito_jogo_financeiro (
         .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
         .fim_rodada     ( w_fim_rodada ),
-        .jogada_pulso   ( w_jogada_pulso ),
+        .acao_pulso     ( w_acao_pulso ),
+        .eh_jogada      ( w_eh_jogada ),
         .contagem       ( w_contagem ),
         .rodada         ( w_rodada ),
 
@@ -69,7 +70,8 @@ module circuito_jogo_financeiro (
         .clock        ( clock ),
         .reset        ( reset ),
         .iniciar      ( iniciar ),
-        .jogada_pulso ( w_jogada_pulso ),
+        .acao_pulso   ( w_acao_pulso ),
+        .eh_jogada    ( w_eh_jogada ),
         .fim_jogo     ( w_fim_jogo ),
         .fim_perdeu   ( w_fim_perdeu ),
         .fim_rodada   ( w_fim_rodada ),

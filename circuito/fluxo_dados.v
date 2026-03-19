@@ -8,8 +8,6 @@ module fluxo_dados (
     input vender,
     input [5:0] config_display,
 
-    input jogada,
-
     input rstED,
     input we,
     input zeraCJ,
@@ -21,19 +19,20 @@ module fluxo_dados (
     output fim_jogo,
     output fim_perdeu,
     output fim_rodada,
-    output jogada_pulso, //
+    output acao_pulso,
+    output eh_jogada,
     output [3:0] contagem, //
     output [3:0] rodada, //
 
     output [23:0] dinheiro
 );
 
-/*
+
 /////////////display/////////////////////////////////
     wire sel_display;
     wire sel_display_pulso;
     wire [5:0] config_display_out;
-    wire addr_read;
+    wire [2:0] addr_read;
 
     edge_detector sel_display_ED (
         .clock ( clock ),
@@ -54,8 +53,8 @@ module fluxo_dados (
 
     // transformador de formato de config_display (botoes) p/ endereco de leitura
     encoder #(.N(6)) addr_display (
-        .input ( config_display_out ),
-        .output ( addr_read )
+        .entrada ( config_display_out ),
+        .saida ( addr_read )
     );
 
     // memoria das informacoes do jogador
@@ -67,10 +66,10 @@ module fluxo_dados (
         .addr_write ( ),
         .data_out   ( dinheiro )
     );
-*/
+
 //////////////////////////////////////////////////////////////////
 ////////////////acao//////////////////////////////////////////////
-/*
+
     wire [5:0] acoes;
     wire tem_acao;
     wire acao_pulso;
@@ -82,26 +81,28 @@ module fluxo_dados (
         .pulso ( acao_pulso )
     );
     assign acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
+    /*assign acoes_sem_jogada = (investir || resgatar || comprar || vender);
+    assign jogada = (estudar || trabalhar);*/
     assign tem_acao = |acoes;
+    
 
     // registrador da acao realizada
-    registrador_n #(.N(6)) regDisplay (
+    registrador_n #(.N(6)) regAcao (
         .clock  ( clock ),
         .clear  ( zeraA ),
         .enable ( registraA ),
         .D      ( acoes ),
         .Q      ( acoes_out )
     );
-*/
+    wire [5:0] acoes_out;
+
 ///////////////////////////////////////////////////////////////////////////////
 //////////////jogada/////////////////////////////////////////////////////////
-
-    edge_detector acao_ED (
-        .clock ( clock ),
-        .reset ( rstED ),
-        .sinal ( jogada ),
-        .pulso ( jogada_pulso )
-    );
+    wire [1:0] jogada;
+    wire eh_jogada;
+    assign jogada = {acoes_out[5], acoes_out[4]};
+    assign eh_jogada = |jogada;
+    
 
 
     // contador_modulo_n contadorJogada
