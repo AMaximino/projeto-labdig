@@ -19,6 +19,7 @@ module circuito_jogo_financeiro_tb1;
 
     wire [6:0]  contagem_out;
     wire [6:0]  rodada_out;
+    wire [6:0]  estado_out;
     wire [11:0] display_rodadas_out;
     wire [11:0] display_jogadas_out;
     wire [41:0] display_dinheiro_out;
@@ -53,6 +54,7 @@ module circuito_jogo_financeiro_tb1;
       .jogada           ( jogada_in ),
       .contagem         ( contagem_out ),
       .rodada           ( rodada_out ),
+      .estado           ( estado_out ),
       .display_rodadas  ( display_rodadas_out ),
       .display_jogadas  ( display_jogadas_out ),
       .display_dinheiro ( display_dinheiro_out ),

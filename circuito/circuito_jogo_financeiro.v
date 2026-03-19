@@ -15,6 +15,7 @@ module circuito_jogo_financeiro (
 
     output [6:0] contagem, //
     output [6:0] rodada, //
+    output [6:0] estado, //
 
     output [11:0] display_rodadas,
     output [11:0] display_jogadas,
@@ -43,6 +44,7 @@ module circuito_jogo_financeiro (
     wire w_jogada_pulso;
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
+    wire [4:0] w_estado;
 
     fluxo_dados fd (
         .clock          ( clock ),
@@ -91,7 +93,8 @@ module circuito_jogo_financeiro (
         .contaCR      ( w_contaCR ),
         .registraD    ( w_registraD ),
         .terminou     ( terminou ),
-        .perdeu       ( perdeu )
+        .perdeu       ( perdeu ),
+        .estado       ( w_estado )
     );
 
 
@@ -111,6 +114,12 @@ module circuito_jogo_financeiro (
         .hexa ( w_contagem ),
         .enable ( 1'b1 ),
         .display ( rodada )
+    );
+
+    estado7seg d0 (  //provisorio
+        .estado  ( w_estado ),
+        .enable  ( 1'b1 ),
+        .display ( estado )
     );
 
 
