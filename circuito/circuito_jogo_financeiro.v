@@ -48,15 +48,15 @@ module circuito_jogo_financeiro (
 
     fluxo_dados fd (
         .clock          ( clock ),
-        .estudar        ( estudar ),
-        .trabalhar      ( trabalhar ),
-        .investir       ( investir ),
-        .resgatar       ( resgatar ),
-        .comprar        ( comprar ),
-        .vender         ( vender ),
+        .estudar        ( ~estudar ),
+        .trabalhar      ( ~trabalhar ),
+        .investir       ( ~investir ),
+        .resgatar       ( ~resgatar ),
+        .comprar        ( ~comprar ),
+        .vender         ( ~vender ),
         .config_display ( config_display ),
 
-        .jogada         ( jogada ),
+        .jogada         ( ~jogada ),
         .rstED          ( w_rstED ),
         .we             ( w_we ),
         .zeraCJ         ( w_zeraCJ ),
@@ -78,8 +78,8 @@ module circuito_jogo_financeiro (
 
     unidade_controle uc (
         .clock        ( clock ),
-        .reset        ( reset ),
-        .iniciar      ( iniciar ),
+        .reset        ( ~reset ),
+        .iniciar      ( ~iniciar ),
         .jogada_pulso ( w_jogada_pulso ),
         .fim_jogo     ( w_fim_jogo ),
         .fim_perdeu   ( w_fim_perdeu ),
