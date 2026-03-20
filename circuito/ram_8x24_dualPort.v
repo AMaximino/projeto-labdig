@@ -6,7 +6,7 @@
 //ram[4]: gastos fixos
 //ram[5]: gastos unicos
 
-module info_ram (
+module ram_8x24_dualPort (
     input             clock,
     input             we,
     input      [23:0] data,
@@ -30,7 +30,6 @@ module info_ram (
         // Escrita da memoria
         if (we)
             ram[addr_write] <= data;
-
         // Leitura da memoria
         data_out <= ram[addr_read];
     end

@@ -30,7 +30,12 @@ module circuito_jogo_financeiro (
     wire w_contaCJ;
     wire w_zeraCR;
     wire w_contaCR;
+    wire w_zeraD;
     wire w_registraD;
+    wire w_zeraA;
+    wire w_registraA;
+    wire w_zeraR;
+    wire [5:0] w_registraR;
 
     wire w_acao_pulso;
     wire w_eh_jogada;
@@ -53,7 +58,12 @@ module circuito_jogo_financeiro (
         .contaCJ        ( w_contaCJ ),
         .zeraCR         ( w_zeraCR ),
         .contaCR        ( w_contaCR ),
+        .zeraD          ( w_zeraD ),
         .registraD      ( w_registraD ),
+        .zeraA          ( w_zeraA ),
+        .registraA      ( w_registraA ),
+        .zeraR          ( w_zeraR ),
+        .registraR      ( w_registraR ),
 
         .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
@@ -82,35 +92,21 @@ module circuito_jogo_financeiro (
         .contaCJ      ( w_contaCJ ),
         .zeraCR       ( w_zeraCR ),
         .contaCR      ( w_contaCR ),
+        .zeraD        ( w_zeraD ),
         .registraD    ( w_registraD ),
+        .zeraA        ( w_zeraA ),
+        .registraA    ( w_registraA ),
+        .zeraR        ( w_zeraR ),
+        .registraR    ( w_registraR ),
         .terminou     ( terminou ),
         .perdeu       ( perdeu )
     );
 
 
-/*    display6digitos disp6dig (
+    display6digitos disp6dig (
         .dinheiro ( dinheiro ),
         .enable ( 1'b1 ),
         .display ( display_dinheiro )
-    ); */
-
-    hexa7seg d5 (  //provisorio
-        .hexa ( w_rodada ),
-        .enable ( 1'b1 ),
-        .display ( contagem )
     );
-
-    hexa7seg d3 (  //provisorio
-        .hexa ( w_contagem ),
-        .enable ( 1'b1 ),
-        .display ( rodada )
-    );
-
-
-
-    
-
-
-
 
 endmodule

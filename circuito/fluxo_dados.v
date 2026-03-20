@@ -14,7 +14,12 @@ module fluxo_dados (
     input contaCJ,
     input zeraCR,
     input contaCR,
+    input zeraD,
     input registraD,
+    input zeraA,
+    input registraA,
+    input zeraR,
+    input [5:0] registraR,
 
     output fim_jogo,
     output fim_perdeu,
@@ -57,15 +62,61 @@ module fluxo_dados (
         .saida ( addr_read )
     );
 
-    // memoria das informacoes do jogador
-    info_ram infoJogador (
+
+///////////info/////////////////////////////////////////////////////////////////////////
+    registrador_n #(.N(24)) reg_saldo (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[0] ),
+        .D      ( saldo_in ),
+        .Q      ( saldo )
+    );
+    registrador_n #(.N(24)) reg_salario (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[1] ),
+        .D      ( salario_in ),
+        .Q      ( salario )
+    );
+    registrador_n #(.N(24)) reg_valorInvestido (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[2] ),
+        .D      ( valorInvestido_in ),
+        .Q      ( valorInvestido )
+    );
+    registrador_n #(.N(24)) reg_rendimento (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[3] ),
+        .D      ( rendimento_in ),
+        .Q      ( rendimento )
+    );
+    registrador_n #(.N(24)) reg_gastosFixos (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[4] ),
+        .D      ( gastosFixos_in ),
+        .Q      ( gastosFixos )
+    );
+    registrador_n #(.N(24)) reg_gastosUnicos (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR[5] ),
+        .D      ( gastosUnicos_in ),
+        .Q      ( gastosUnicos )
+    );
+
+
+    /*// memoria das informacoes do jogador
+    ram_8x24_dualPort infoJogador (
         .clock      ( clock ),
         .we         ( we ),
         .data       ( ),
         .addr_read  ( addr_read ),
         .addr_write ( ),
         .data_out   ( dinheiro )
-    );
+    );*/
 
 //////////////////////////////////////////////////////////////////
 ////////////////acao//////////////////////////////////////////////
