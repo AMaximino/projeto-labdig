@@ -15,16 +15,28 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/Eatual
 add wave -noupdate -divider Entradas
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/reset_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/iniciar_in
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/jogada_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/trabalhar_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/estudar_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/investir_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/resgatar_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/comprar_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/vender_in
 add wave -noupdate -divider Saidas
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_rodada_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
+add wave -noupdate -divider valoresFinanceiros
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/saldo
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/salario
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/valorInvestido
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rendimento
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosFixos
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosUnicos
 add wave -noupdate -divider FD
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/iniciar
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/jogada
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/jogada_pulso
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acao_pulso
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/eh_jogada
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_jogo
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_perdeu
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_rodada
