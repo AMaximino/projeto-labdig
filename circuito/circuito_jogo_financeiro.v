@@ -15,8 +15,8 @@ module circuito_jogo_financeiro (
     output [6:0] rodada, //
     output [6:0] estado, //
 
-    output [11:0] display_rodadas,
     output [11:0] display_jogadas,
+    output [11:0] display_rodadas,
     output [41:0] display_dinheiro,
     output ultima_jogada,
     output ultima_rodada,
@@ -87,8 +87,8 @@ module circuito_jogo_financeiro (
 
     unidade_controle uc (
         .clock        ( clock ),
-        .reset        ( reset ),
-        .iniciar      ( iniciar ),
+        .reset        ( ~reset ),
+        .iniciar      ( ~iniciar ),
         .acao_pulso   ( w_acao_pulso ),
         .eh_jogada    ( w_eh_jogada ),
         .fim_jogo     ( w_fim_jogo ),
@@ -119,7 +119,7 @@ module circuito_jogo_financeiro (
         .display ( display_dinheiro )
     );
 
-    hexa7seg d3 (  //provisorio
+    /*hexa7seg d3 (  //provisorio
         .hexa ( w_contagem ),
         .enable ( 1'b1 ),
         .display ( rodada )
@@ -129,7 +129,7 @@ module circuito_jogo_financeiro (
         .estado  ( w_estado ),
         .enable  ( 1'b1 ),
         .display ( estado )
-    );
+    );*/
 
 
 

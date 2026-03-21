@@ -159,7 +159,6 @@ processador_acao #(.N(20)) p (
 
     wire [5:0] acoes;
     wire tem_acao;
-    /*wire acao_pulso;*/
 
     edge_detector acao_ED (
         .clock ( clock ),
@@ -196,7 +195,7 @@ processador_acao #(.N(20)) p (
     // contador_modulo_n contadorJogada
     contador_modulo_n #(.N(4)) contadorJogada (
       .clock  ( clock ),
-      .clr    ( ~zeraCJ ),
+      .clr    ( zeraCJ ),
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
@@ -210,7 +209,7 @@ processador_acao #(.N(20)) p (
     // contador_modulo_n contadorRodada
     contador_modulo_n #(.N(4)) contadorRodada (
       .clock  ( clock ),
-      .clr    ( ~zeraCR ),
+      .clr    ( zeraCR ),
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
