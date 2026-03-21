@@ -26,6 +26,13 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_rodada_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
+add wave -noupdate -divider valoresFinanceiros
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/saldo
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/salario
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/valorInvestido
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rendimento
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosFixos
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosUnicos
 add wave -noupdate -divider FD
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/iniciar
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acao_pulso

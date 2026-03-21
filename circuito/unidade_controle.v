@@ -102,14 +102,14 @@ module unidade_controle ( //provisoria
         zeraD            = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraD        = 1'b0;
         zeraA            = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraA        = 
+        registraA        = (Eatual == registraAcao) ? 1'b1 : 1'b0;
         zeraR            = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraR[0]     =
+        /*registraR[0]     =
         registraR[1]     =
         registraR[2]     =
         registraR[3]     =
         registraR[4]     =
-        registraR[5]     =
+        registraR[5]     =*/
         terminou         = (Eatual == fim) ? 1'b1 : 1'b0;
         perdeu           = (Eatual == fimPerdeu) ? 1'b1 : 1'b0;
 
