@@ -9,6 +9,7 @@ module fluxo_dados (
     input [5:0] config_display,
 
     input rstED,
+    input init,
     input we,
     input zeraCJ,
     input contaCJ,
@@ -19,7 +20,7 @@ module fluxo_dados (
     input zeraA,
     input registraA,
     input zeraR,
-    input [5:0] registraR,
+    input registraR,
 
     output fim_jogo,
     output fim_perdeu,
@@ -33,18 +34,18 @@ module fluxo_dados (
     output [23:0] dinheiro
 );
 
-    wire [19:0]saldo;
-    wire [19:0]saldo_in;
-    wire [19:0]salario;
-    wire [19:0]salario_in;
-    wire [19:0]valorInvestido;
-    wire [19:0]valorInvestido_in;
-    wire [19:0]rendimento;
-    wire [19:0]rendimento_in;
-    wire [19:0]gastosFixos;
-    wire [19:0]gastosFixos_in;
-    wire [19:0]gastosUnicos;
-    wire [19:0]gastosUnicos_in;
+    wire [19:0] saldo;
+    wire [19:0] saldo_in;
+    wire [19:0] salario;
+    wire [19:0] salario_in;
+    wire [19:0] valorInvestido;
+    wire [19:0] valorInvestido_in;
+    wire [19:0] rendimento;
+    wire [19:0] rendimento_in;
+    wire [19:0] gastosFixos;
+    wire [19:0] gastosFixos_in;
+    wire [19:0] gastosUnicos;
+    wire [19:0] gastosUnicos_in;
 
     wire [5:0] acoes_out;
 
@@ -79,45 +80,46 @@ module fluxo_dados (
 
 
 ///////////info/////////////////////////////////////////////////////////////////////////
+    
     registrador_n #(.N(20)) reg_saldo (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[0] ),
+        .enable ( registraR ),
         .D      ( saldo_in ),
         .Q      ( saldo )
     );
     registrador_n #(.N(20)) reg_salario (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[1] ),
+        .enable ( registraR ),
         .D      ( salario_in ),
         .Q      ( salario )
     );
     registrador_n #(.N(20)) reg_valorInvestido (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[2] ),
+        .enable ( registraR ),
         .D      ( valorInvestido_in ),
         .Q      ( valorInvestido )
     );
     registrador_n #(.N(20)) reg_rendimento (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[3] ),
+        .enable ( registraR ),
         .D      ( rendimento_in ),
         .Q      ( rendimento )
     );
     registrador_n #(.N(20)) reg_gastosFixos (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[4] ),
+        .enable ( registraR ),
         .D      ( gastosFixos_in ),
         .Q      ( gastosFixos )
     );
     registrador_n #(.N(20)) reg_gastosUnicos (
         .clock  ( clock ),
         .clear  ( zeraR ),
-        .enable ( registraR[5] ),
+        .enable ( registraR ),
         .D      ( gastosUnicos_in ),
         .Q      ( gastosUnicos )
     );
@@ -138,6 +140,7 @@ module fluxo_dados (
 ////////////////processamento de acoes//////////////////////////////////////////////
 
 processador_acao #(.N(20)) p (
+    .clock               ( clock ),
     .saldo_in            ( saldo ),
     .salario_in          ( salario ),
     .valor_investido_in  ( valorInvestido ),
@@ -145,6 +148,7 @@ processador_acao #(.N(20)) p (
     .gastos_fixos_in     ( gastosFixos ),
     .gastos_unicos_in    ( gastosUnicos ),
     .acao                ( acoes_out ),
+    .init                ( init ),
 
     .saldo_out           ( saldo_in ),
     .salario_out         ( salario_in ),

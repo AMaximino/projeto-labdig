@@ -45,8 +45,15 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_perdeu
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_rodada
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/contagem
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rodada
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/saldo_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/salario_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/valor_investido_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/rendimento_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_fixos_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_unicos_out
 add wave -noupdate -divider UC
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rstED
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/init
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/we
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraCJ
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/contaCJ
@@ -57,6 +64,7 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraD
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraA
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraA
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraR
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraR
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ns} 0}
 quietly wave cursor active 1

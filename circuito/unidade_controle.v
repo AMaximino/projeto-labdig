@@ -1,4 +1,4 @@
-module unidade_controle ( //provisoria
+module unidade_controle (
     input      clock,
     input      reset,
     input      iniciar,
@@ -9,6 +9,7 @@ module unidade_controle ( //provisoria
     input      fim_rodada,
 
     output reg rstED,
+    output reg init,
     output reg we,
     output reg zeraCJ,
     output reg contaCJ,
@@ -19,7 +20,7 @@ module unidade_controle ( //provisoria
     output reg zeraA,
     output reg registraA,
     output reg zeraR,
-    output reg [5:0] registraR,
+    output reg registraR,
 
     output reg terminou,
     output reg perdeu,
@@ -42,6 +43,7 @@ module unidade_controle ( //provisoria
     parameter processarAcao     = 5'b01100;
     parameter jogadaOuAcao      = 5'b01101;
     parameter resgistraDisplay  = 5'b01110;
+    parameter registraValor     = 5'b01111;
 
     // Variaveis de estado
     reg [4:0] Eatual, Eprox;
@@ -85,9 +87,10 @@ module unidade_controle ( //provisoria
             fim:               Eprox = (iniciar) ? preparacao : fim;
             fimPerdeu:         Eprox = (iniciar) ? preparacao : fimPerdeu;
             registraAcao:      Eprox = processarAcao;
-            processarAcao:     Eprox = verificaPerdeu;
+            processarAcao:     Eprox = registraValor;
             jogadaOuAcao:      Eprox = (eh_jogada) ? verificaFim : espera;
             resgistraDisplay:  Eprox = espera;
+            registraValor:     Eprox = verificaPerdeu;
             default:           Eprox = inicial;
         endcase
     end
@@ -95,6 +98,7 @@ module unidade_controle ( //provisoria
     // Logica de saida (maquina Moore)
     always @* begin
         rstED            = (Eatual == inicial) ? 1'b1 : 1'b0;
+        init             = (Eatual == inicial) ? 1'b1 : 1'b0;
         we               = 1'b0;
         zeraCJ           = (Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
         contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
@@ -105,6 +109,7 @@ module unidade_controle ( //provisoria
         zeraA            = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraA        = (Eatual == registraAcao) ? 1'b1 : 1'b0;
         zeraR            = (Eatual == inicial) ? 1'b1 : 1'b0;
+        registraR        = (Eatual == standby || Eatual == registraValor) ? 1'b1 : 1'b0;
         /*registraR[0]     =
         registraR[1]     =
         registraR[2]     =

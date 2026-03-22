@@ -79,6 +79,7 @@ module circuito_jogo_financeiro_tb1;
       vender_in       = 1;
       #clockPeriod;
 
+      #(10*clockPeriod);
       // Teste 1. resetar circuito
       caso = 1;
       // gera pulso de reset
