@@ -8,15 +8,15 @@ module circuito_jogo_financeiro (
     input resgatar,
     input comprar,
     input vender,
-    input [2:0] itens,
+    //input [2:0] itens,
     input [5:0] config_display,
 
     output [6:0] contagem, //
     output [6:0] rodada, //
     output [6:0] estado, //
 
-    output [11:0] display_jogadas,
-    output [11:0] display_rodadas,
+    //output [11:0] display_jogadas,
+    //output [11:0] display_rodadas,
     output [41:0] display_dinheiro,
     output ultima_jogada,
     output ultima_rodada,
@@ -47,6 +47,7 @@ module circuito_jogo_financeiro (
 
     wire w_acao_pulso;
     wire w_eh_jogada;
+    wire w_display_pulso;
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
@@ -80,6 +81,7 @@ module circuito_jogo_financeiro (
         .fim_rodada     ( w_fim_rodada ),
         .acao_pulso     ( w_acao_pulso ),
         .eh_jogada      ( w_eh_jogada ),
+        .display_pulso  ( w_display_pulso ),
         .contagem       ( w_contagem ),
         .rodada         ( w_rodada ),
 
@@ -88,31 +90,32 @@ module circuito_jogo_financeiro (
     );
 
     unidade_controle uc (
-        .clock        ( clock ),
-        .reset        ( ~reset ),
-        .iniciar      ( ~iniciar ),
-        .acao_pulso   ( w_acao_pulso ),
-        .eh_jogada    ( w_eh_jogada ),
-        .fim_jogo     ( w_fim_jogo ),
-        .fim_perdeu   ( w_fim_perdeu ),
-        .fim_rodada   ( w_fim_rodada ),
+        .clock         ( clock ),
+        .reset         ( ~reset ),
+        .iniciar       ( ~iniciar ),
+        .acao_pulso    ( w_acao_pulso ),
+        .eh_jogada     ( w_eh_jogada ),
+        .display_pulso ( w_display_pulso ),
+        .fim_jogo      ( w_fim_jogo ),
+        .fim_perdeu    ( w_fim_perdeu ),
+        .fim_rodada    ( w_fim_rodada ),
 
-        .rstED        ( w_rstED ),
-        .init         ( w_init ),
-        .we           ( w_we ),
-        .zeraCJ       ( w_zeraCJ ),
-        .contaCJ      ( w_contaCJ ),
-        .zeraCR       ( w_zeraCR ),
-        .contaCR      ( w_contaCR ),
-        .zeraD        ( w_zeraD ),
-        .registraD    ( w_registraD ),
-        .zeraA        ( w_zeraA ),
-        .registraA    ( w_registraA ),
-        .zeraR        ( w_zeraR ),
-        .registraR    ( w_registraR ),
-        .terminou     ( terminou ),
-        .perdeu       ( perdeu ),
-        .estado       ( w_estado )
+        .rstED         ( w_rstED ),
+        .init          ( w_init ),
+        .we            ( w_we ),
+        .zeraCJ        ( w_zeraCJ ),
+        .contaCJ       ( w_contaCJ ),
+        .zeraCR        ( w_zeraCR ),
+        .contaCR       ( w_contaCR ),
+        .zeraD         ( w_zeraD ),
+        .registraD     ( w_registraD ),
+        .zeraA         ( w_zeraA ),
+        .registraA     ( w_registraA ),
+        .zeraR         ( w_zeraR ),
+        .registraR     ( w_registraR ),
+        .terminou      ( terminou ),
+        .perdeu        ( perdeu ),
+        .estado        ( w_estado )
     );
 
 

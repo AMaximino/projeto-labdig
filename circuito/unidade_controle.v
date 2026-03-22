@@ -4,6 +4,7 @@ module unidade_controle (
     input      iniciar,
     input      acao_pulso,
     input      eh_jogada,
+    input      display_pulso,
     input      fim_jogo,
     input      fim_perdeu,
     input      fim_rodada,
@@ -42,7 +43,7 @@ module unidade_controle (
     parameter registraAcao      = 5'b01011;
     parameter processarAcao     = 5'b01100;
     parameter jogadaOuAcao      = 5'b01101;
-    parameter resgistraDisplay  = 5'b01110;
+    parameter registraDisplay   = 5'b01110;
     parameter registraValor     = 5'b01111;
 
     // Variaveis de estado
@@ -78,7 +79,7 @@ module unidade_controle (
                 else
                     Eprox = preparacao;
             end
-            espera:            Eprox = (acao_pulso) ? registraAcao : espera;
+            espera:            Eprox = (acao_pulso) ? registraAcao : ((display_pulso) ? registraDisplay : espera);
             verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
             verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
             verificaFimRodada: Eprox = (fim_rodada) ? novaRodada : proximaJogada;
@@ -89,7 +90,7 @@ module unidade_controle (
             registraAcao:      Eprox = processarAcao;
             processarAcao:     Eprox = registraValor;
             jogadaOuAcao:      Eprox = (eh_jogada) ? verificaFim : espera;
-            resgistraDisplay:  Eprox = espera;
+            registraDisplay:   Eprox = espera;
             registraValor:     Eprox = verificaPerdeu;
             default:           Eprox = inicial;
         endcase
@@ -105,7 +106,7 @@ module unidade_controle (
         zeraCR           = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaCR          = (Eatual == novaRodada) ? 1'b1 : 1'b0;
         zeraD            = (Eatual == inicial) ? 1'b1 : 1'b0;
-        registraD        = 1'b0;
+        registraD        = (Eatual == registraDisplay) ? 1'b1 : 1'b0;
         zeraA            = (Eatual == inicial) ? 1'b1 : 1'b0;
         registraA        = (Eatual == registraAcao) ? 1'b1 : 1'b0;
         zeraR            = (Eatual == inicial) ? 1'b1 : 1'b0;

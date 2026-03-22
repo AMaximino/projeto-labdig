@@ -27,6 +27,7 @@ module fluxo_dados (
     output fim_rodada,
     output acao_pulso,
     output eh_jogada,
+    output display_pulso,
     output [3:0] contagem, //
     output [3:0] rodada, //
 
@@ -51,7 +52,6 @@ module fluxo_dados (
 
 /////////////display/////////////////////////////////
     wire sel_display;
-    wire sel_display_pulso;
     wire [5:0] config_display_out;
     wire [2:0] addr_read;
 
@@ -72,11 +72,31 @@ module fluxo_dados (
         .Q      ( config_display_out )
     );
 
-    // transformador de formato de config_display (botoes) p/ endereco de leitura
+    /*// transformador de formato de config_display (botoes) p/ endereco de leitura
     encoder #(.N(6)) addr_display (
         .entrada ( config_display_out ),
         .saida ( addr_read )
+    );*/
+
+    reg [19:0] dinheiro_bin;
+    bin2bcd #(
+        .BIN_WIDTH(20),
+        .DIGITS(6)
+    ) bin2bcd (
+        .bin ( dinheiro_bin ),
+        .bcd ( dinheiro )
     );
+    always @(*) begin
+        case (config_display_out)
+            6'b000001: dinheiro_bin = gastosUnicos;
+            6'b000010: dinheiro_bin = gastosFixos;
+            6'b000100: dinheiro_bin = rendimento;
+            6'b001000: dinheiro_bin = valorInvestido;
+            6'b010000: dinheiro_bin = salario;
+            6'b100000: dinheiro_bin = saldo;
+            default: dinheiro_bin = saldo;
+        endcase
+    end
 
 
 ///////////info/////////////////////////////////////////////////////////////////////////

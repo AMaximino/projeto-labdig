@@ -1,4 +1,4 @@
-//ram de 8x24 dual-port
+//
 //ram[0]: conta
 //ram[1]: salario
 //ram[2]: valor investido

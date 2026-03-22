@@ -19,8 +19,8 @@ module circuito_jogo_financeiro_tb1;
     wire [6:0]  contagem_out;
     wire [6:0]  rodada_out;
     wire [6:0]  estado_out;
-    wire [11:0] display_rodadas_out;
     wire [11:0] display_jogadas_out;
+    wire [11:0] display_rodadas_out;
     wire [41:0] display_dinheiro_out;
     wire        ultima_jogada_out;
     wire        ultima_rodada_out;
@@ -46,15 +46,15 @@ module circuito_jogo_financeiro_tb1;
       .trabalhar        ( trabalhar_in ),
       .investir         ( investir_in ),
       .resgatar         ( resgatar_in ),
-      .comprar          ( comprar_in),
-      .vender           ( vender_in),
-      .itens            ( itens_in ),
+      .comprar          ( comprar_in ),
+      .vender           ( vender_in ),
+      //.itens            ( itens_in ),
       .config_display   ( config_display_in ),
       .contagem         ( contagem_out ),
       .rodada           ( rodada_out ),
       .estado           ( estado_out ),
-      .display_rodadas  ( display_rodadas_out ),
-      .display_jogadas  ( display_jogadas_out ),
+      //.display_jogadas  ( display_jogadas_out ),
+      //.display_rodadas  ( display_rodadas_out ),
       .display_dinheiro ( display_dinheiro_out ),
       .ultima_jogada    ( ultima_jogada_out ),
       .ultima_rodada    ( ultima_rodada_out ),
@@ -77,6 +77,7 @@ module circuito_jogo_financeiro_tb1;
       resgatar_in     = 1;
       comprar_in      = 1;
       vender_in       = 1;
+      config_display_in = 6'b000000;
       #clockPeriod;
 
       #(10*clockPeriod);
@@ -113,20 +114,20 @@ module circuito_jogo_financeiro_tb1;
       trabalhar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 5. jogada #3
+      // Teste 5. muda_display
       caso = 5;
       @(negedge clock_in);
-      investir_in = 0;
+      config_display_in = 6'b010000;
       #(10*clockPeriod);
-      investir_in = 1;
+      config_display_in = 6'b010000;
       #(10*clockPeriod);
 
       // Teste 6. jogada #4
       caso = 6;
       @(negedge clock_in);
-      vender_in = 0;
+      investir_in = 0;
       #(10*clockPeriod);
-      vender_in = 1;
+      investir_in = 1;
       #(10*clockPeriod);
 
       // Teste 7. jogada #5
