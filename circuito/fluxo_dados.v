@@ -10,7 +10,7 @@ module fluxo_dados (
 
     input rstED,
     input init,
-    input we,
+    input processaE,
     input zeraCJ,
     input contaCJ,
     input zeraCR,
@@ -169,6 +169,7 @@ processador_acao #(.N(20)) p (
     .gastos_unicos_in    ( gastosUnicos ),
     .acao                ( acoes_out ),
     .init                ( init ),
+    .processaE           ( processaE ),
 
     .saldo_out           ( saldo_in ),
     .salario_out         ( salario_in ),

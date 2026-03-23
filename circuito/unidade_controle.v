@@ -11,7 +11,7 @@ module unidade_controle (
 
     output reg rstED,
     output reg init,
-    output reg we,
+    output reg processaE,
     output reg zeraCJ,
     output reg contaCJ,
     output reg zeraCR,
@@ -100,7 +100,7 @@ module unidade_controle (
     always @* begin
         rstED            = (Eatual == inicial) ? 1'b1 : 1'b0;
         init             = (Eatual == inicial) ? 1'b1 : 1'b0;
-        we               = 1'b0;
+        processaE        = (Eatual == processarAcao) ? 1'b1 : 1'b0;
         zeraCJ           = (Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
         contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
         zeraCR           = (Eatual == preparacao) ? 1'b1 : 1'b0;

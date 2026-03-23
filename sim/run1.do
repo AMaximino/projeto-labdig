@@ -62,6 +62,7 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/display_pulso
 add wave -noupdate -divider UC
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rstED
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/init
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/processaE
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/we
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraCJ
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/contaCJ

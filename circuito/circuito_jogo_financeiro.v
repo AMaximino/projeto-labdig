@@ -33,7 +33,7 @@ module circuito_jogo_financeiro (
 
     wire w_rstED;
     wire w_init;
-    wire w_we;
+    wire w_processaE;
     wire w_zeraCJ;
     wire w_contaCJ;
     wire w_zeraCR;
@@ -64,7 +64,7 @@ module circuito_jogo_financeiro (
 
         .rstED          ( w_rstED ),
         .init           ( w_init ),
-        .we             ( w_we ),
+        .processaE             ( w_processaE ),
         .zeraCJ         ( w_zeraCJ ),
         .contaCJ        ( w_contaCJ ),
         .zeraCR         ( w_zeraCR ),
@@ -102,7 +102,7 @@ module circuito_jogo_financeiro (
 
         .rstED         ( w_rstED ),
         .init          ( w_init ),
-        .we            ( w_we ),
+        .processaE     ( w_processaE ),
         .zeraCJ        ( w_zeraCJ ),
         .contaCJ       ( w_contaCJ ),
         .zeraCR        ( w_zeraCR ),

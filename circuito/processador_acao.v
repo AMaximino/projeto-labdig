@@ -8,6 +8,7 @@ module processador_acao #(parameter N = 20)(
     input  [N-1:0] gastos_unicos_in,
     input  [5:0]   acao,
     input init,
+    input processaE,
 
     output reg  [N-1:0] saldo_out,
     output reg  [N-1:0] salario_out,
@@ -40,26 +41,26 @@ always @(posedge clock) begin
     end
     else begin
         rendimento_out <= valor_investido_in >> 5; //3,125% ao trimestre (rodada)
-        case(acao)
-            VENDER: ;
-            COMPRAR: ;
-            RESGATAR: begin
-                saldo_out <= saldo_in + investimento;
-                valor_investido_out <= valor_investido_in - investimento;
-            end
-            INVESTIR: begin
-                saldo_out <= saldo_in - investimento;
-                valor_investido_out <= valor_investido_in + investimento;
-            end
-            TRABALHAR: begin
-                saldo_out <= saldo_in + salario_in;
-                salario_out <= salario_in;
-            end
-            ESTUDAR: begin
-                saldo_out <= saldo_in - custo_estudo;
-                salario_out <= salario_in + incremento_salario;
-            end
-        endcase
+        if (processaE)
+            case(acao)
+                VENDER: ;
+                COMPRAR: ;
+                RESGATAR: begin
+                    saldo_out <= saldo_in + investimento;
+                    valor_investido_out <= valor_investido_in - investimento;
+                end
+                INVESTIR: begin
+                    saldo_out <= saldo_in - investimento;
+                    valor_investido_out <= valor_investido_in + investimento;
+                end
+                TRABALHAR: begin
+                    saldo_out <= saldo_in + salario_in;
+                end
+                ESTUDAR: begin
+                    saldo_out <= saldo_in - custo_estudo;
+                    salario_out <= salario_in + incremento_salario;
+                end
+            endcase
     end
 end
 
