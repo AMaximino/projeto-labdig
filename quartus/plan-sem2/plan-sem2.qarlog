@@ -1,0 +1,32 @@
+Quartus Prime Archive log --	C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/quartus/plan-sem2/plan-sem2.qarlog
+
+Archive:	C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/quartus/plan-sem2/plan-sem2.qar
+Date:		Mon Mar 23 11:18:29 2026
+Quartus Prime		24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+
+	=========== Files Selected: ===========
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/bin2bcd.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/circuito_jogo_financeiro.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/comparador_85.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/contador_163.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/contador_m.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/contador_modulo_n.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/display6digitos.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/display_4_digitos.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/edge_detector.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/encoder.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/estado7seg.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/fluxo_dados.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/hexa7seg.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/processador_acao.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/ram_8x24_dualPort.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/registrador_n.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/sync_ram_16x4_file.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/circuito/unidade_controle.v
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/quartus/plan-sem2/plan-sem2.qpf
+C:/Users/Sophia/Documents/projeto-labdig/projeto-labdig/quartus/plan-sem2/plan-sem2.qsf
+c:/intelfpga_lite/24.1std/quartus/bin64/assignment_defaults.qdf
+	======= Total: 21 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
