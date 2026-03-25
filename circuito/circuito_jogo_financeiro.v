@@ -11,9 +11,9 @@ module circuito_jogo_financeiro (
     //input [2:0] itens,
     input [5:0] config_display,
 
-    output [6:0] contagem, //
-    output [6:0] rodada, //
-    output [6:0] estado, //
+    output [3:0] contagem, //
+    output [3:0] rodada, //
+    output [4:0] estado, //
 
     //output [11:0] display_jogadas,
     //output [11:0] display_rodadas,
@@ -23,6 +23,9 @@ module circuito_jogo_financeiro (
     output terminou,
     output perdeu
 );
+    assign contagem = w_contagem;
+    assign rodada = w_rodada;
+    assign estado = w_estado;
 
     wire w_fim_jogo;
     wire w_fim_perdeu;
@@ -60,11 +63,11 @@ module circuito_jogo_financeiro (
         .resgatar       ( ~resgatar ),
         .comprar        ( ~comprar ),
         .vender         ( ~vender ),
-        .config_display ( config_display ),
+        .config_display ( ~config_display ),
 
         .rstED          ( w_rstED ),
         .init           ( w_init ),
-        .processaE             ( w_processaE ),
+        .processaE      ( w_processaE ),
         .zeraCJ         ( w_zeraCJ ),
         .contaCJ        ( w_contaCJ ),
         .zeraCR         ( w_zeraCR ),
@@ -127,6 +130,12 @@ module circuito_jogo_financeiro (
 
     /*hexa7seg d3 (  //provisorio
         .hexa ( w_contagem ),
+        .enable ( 1'b1 ),
+        .display ( contagem )
+    );
+
+    /*hexa7seg d5 (  //provisorio
+        .hexa ( w_rodada ),
         .enable ( 1'b1 ),
         .display ( rodada )
     );
