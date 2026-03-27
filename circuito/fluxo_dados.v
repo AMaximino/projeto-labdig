@@ -218,7 +218,7 @@ processador_acao p (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
-      .modulo ( 4'b0100 ),  //(modulo +1) jogadas
+      .modulo ( 4'b010 ),  //(modulo +1) jogadas, 3 jogadas -> 3 meses por jogada (trimestre)
       .D      ( 4'b0000 ),     
       .Q      ( contagem ),
       .rco    ( fim_rodada )
@@ -232,7 +232,7 @@ processador_acao p (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b0011 ),  //(modulo + 1) rodadas
+      .modulo ( 4'b0111 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )
