@@ -23,9 +23,7 @@ module circuito_jogo_financeiro (
     output terminou,
     output perdeu
 );
-    assign contagem = w_contagem;
-    assign rodada = w_rodada;
-    assign estado = w_estado;
+    
 
     wire w_fim_jogo;
     wire w_fim_perdeu;
@@ -47,6 +45,8 @@ module circuito_jogo_financeiro (
     wire w_registraA;
     wire w_zeraR;
     wire w_registraR;
+    wire w_zeraM;
+    wire w_registraM;
 
     wire w_acao_pulso;
     wire w_eh_jogada;
@@ -54,6 +54,11 @@ module circuito_jogo_financeiro (
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
+
+
+    assign contagem = w_contagem;
+    assign rodada = w_rodada;
+    assign estado = w_estado;
 
     fluxo_dados fd (
         .clock          ( clock ),
@@ -78,6 +83,8 @@ module circuito_jogo_financeiro (
         .registraA      ( w_registraA ),
         .zeraR          ( w_zeraR ),
         .registraR      ( w_registraR ),
+        .zeraM          ( w_zeraM ),
+        .registraM      ( w_registraM ),
 
         .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
@@ -116,6 +123,8 @@ module circuito_jogo_financeiro (
         .registraA     ( w_registraA ),
         .zeraR         ( w_zeraR ),
         .registraR     ( w_registraR ),
+        .zeraM         ( w_zeraM ),
+        .registraM     ( w_registraM ),
         .terminou      ( terminou ),
         .perdeu        ( perdeu ),
         .estado        ( w_estado )
@@ -128,29 +137,12 @@ module circuito_jogo_financeiro (
         .display ( display_dinheiro )
     );
 
-    /*hexa7seg d3 (  //provisorio
-        .hexa ( w_contagem ),
-        .enable ( 1'b1 ),
-        .display ( contagem )
-    );
+    /*display4digitos dispRodadas (
 
-    /*hexa7seg d5 (  //provisorio
-        .hexa ( w_rodada ),
-        .enable ( 1'b1 ),
-        .display ( rodada )
-    );
-
-    estado7seg d0 (  //provisorio
-        .estado  ( w_estado ),
-        .enable  ( 1'b1 ),
-        .display ( estado )
     );*/
 
+    /*display4digitos dispJogadas (
 
-
-    
-
-
-
+    );*/
 
 endmodule

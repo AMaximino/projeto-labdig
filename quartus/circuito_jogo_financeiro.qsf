@@ -57,15 +57,23 @@ set_location_assignment PIN_J18 -to rodada[0]
 set_location_assignment PIN_G11 -to rodada[1]
 set_location_assignment PIN_J11 -to rodada[2]
 set_location_assignment PIN_A15 -to rodada[3]
+set_location_assignment PIN_U15 -to rodada[4]
+set_location_assignment PIN_Y15 -to rodada[5]
+set_location_assignment PIN_P9 -to rodada[6]
 set_location_assignment PIN_L1 -to perdeu
 set_location_assignment PIN_R17 -to contagem[0]
 set_location_assignment PIN_T20 -to contagem[1]
 set_location_assignment PIN_T18 -to contagem[2]
 set_location_assignment PIN_T15 -to contagem[3]
+set_location_assignment PIN_Y22 -to contagem[4]
+set_location_assignment PIN_Y21 -to contagem[5]
+set_location_assignment PIN_AA22 -to contagem[6]
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name VERILOG_FILE ../circuito/bin2bcd.v
 set_global_assignment -name VERILOG_FILE ../circuito/processador_acao.v
+set_global_assignment -name VERILOG_FILE ../circuito/bin2bcd.v
+set_global_assignment -name VERILOG_FILE ../circuito/sel_dinheiro.v
+set_global_assignment -name VERILOG_FILE ../circuito/dec7seg.v
 set_global_assignment -name VERILOG_FILE ../circuito/unidade_controle.v
 set_global_assignment -name VERILOG_FILE ../circuito/sync_ram_16x4_file.v
 set_global_assignment -name VERILOG_FILE ../circuito/registrador_n.v
