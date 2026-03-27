@@ -117,7 +117,7 @@ module circuito_jogo_financeiro_tb1;
       // Teste 5. muda_display
       caso = 5;
       @(negedge clock_in);
-      config_display_in = 6'b101111;
+      config_display_in = 6'b011111;
       #(10*clockPeriod);
       config_display_in = 6'b111111;
       #(10*clockPeriod);

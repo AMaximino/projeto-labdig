@@ -1,0 +1,65 @@
+/* ----------------------------------------------------------------------------------------
+ * Arquivo   : dec7seg.v
+ * Projeto   : Projeto LabDig
+ *-----------------------------------------------------------------------------------------
+ * Descricao : decodificador hexadecimal para 
+ *             display de 7 segmentos 
+ * 
+ * entrada : dec -  codigo binario de 4 bits decimal, com codigo para "-"
+ * saida   : display - codigo de 7 bits para display de 7 segmentos
+ *
+ * baseado no componente bcd7seg.v da Intel FPGA
+ *-----------------------------------------------------------------------------------------
+ * dica de uso: mapeamento para displays da placa DE0-CV
+ *              bit 6 mais significativo é o bit a esquerda
+ *              p.ex. sseg(6) -> HEX0[6] ou HEX06
+ *-----------------------------------------------------------------------------------------
+ * Revisoes  :
+ *     Data        Versao  Autor                                                Descricao
+ *     24/12/2023  1.0     Edson Midorikawa                                     criacao
+ *     11/02/2026  1.1     André Maximinio, Gabriel Prodossimo, Sophia Mariano  enable
+ *     27/03/2026  2.0     André Maximino                                       representação de decimais
+ *-----------------------------------------------------------------------------------------
+ */
+
+module dec7seg (dec, enable, display);
+    input      [3:0] dec;
+    input enable;
+    output reg [6:0] display;
+
+    /*
+     *    ---
+     *   | 0 |
+     * 5 |   | 1
+     *   |   |
+     *    ---
+     *   | 6 |
+     * 4 |   | 2
+     *   |   |
+     *    ---
+     *     3
+     */
+        
+    always @(dec) begin
+        if (enable) begin
+            case (dec)
+                4'h0:    display = 7'b1000000;
+                4'h1:    display = 7'b1111001;
+                4'h2:    display = 7'b0100100;
+                4'h3:    display = 7'b0110000;
+                4'h4:    display = 7'b0011001;
+                4'h5:    display = 7'b0010010;
+                4'h6:    display = 7'b0000010;
+                4'h7:    display = 7'b1111000;
+                4'h8:    display = 7'b0000000;
+                4'h9:    display = 7'b0010000;
+                4'ha:    display = 7'b0111111; // '-'
+                default: display = 7'b1111111;
+            endcase
+        end
+        else begin
+            display = 7'b1111111;
+        end
+    end
+    
+endmodule

@@ -29,25 +29,25 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_dinheiro_out
 add wave -noupdate -divider valoresFinanceiros
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/saldo
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/salario
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/valorInvestido
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rendimento
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosFixos
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/gastosUnicos
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/saldo
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/salario
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/valorInvestido
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/rendimento
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/gastosFixos
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/gastosUnicos
 add wave -noupdate -divider FD
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/iniciar
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_jogo
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_perdeu
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/fim_rodada
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/contagem
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rodada
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/saldo_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/salario_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/valor_investido_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/rendimento_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_fixos_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_unicos_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/contagem
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/rodada
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/saldo_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/salario_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/valor_investido_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/rendimento_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_fixos_out
+add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_unicos_out
 add wave -noupdate -divider Acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes_out
