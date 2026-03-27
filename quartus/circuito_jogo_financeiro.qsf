@@ -58,10 +58,10 @@ set_location_assignment PIN_G11 -to rodada[1]
 set_location_assignment PIN_J11 -to rodada[2]
 set_location_assignment PIN_A15 -to rodada[3]
 set_location_assignment PIN_L1 -to perdeu
-set_location_assignment PIN_L8 -to contagem[0]
-set_location_assignment PIN_B15 -to contagem[1]
-set_location_assignment PIN_E14 -to contagem[2]
-set_location_assignment PIN_E16 -to contagem[3]
+set_location_assignment PIN_R17 -to contagem[0]
+set_location_assignment PIN_T20 -to contagem[1]
+set_location_assignment PIN_T18 -to contagem[2]
+set_location_assignment PIN_T15 -to contagem[3]
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VERILOG_FILE ../circuito/bin2bcd.v
@@ -89,12 +89,12 @@ set_location_assignment PIN_G17 -to estado[4]
 set_location_assignment PIN_U1 -to terminou
 set_location_assignment PIN_AA1 -to ultima_jogada
 set_location_assignment PIN_AA2 -to ultima_rodada
-set_location_assignment PIN_AB13 -to vender
+set_location_assignment PIN_F15 -to vender
 set_location_assignment PIN_K16 -to trabalhar
-set_location_assignment PIN_AA13 -to resgatar
-set_location_assignment PIN_AA14 -to investir
+set_location_assignment PIN_F12 -to resgatar
+set_location_assignment PIN_G15 -to investir
 set_location_assignment PIN_G12 -to estudar
-set_location_assignment PIN_AB12 -to comprar
+set_location_assignment PIN_E15 -to comprar
 set_location_assignment PIN_U21 -to display_dinheiro[0]
 set_location_assignment PIN_V21 -to display_dinheiro[1]
 set_location_assignment PIN_W22 -to display_dinheiro[2]
