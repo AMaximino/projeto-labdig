@@ -63,7 +63,6 @@ add wave -noupdate -divider UC
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/rstED
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/init
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/processaE
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/we
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraCJ
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/contaCJ
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraCR
@@ -74,6 +73,8 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraA
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraA
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraR
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraR
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraM
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraM
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ns} 0}
 quietly wave cursor active 1

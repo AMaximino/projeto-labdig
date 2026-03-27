@@ -35,8 +35,9 @@ always @(posedge clock) begin
         saldo_out <= 20'd1500;
         salario_out <= 20'd100;
         valor_investido_out <= 20'd0;
-        gastos_fixos_out <= 20'd50;
         rendimento_out <= 20'd0;
+        gastos_fixos_out <= 20'd50;
+        
         gastos_unicos_out <= 20'd0;
     end
     else begin

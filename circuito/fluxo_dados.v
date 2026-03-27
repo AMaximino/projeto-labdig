@@ -21,6 +21,8 @@ module fluxo_dados (
     input registraA,
     input zeraR,
     input registraR,
+    input zeraM,
+    input registraM,
 
     output fim_jogo,
     output fim_perdeu,
@@ -220,7 +222,7 @@ processador_acao #(.N(20)) p (
     // contador_modulo_n contadorJogada
     contador_modulo_n #(.N(4)) contadorJogada (
       .clock  ( clock ),
-      .clr    ( zeraCJ ),
+      .clr    ( ~zeraCJ ),
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
@@ -234,7 +236,7 @@ processador_acao #(.N(20)) p (
     // contador_modulo_n contadorRodada
     contador_modulo_n #(.N(4)) contadorRodada (
       .clock  ( clock ),
-      .clr    ( zeraCR ),
+      .clr    ( ~zeraCR ),
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
