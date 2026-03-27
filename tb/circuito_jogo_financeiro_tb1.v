@@ -13,12 +13,12 @@ module circuito_jogo_financeiro_tb1;
     reg        resgatar_in = 1;
     reg        comprar_in = 1;
     reg        vender_in = 1;
-    reg  [2:0] itens_in = 3'b000;
-    reg  [5:0] config_display_in = 6'b000000;
+    reg  [2:0] itens_in = 3'b111;
+    reg  [5:0] config_display_in = 6'b111111;
 
-    wire [6:0]  contagem_out;
-    wire [6:0]  rodada_out;
-    wire [6:0]  estado_out;
+    wire [3:0]  contagem_out;
+    wire [3:0]  rodada_out;
+    wire [4:0]  estado_out;
     wire [11:0] display_jogadas_out;
     wire [11:0] display_rodadas_out;
     wire [41:0] display_dinheiro_out;
@@ -77,7 +77,7 @@ module circuito_jogo_financeiro_tb1;
       resgatar_in     = 1;
       comprar_in      = 1;
       vender_in       = 1;
-      config_display_in = 6'b000000;
+      config_display_in = 6'b111111;
       #clockPeriod;
 
       #(10*clockPeriod);
@@ -117,9 +117,9 @@ module circuito_jogo_financeiro_tb1;
       // Teste 5. muda_display
       caso = 5;
       @(negedge clock_in);
-      config_display_in = 6'b010000;
+      config_display_in = 6'b101111;
       #(10*clockPeriod);
-      config_display_in = 6'b010000;
+      config_display_in = 6'b111111;
       #(10*clockPeriod);
 
       // Teste 6. jogada #4
