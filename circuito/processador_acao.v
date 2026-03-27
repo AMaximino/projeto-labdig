@@ -1,27 +1,27 @@
-module processador_acao #(parameter N = 20)(
+module processador_acao (
     input clock,
-    input  [N-1:0] saldo_in,
-    input  [N-1:0] salario_in,
-    input  [N-1:0] valor_investido_in,
-    input  [N-1:0] rendimento_in,
-    input  [N-1:0] gastos_fixos_in,
-    input  [N-1:0] gastos_unicos_in,
-    input  [5:0]   acao,
+    input signed [20:0] saldo_in,
+    input signed [20:0] salario_in,
+    input signed [20:0] valor_investido_in,
+    input signed [20:0] rendimento_in,
+    input signed [20:0] gastos_fixos_in,
+    input signed [20:0] gastos_unicos_in,
+    input [5:0]  acao,
     input init,
     input processaE,
 
-    output reg  [N-1:0] saldo_out,
-    output reg  [N-1:0] salario_out,
-    output reg  [N-1:0] valor_investido_out,
-    output reg  [N-1:0] rendimento_out,
-    output reg  [N-1:0] gastos_fixos_out,
-    output reg  [N-1:0] gastos_unicos_out
+    output reg signed [20:0] saldo_out,
+    output reg signed [20:0] salario_out,
+    output reg signed [20:0] valor_investido_out,
+    output reg signed [20:0] rendimento_out,
+    output reg signed [20:0] gastos_fixos_out,
+    output reg signed [20:0] gastos_unicos_out
 );
-wire [N-1:0] custo_estudo = 20'd1000;
-wire [N-1:0] investimento = 20'd1000;
-wire [N-1:0] incremento_salario = 20'd1000;
+wire signed [20:0] custo_estudo = 20'd1000;
+wire signed [20:0] investimento = 20'd1000;
+wire signed [20:0] incremento_salario = 20'd1000;
 
-//saldo    assign acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
+//acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
 
 localparam VENDER     = 6'b000001;
 localparam COMPRAR    = 6'b000010;
@@ -37,7 +37,6 @@ always @(posedge clock) begin
         valor_investido_out <= 20'd0;
         rendimento_out <= 20'd0;
         gastos_fixos_out <= 20'd50;
-        
         gastos_unicos_out <= 20'd0;
     end
     else begin

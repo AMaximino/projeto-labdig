@@ -125,20 +125,20 @@ module circuito_jogo_financeiro_tb1;
       // Teste 6. jogada #4
       caso = 6;
       @(negedge clock_in);
-      investir_in = 0;
+      estudar_in = 0;
       #(10*clockPeriod);
-      investir_in = 1;
+      estudar_in = 1;
       #(10*clockPeriod);
 
       // Teste 7. jogada #5
       caso = 7;
       @(negedge clock_in);
-      vender_in = 0;
+      estudar_in = 0;
       #(10*clockPeriod);
-      vender_in = 1;
+      estudar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 8. jogada #1
+      // Teste 8. jogada #6
       caso = 8;
       @(negedge clock_in);
       vender_in = 0;
@@ -146,7 +146,7 @@ module circuito_jogo_financeiro_tb1;
       vender_in = 1;
       #(10*clockPeriod);
 
-      // Teste 9. jogada #2
+      // Teste 9. jogada #7
       caso = 9;
       @(negedge clock_in);
       vender_in = 0;
@@ -154,7 +154,7 @@ module circuito_jogo_financeiro_tb1;
       vender_in = 1;
       #(10*clockPeriod);
 
-      // Teste 10. jogada #3
+      // Teste 10. jogada #8
       caso = 10;
       @(negedge clock_in);
       vender_in = 0;

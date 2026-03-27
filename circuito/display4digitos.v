@@ -17,7 +17,7 @@
 */
 
 
-module display_4_digitos (
+module display4digitos (
     input wire clk,                  // Clock de 50MHz
     input wire [3:0] valor3,         // Valor Hexa para o dígito 3 (Milhar)
     input wire [3:0] valor2,         // Valor Hexa para o dígito 2 (Centena)

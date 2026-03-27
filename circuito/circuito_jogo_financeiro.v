@@ -137,29 +137,12 @@ module circuito_jogo_financeiro (
         .display ( display_dinheiro )
     );
 
-    /*hexa7seg d3 (  //provisorio
-        .hexa ( w_contagem ),
-        .enable ( 1'b1 ),
-        .display ( contagem )
-    );
+    /*display4digitos dispRodadas (
 
-    /*hexa7seg d5 (  //provisorio
-        .hexa ( w_rodada ),
-        .enable ( 1'b1 ),
-        .display ( rodada )
-    );
-
-    estado7seg d0 (  //provisorio
-        .estado  ( w_estado ),
-        .enable  ( 1'b1 ),
-        .display ( estado )
     );*/
 
+    /*display4digitos dispJogadas (
 
-
-    
-
-
-
+    );*/
 
 endmodule
