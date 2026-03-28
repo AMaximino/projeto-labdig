@@ -48,6 +48,11 @@ add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/f
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/rendimento_out
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_fixos_out
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/p/gastos_unicos_out
+add wave -noupdate -divider CompraVenda
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/seletor_item
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/preco
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/p/seletor_valido
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/indicador_itens_out
 add wave -noupdate -divider Acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes_out

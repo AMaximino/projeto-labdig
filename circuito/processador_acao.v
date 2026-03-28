@@ -31,8 +31,8 @@ assign seletor_valido = (seletor_item != 0) && ((seletor_item & (seletor_item - 
 
 initial begin
     precos_item[0] = 21'd600; //carro 60k, lembrando q é x100
-    precos_item[1] = 21'd1100; //carro 110k
-    precos_item[2] = 21'd2500; //carro 250k
+    precos_item[1] = 21'd1000; //carro 100k
+    precos_item[2] = 21'd2500; //carro 200k
     precos_item[3] = 21'd5000; //casa 500k
     precos_item[4] = 21'd9000; //casa 900k
     precos_item[5] = 21'd19000; //casa 1900k
@@ -81,7 +81,12 @@ always @(posedge clock) begin
         rendimento_out <= valor_investido_in >> 5; //3,125% ao trimestre (rodada)
         if (processaE)
             case(acao)
-                VENDER: ;
+                VENDER: begin
+                    if (seletor_valido && ((itens_in & seletor_item) != 10'b0)) begin //ve se é valido (1 bit do seletor ligado) e se ele tem o item
+                        saldo_out <= saldo_in + preco; //quando compra um item, tem que descontar o custo do item do saldo
+                        itens_out <= itens_in & (~seletor_item); //atualiza os itens q o jogador tem, removendo o item selecionado
+                    end
+                end
                 COMPRAR: begin
                     if (seletor_valido && ((itens_in & seletor_item) == 10'b0)) begin //ve se ele nao tem o item ainda
                         saldo_out <= saldo_in - preco; //quando compra um item, tem que descontar o custo do item do saldo

@@ -145,18 +145,40 @@ module circuito_jogo_financeiro_tb1;
       // Teste 8. jogada #6
       caso = 8;
       @(negedge clock_in);
-      seletor_item_in = 10'b0010000000; //seleciona shoping (500 pila)
+      seletor_item_in = 10'b1101111111; //seleciona shoping (5 = 500 pila)
       #(10*clockPeriod);
-      comprar_in = 0; //comppra
+      comprar_in = 0; //compra
       #(10*clockPeriod);
       comprar_in = 1;
       #(10*clockPeriod);
-      
+
+      // Teste 8. jogada #6
+      caso = 8;
+      @(negedge clock_in);
+      seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
+      #(10*clockPeriod);
+      comprar_in = 0; //compra
+      #(10*clockPeriod);
+      comprar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 8. jogada #6
+      caso = 8;
+      @(negedge clock_in);
+      seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
+      #(10*clockPeriod);
+      comprar_in = 0; //tenta comprar o carro ja tendo ele, é pra nao acontecer nada
+      #(10*clockPeriod);
+      comprar_in = 1;
+      #(10*clockPeriod);
+
       // Teste 9. jogada #7
       caso = 9;
       @(negedge clock_in);
-      vender_in = 0;
+      seletor_item_in = 10'b1101111111; //seleciona shopping (5 = 500 pila)
       #(10*clockPeriod);
+      vender_in = 0; //vender 
+      #(10*clockPeriod); 
       vender_in = 1;
       #(10*clockPeriod);
 
