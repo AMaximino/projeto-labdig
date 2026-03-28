@@ -35,6 +35,8 @@ module circuito_jogo_financeiro (
     wire w_rstED;
     wire w_init;
     wire w_processaE;
+    wire w_rende;
+    wire w_despesa;
     wire w_zeraCJ;
     wire w_contaCJ;
     wire w_zeraCR;
@@ -43,8 +45,8 @@ module circuito_jogo_financeiro (
     wire w_registraD;
     wire w_zeraA;
     wire w_registraA;
-    wire w_zeraR;
-    wire w_registraR;
+    wire w_zeraV;
+    wire w_registraV;
     wire w_zeraM;
     wire w_registraM;
 
@@ -73,6 +75,8 @@ module circuito_jogo_financeiro (
         .rstED          ( w_rstED ),
         .init           ( w_init ),
         .processaE      ( w_processaE ),
+        .rende          ( w_rende ),
+        .despesa        ( w_despesa ),
         .zeraCJ         ( w_zeraCJ ),
         .contaCJ        ( w_contaCJ ),
         .zeraCR         ( w_zeraCR ),
@@ -81,8 +85,8 @@ module circuito_jogo_financeiro (
         .registraD      ( w_registraD ),
         .zeraA          ( w_zeraA ),
         .registraA      ( w_registraA ),
-        .zeraR          ( w_zeraR ),
-        .registraR      ( w_registraR ),
+        .zeraV          ( w_zeraV ),
+        .registraV      ( w_registraV ),
         .zeraM          ( w_zeraM ),
         .registraM      ( w_registraM ),
 
@@ -113,6 +117,8 @@ module circuito_jogo_financeiro (
         .rstED         ( w_rstED ),
         .init          ( w_init ),
         .processaE     ( w_processaE ),
+        .rende         ( w_rende ),
+        .despesa       ( w_despesa ),
         .zeraCJ        ( w_zeraCJ ),
         .contaCJ       ( w_contaCJ ),
         .zeraCR        ( w_zeraCR ),
@@ -121,8 +127,8 @@ module circuito_jogo_financeiro (
         .registraD     ( w_registraD ),
         .zeraA         ( w_zeraA ),
         .registraA     ( w_registraA ),
-        .zeraR         ( w_zeraR ),
-        .registraR     ( w_registraR ),
+        .zeraV         ( w_zeraV ),
+        .registraV     ( w_registraV ),
         .zeraM         ( w_zeraM ),
         .registraM     ( w_registraM ),
         .terminou      ( terminou ),

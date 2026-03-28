@@ -11,6 +11,8 @@ module fluxo_dados (
     input rstED,
     input init,
     input processaE,
+    input rende,
+    input despesa,
     input zeraCJ,
     input contaCJ,
     input zeraCR,
@@ -19,8 +21,8 @@ module fluxo_dados (
     input registraD,
     input zeraA,
     input registraA,
-    input zeraR,
-    input registraR,
+    input zeraV,
+    input registraV,
     input zeraM,
     input registraM,
 
@@ -39,17 +41,17 @@ module fluxo_dados (
 
     //em complemento de 2 -> bit 21 = 1 indica negativo
     wire [20:0] saldo;
-    wire [20:0] saldo_in;
+    wire [20:0] saldo_next;
     wire [20:0] salario;
-    wire [20:0] salario_in;
+    wire [20:0] salario_next;
     wire [20:0] valorInvestido;
-    wire [20:0] valorInvestido_in;
+    wire [20:0] valorInvestido_next;
     wire [20:0] rendimento;
-    wire [20:0] rendimento_in;
+    wire [20:0] rendimento_next;
     wire [20:0] gastosFixos;
-    wire [20:0] gastosFixos_in;
+    wire [20:0] gastosFixos_next;
     wire [20:0] gastosUnicos;
-    wire [20:0] gastosUnicos_in;
+    wire [20:0] gastosUnicos_next;
 
     wire [5:0] acoes_out;
 
@@ -97,81 +99,140 @@ module fluxo_dados (
     
     registrador_n #(.N(21)) reg_saldo (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( saldo_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( saldo_next ),
         .Q      ( saldo )
     );
     registrador_n #(.N(21)) reg_salario (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( salario_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( salario_next ),
         .Q      ( salario )
     );
     registrador_n #(.N(21)) reg_valorInvestido (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( valorInvestido_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( valorInvestido_next ),
         .Q      ( valorInvestido )
     );
     registrador_n #(.N(21)) reg_rendimento (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( rendimento_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( rendimento_next ),
         .Q      ( rendimento )
     );
     registrador_n #(.N(21)) reg_gastosFixos (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( gastosFixos_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( gastosFixos_next ),
         .Q      ( gastosFixos )
     );
     registrador_n #(.N(21)) reg_gastosUnicos (
         .clock  ( clock ),
-        .clear  ( zeraR ),
-        .enable ( registraR ),
-        .D      ( gastosUnicos_in ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( gastosUnicos_next ),
         .Q      ( gastosUnicos )
     );
 
-
-
-    /*// memoria das informacoes do jogador
-    ram_8x24_dualPort infoJogador (
-        .clock      ( clock ),
-        .we         ( we ),
-        .data       ( ),
-        .addr_read  ( addr_read ),
-        .addr_write ( ),
-        .data_out   ( dinheiro )
-    );*/
-
     //////////////////////////////////////////////////////////////////
-////////////////processamento de acoes//////////////////////////////////////////////
+////////////////processamento//////////////////////////////////////////////
 
-processador_acao p (
-    .clock               ( clock ),
-    .saldo_in            ( saldo ),
-    .salario_in          ( salario ),
-    .valor_investido_in  ( valorInvestido ),
-    .rendimento_in       ( rendimento ),
-    .gastos_fixos_in     ( gastosFixos ),
-    .gastos_unicos_in    ( gastosUnicos ),
-    .acao                ( acoes_out ),
-    .init                ( init ),
-    .processaE           ( processaE ),
+    wire [20:0] saldo_proc;
+    wire [20:0] salario_proc;
+    wire [20:0] valorInvestido_proc;
+    wire [20:0] rendimento_proc;
+    wire [20:0] gastosFixos_proc;
+    wire [20:0] gastosUnicos_proc;
+    processador_acao pa (
+        .saldo_in            ( saldo ),
+        .salario_in          ( salario ),
+        .valorInvestido_in   ( valorInvestido ),
+        .rendimento_in       ( rendimento ),
+        .gastosFixos_in      ( gastosFixos ),
+        .gastosUnicos_in     ( gastosUnicos ),
+        .acao                ( acoes_out ),
+        .processaE           ( processaE ),
+        .saldo_out           ( saldo_proc ),
+        .salario_out         ( salario_proc ),
+        .valorInvestido_out  ( valorInvestido_proc ),
+        .rendimento_out      ( rendimento_proc ),
+        .gastosFixos_out     ( gastosFixos_proc ),
+        .gastosUnicos_out    ( gastosUnicos_proc )
+    );
 
-    .saldo_out           ( saldo_in ),
-    .salario_out         ( salario_in ),
-    .valor_investido_out ( valorInvestido_in ),
-    .rendimento_out      ( rendimento_in ),
-    .gastos_fixos_out    ( gastosFixos_in ),
-    .gastos_unicos_out   ( gastosUnicos_in )
-);
+    wire [20:0] saldo_evento;
+    wire [20:0] salario_evento;
+    wire [20:0] valorInvestido_evento;
+    wire [20:0] rendimento_evento;
+    wire [20:0] gastosFixos_evento;
+    wire [20:0] gastosUnicos_evento;
+    processador_evento pe (
+        .saldo_in            ( saldo ),
+        .salario_in          ( salario ),
+        .valorInvestido_in   ( valorInvestido ),
+        .rendimento_in       ( rendimento ),
+        .gastosFixos_in      ( gastosFixos ),
+        .gastosUnicos_in     ( gastosUnicos ),
+        .rende               ( rende ),
+        .despesa             ( despesa ),
+        .saldo_out           ( saldo_evento ),
+        .salario_out         ( salario_evento ),
+        .valorInvestido_out  ( valorInvestido_evento ),
+        .rendimento_out      ( rendimento_evento ),
+        .gastosFixos_out     ( gastosFixos_evento ),
+        .gastosUnicos_out    ( gastosUnicos_evento )
+    );
+
+    wire [20:0] saldo_init;
+    wire [20:0] salario_init;
+    wire [20:0] valorInvestido_init;
+    wire [20:0] rendimento_init;
+    wire [20:0] gastosFixos_init;
+    wire [20:0] gastosUnicos_init;
+    inicializador i (
+        .saldo          ( saldo_init ),
+        .salario        ( salario_init ),
+        .valorInvestido ( valorInvestido_init ),
+        .rendimento     ( rendimento_init ),
+        .gastosFixos    ( gastosFixos_init ),
+        .gastosUnicos   ( gastosUnicos_init )
+    );
+
+    sel_valor MUX (
+        .saldo_init            ( saldo_init ),
+        .salario_init          ( salario_init ),
+        .valorInvestido_init   ( valorInvestido_init ),
+        .rendimento_init       ( rendimento_init ),
+        .gastosFixos_init      ( gastosFixos_init ),
+        .gastosUnicos_init     ( gastosUnicos_init ),
+        .saldo_proc            ( saldo_proc ),
+        .salario_proc          ( salario_proc ),
+        .valorInvestido_proc   ( valorInvestido_proc ),
+        .rendimento_proc       ( rendimento_proc ),
+        .gastosFixos_proc      ( gastosFixos_proc ),
+        .gastosUnicos_proc     ( gastosUnicos_proc ),
+        .saldo_evento          ( saldo_evento ),
+        .salario_evento        ( salario_evento ),
+        .valorInvestido_evento ( valorInvestido_evento ),
+        .rendimento_evento     ( rendimento_evento ),
+        .gastosFixos_evento    ( gastosFixos_evento ),
+        .gastosUnicos_evento   ( gastosUnicos_evento ),
+        .init                  ( init ),
+        .processaE             ( processaE ),
+        .saldo_out             ( saldo_next ),
+        .salario_out           ( salario_next ),
+        .valorInvestido_out    ( valorInvestido_next ),
+        .rendimento_out        ( rendimento_next ),
+        .gastosFixos_out       ( gastosFixos_next ),
+        .gastosUnicos_out      ( gastosUnicos_next )
+    );
+
 
 //////////////////////////////////////////////////////////////////
 ////////////////acao//////////////////////////////////////////////
@@ -186,13 +247,10 @@ processador_acao p (
         .pulso ( acao_pulso )
     );
     assign acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
-    /*assign acoes_sem_jogada = (investir || resgatar || comprar || vender);
-    assign jogada = (estudar || trabalhar);*/
     assign tem_acao = |acoes;
     
 
     // registrador da acao realizada
-    
     registrador_n #(.N(6)) regAcao (
         .clock  ( clock ),
         .clear  ( zeraA ),
@@ -205,7 +263,6 @@ processador_acao p (
 ///////////////////////////////////////////////////////////////////////////////
 //////////////jogada/////////////////////////////////////////////////////////
     wire [1:0] jogada;
-    /*wire eh_jogada;*/
     assign jogada = {acoes_out[5], acoes_out[4]};
     assign eh_jogada = |jogada;
     
@@ -237,7 +294,6 @@ processador_acao p (
       .Q      ( rodada ),
       .rco    ( ultima_rodada )
     );
-
 
     assign fim_jogo = fim_rodada && ultima_rodada;
     assign fim_perdeu = saldo[20];
