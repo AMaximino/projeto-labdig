@@ -7,6 +7,7 @@ module fluxo_dados (
     input comprar,
     input vender,
     input [5:0] config_display,
+    input [9:0] seletor_item,
 
     input rstED,
     input init,
@@ -34,7 +35,8 @@ module fluxo_dados (
     output [3:0] rodada, //
 
     output ultima_rodada,
-    output [23:0] dinheiro
+    output [23:0] dinheiro,
+    output [9:0] itens_out
 );
 
     //em complemento de 2 -> bit 21 = 1 indica negativo
@@ -50,8 +52,12 @@ module fluxo_dados (
     wire [20:0] gastosFixos_in;
     wire [20:0] gastosUnicos;
     wire [20:0] gastosUnicos_in;
+    wire [9:0] itens;
+    wire [9:0] itens_in;
 
     wire [5:0] acoes_out;
+
+    assign itens_out = itens;
 
 /////////////display/////////////////////////////////
     wire sel_display;
@@ -138,6 +144,13 @@ module fluxo_dados (
         .Q      ( gastosUnicos )
     );
 
+    registrador_n #(.N(10)) reg_itens (
+        .clock  ( clock ),
+        .clear  ( zeraR ),
+        .enable ( registraR ),
+        .D      ( itens_in ),
+        .Q      ( itens )
+    );
 
 
     /*// memoria das informacoes do jogador
@@ -164,13 +177,17 @@ processador_acao p (
     .acao                ( acoes_out ),
     .init                ( init ),
     .processaE           ( processaE ),
+    .seletor_item        ( seletor_item ),
+    .itens_in            ( itens ),
 
     .saldo_out           ( saldo_in ),
     .salario_out         ( salario_in ),
     .valor_investido_out ( valorInvestido_in ),
     .rendimento_out      ( rendimento_in ),
     .gastos_fixos_out    ( gastosFixos_in ),
-    .gastos_unicos_out   ( gastosUnicos_in )
+    .gastos_unicos_out   ( gastosUnicos_in ),
+    .itens_out           ( itens_in)
+
 );
 
 //////////////////////////////////////////////////////////////////

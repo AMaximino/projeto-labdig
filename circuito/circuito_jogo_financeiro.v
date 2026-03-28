@@ -8,7 +8,7 @@ module circuito_jogo_financeiro (
     input resgatar,
     input comprar,
     input vender,
-    //input [2:0] itens,
+    input [9:0] seletor_item,
     input [5:0] config_display,
 
     output [3:0] contagem, //
@@ -18,6 +18,7 @@ module circuito_jogo_financeiro (
     //output [11:0] display_jogadas,
     //output [11:0] display_rodadas,
     output [41:0] display_dinheiro,
+    output [9:0] indicador_itens,
     output ultima_jogada,
     output ultima_rodada,
     output terminou,
@@ -69,6 +70,7 @@ module circuito_jogo_financeiro (
         .comprar        ( ~comprar ),
         .vender         ( ~vender ),
         .config_display ( ~config_display ),
+        .seletor_item   ( ~seletor_item ),
 
         .rstED          ( w_rstED ),
         .init           ( w_init ),
@@ -96,7 +98,8 @@ module circuito_jogo_financeiro (
         .rodada         ( w_rodada ),
 
         .ultima_rodada  ( ultima_rodada ),
-        .dinheiro       ( dinheiro )
+        .dinheiro       ( dinheiro ),
+        .itens_out      ( indicador_itens )
     );
 
     unidade_controle uc (

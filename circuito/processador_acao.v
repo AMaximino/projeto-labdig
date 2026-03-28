@@ -9,17 +9,54 @@ module processador_acao (
     input [5:0]  acao,
     input init,
     input processaE,
+    input [9:0] seletor_item, //selecionar qual item interagir para comprar ou vende-lo
+    input [9:0] itens_in, //quais itens o jogador ja tem
 
     output reg signed [20:0] saldo_out,
     output reg signed [20:0] salario_out,
     output reg signed [20:0] valor_investido_out,
     output reg signed [20:0] rendimento_out,
     output reg signed [20:0] gastos_fixos_out,
-    output reg signed [20:0] gastos_unicos_out
+    output reg signed [20:0] gastos_unicos_out,
+    output reg [9:0] itens_out //atualizar os itens q o jogador ja tem
 );
 wire signed [20:0] custo_estudo = 20'd1000;
 wire signed [20:0] investimento = 20'd1000;
 wire signed [20:0] incremento_salario = 20'd1000;
+
+reg signed [20:0] precos_item [0:9]; //feito em reg se quiser implementar algo alteravel
+reg signed [20:0] preco; // preco do item selecionado
+wire seletor_valido;
+assign seletor_valido = (seletor_item != 0) && ((seletor_item & (seletor_item - 1)) == 0); //testa se so tem um bit ligado
+
+initial begin
+    precos_item[0] = 21'd600; //carro 60k, lembrando q é x100
+    precos_item[1] = 21'd1100; //carro 110k
+    precos_item[2] = 21'd2500; //carro 250k
+    precos_item[3] = 21'd5000; //casa 500k
+    precos_item[4] = 21'd9000; //casa 900k
+    precos_item[5] = 21'd19000; //casa 1900k
+    precos_item[6] = 21'd100; //celular caro 10k
+    precos_item[7] = 21'd5; //shoping 500 pila ->implementar futuramente algo q de pra ficar comprando e faça show de luz
+    precos_item[8] = 21'd30; //descer pra bc 3k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
+    precos_item[9] = 21'd150; //viajar pra fora 15k ->implementar futuramente algo q de pra ficar comprando e faça show de luz
+end 
+
+always @(*) begin
+    case (seletor_item)
+        10'b0000000001: preco = precos_item[0];
+        10'b0000000010: preco = precos_item[1];
+        10'b0000000100: preco = precos_item[2];
+        10'b0000001000: preco = precos_item[3];
+        10'b0000010000: preco = precos_item[4];
+        10'b0000100000: preco = precos_item[5];
+        10'b0001000000: preco = precos_item[6];
+        10'b0010000000: preco = precos_item[7];
+        10'b0100000000: preco = precos_item[8];
+        10'b1000000000: preco = precos_item[9];
+        default: preco = 0;
+    endcase 
+end
 
 //acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
 
@@ -38,13 +75,19 @@ always @(posedge clock) begin
         rendimento_out <= 20'd0;
         gastos_fixos_out <= 20'd50;
         gastos_unicos_out <= 20'd0;
+        itens_out <= 10'b0;
     end
     else begin
         rendimento_out <= valor_investido_in >> 5; //3,125% ao trimestre (rodada)
         if (processaE)
             case(acao)
                 VENDER: ;
-                COMPRAR: ;
+                COMPRAR: begin
+                    if (seletor_valido && ((itens_in & seletor_item) == 10'b0)) begin //ve se ele nao tem o item ainda
+                        saldo_out <= saldo_in - preco; //quando compra um item, tem que descontar o custo do item do saldo
+                        itens_out <= itens_in | seletor_item; //atualiza os itens q o jogador tem, adicionando o item selecionado
+                    end
+                end
                 RESGATAR: begin
                     saldo_out <= saldo_in + investimento;
                     valor_investido_out <= valor_investido_in - investimento;
