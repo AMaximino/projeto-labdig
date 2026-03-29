@@ -16,7 +16,7 @@ module processador_evento (
 );
 
     always @(*) begin
-        // default: mantém valor
+        // default: mantem valor
         saldo_out = saldo_in;
         salario_out = salario_in;
         valorInvestido_out = valorInvestido_in;

@@ -113,4 +113,4 @@ display_7seg_4dig dispRodadas (
     .seg    (display_rodadas_seg), // Conectar aos pinos A-DP do display 2
     .dig    (display_rodadas_dig)  // Conectar aos pinos D1-D4 do display 2
 );
-/*
+*/

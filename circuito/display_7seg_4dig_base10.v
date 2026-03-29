@@ -1,4 +1,4 @@
-module display_7seg_4dig (
+module display_7seg_4dig_base10 (
     input wire clock,
     input wire reset,
     input wire [7:0] valor,  // Número atual (aceita até 99)

@@ -23,7 +23,7 @@ module circuito_jogo_financeiro_tb1;
     //wire [11:0] display_jogadas_out;
     //wire [11:0] display_rodadas_out;
     wire [41:0] display_dinheiro_out;
-    wire [9:0] indicador_itens_out;
+    wire [9:0]  indicador_itens_out;
     wire        ultima_jogada_out;
     wire        ultima_rodada_out;
     wire        terminou_out;
@@ -126,7 +126,7 @@ module circuito_jogo_financeiro_tb1;
       config_display_in = 6'b111111;
       #(10*clockPeriod);
 
-      // Teste 6. jogada #4
+      // Teste 6. jogada #3; fim_rodada
       caso = 6;
       @(negedge clock_in);
       estudar_in = 0;
@@ -134,7 +134,7 @@ module circuito_jogo_financeiro_tb1;
       estudar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 7. jogada #5
+      // Teste 7. jogada #1
       caso = 7;
       @(negedge clock_in);
       trabalhar_in = 0;
@@ -142,7 +142,7 @@ module circuito_jogo_financeiro_tb1;
       trabalhar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 8. jogada #6
+      // Teste 8. comprar
       caso = 8;
       @(negedge clock_in);
       seletor_item_in = 10'b1101111111; //seleciona shoping (5 = 500 pila)
@@ -152,8 +152,8 @@ module circuito_jogo_financeiro_tb1;
       comprar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 8. jogada #6
-      caso = 8;
+      // Teste 9. comprar
+      caso = 9;
       @(negedge clock_in);
       seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
       #(10*clockPeriod);
@@ -162,8 +162,8 @@ module circuito_jogo_financeiro_tb1;
       comprar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 8. jogada #6
-      caso = 8;
+      // Teste 10. comprar repetido
+      caso = 10;
       @(negedge clock_in);
       seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
       #(10*clockPeriod);
@@ -172,8 +172,8 @@ module circuito_jogo_financeiro_tb1;
       comprar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 9. jogada #7
-      caso = 9;
+      // Teste 11. vender
+      caso = 11;
       @(negedge clock_in);
       seletor_item_in = 10'b1101111111; //seleciona shopping (5 = 500 pila)
       #(10*clockPeriod);
@@ -182,12 +182,28 @@ module circuito_jogo_financeiro_tb1;
       vender_in = 1;
       #(10*clockPeriod);
 
-      // Teste 10. jogada #8
-      caso = 10;
+      // Teste 12. jogada #2
+      caso = 12;
       @(negedge clock_in);
       trabalhar_in = 0;
       #(10*clockPeriod);
       trabalhar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 13. jogada #3; fim_rodada
+      caso = 13;
+      @(negedge clock_in);
+      trabalhar_in = 0;
+      #(10*clockPeriod);
+      trabalhar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 14. muda_display
+      caso = 14;
+      @(negedge clock_in);
+      config_display_in = 6'b101111;
+      #(10*clockPeriod);
+      config_display_in = 6'b111111;
       #(10*clockPeriod);
 
       // final dos casos de teste da simulacao
