@@ -13,15 +13,17 @@ module circuito_jogo_financeiro_tb1;
     reg        resgatar_in = 1;
     reg        comprar_in = 1;
     reg        vender_in = 1;
-    reg  [2:0] itens_in = 3'b111;
+    reg  [9:0] seletor_item_in = 10'b1111111111;
     reg  [5:0] config_display_in = 6'b111111;
 
     wire [3:0]  contagem_out;
     wire [3:0]  rodada_out;
     wire [4:0]  estado_out;
-    wire [11:0] display_jogadas_out;
-    wire [11:0] display_rodadas_out;
+
+    //wire [11:0] display_jogadas_out;
+    //wire [11:0] display_rodadas_out;
     wire [41:0] display_dinheiro_out;
+    wire [9:0] indicador_itens_out;
     wire        ultima_jogada_out;
     wire        ultima_rodada_out;
     wire        terminou_out;
@@ -48,7 +50,7 @@ module circuito_jogo_financeiro_tb1;
       .resgatar         ( resgatar_in ),
       .comprar          ( comprar_in ),
       .vender           ( vender_in ),
-      //.itens            ( itens_in ),
+      .seletor_item     ( seletor_item_in ),
       .config_display   ( config_display_in ),
       .contagem         ( contagem_out ),
       .rodada           ( rodada_out ),
@@ -56,6 +58,7 @@ module circuito_jogo_financeiro_tb1;
       //.display_jogadas  ( display_jogadas_out ),
       //.display_rodadas  ( display_rodadas_out ),
       .display_dinheiro ( display_dinheiro_out ),
+      .indicador_itens  ( indicador_itens_out ),
       .ultima_jogada    ( ultima_jogada_out ),
       .ultima_rodada    ( ultima_rodada_out ),
       .terminou         ( terminou_out ),
@@ -78,6 +81,7 @@ module circuito_jogo_financeiro_tb1;
       comprar_in      = 1;
       vender_in       = 1;
       config_display_in = 6'b111111;
+      seletor_item_in = 10'b1111111111;
       #clockPeriod;
 
       #(10*clockPeriod);
@@ -90,7 +94,7 @@ module circuito_jogo_financeiro_tb1;
       reset_in = 1;
       #(10*clockPeriod);
 
-      // Teste 2. iniciar = 1 por 5 periodos de clock // e esperar 10 segundos
+      // Teste 2. iniciar ligado (=0) por 5 periodos de clock e esperar 10 
       caso = 2;
       iniciar_in = 0;
       #(5*clockPeriod);
@@ -133,172 +137,58 @@ module circuito_jogo_financeiro_tb1;
       // Teste 7. jogada #5
       caso = 7;
       @(negedge clock_in);
-      estudar_in = 0;
+      trabalhar_in = 0;
       #(10*clockPeriod);
-      estudar_in = 1;
+      trabalhar_in = 1;
       #(10*clockPeriod);
 
       // Teste 8. jogada #6
       caso = 8;
       @(negedge clock_in);
-      vender_in = 0;
+      seletor_item_in = 10'b1101111111; //seleciona shoping (5 = 500 pila)
       #(10*clockPeriod);
-      vender_in = 1;
+      comprar_in = 0; //compra
+      #(10*clockPeriod);
+      comprar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 8. jogada #6
+      caso = 8;
+      @(negedge clock_in);
+      seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
+      #(10*clockPeriod);
+      comprar_in = 0; //compra
+      #(10*clockPeriod);
+      comprar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 8. jogada #6
+      caso = 8;
+      @(negedge clock_in);
+      seletor_item_in = 10'b1111111101; //seleciona carro2 (1000 = 100k)
+      #(10*clockPeriod);
+      comprar_in = 0; //tenta comprar o carro ja tendo ele, é pra nao acontecer nada
+      #(10*clockPeriod);
+      comprar_in = 1;
       #(10*clockPeriod);
 
       // Teste 9. jogada #7
       caso = 9;
       @(negedge clock_in);
-      vender_in = 0;
+      seletor_item_in = 10'b1101111111; //seleciona shopping (5 = 500 pila)
       #(10*clockPeriod);
+      vender_in = 0; //vender 
+      #(10*clockPeriod); 
       vender_in = 1;
       #(10*clockPeriod);
 
       // Teste 10. jogada #8
       caso = 10;
       @(negedge clock_in);
-      vender_in = 0;
+      trabalhar_in = 0;
       #(10*clockPeriod);
-      vender_in = 1;
+      trabalhar_in = 1;
       #(10*clockPeriod);
-
-      // Teste 11. jogada #4
-      caso = 11;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 12. jogada #5
-      caso = 12;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 13. jogada #1
-      caso = 13;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 14. jogada #2
-      caso = 14;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 15. jogada #3
-      caso = 15;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 16. jogada #4
-      caso = 16;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 17. jogada #5
-      caso = 17;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 18. jogada #1
-      caso = 18;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 19. jogada #2
-      caso = 19;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 20. jogada #3
-      caso = 20;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 21. jogada #4
-      caso = 21;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 22. jogada #5
-      caso = 22;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 23. jogada #1
-      caso = 23;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 24. jogada #1
-      caso = 24;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 3. jogada #1
-      caso = 3;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 3. jogada #1
-      caso = 3;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-      // Teste 3. jogada #1
-      caso = 3;
-      @(negedge clock_in);
-      vender_in = 0;
-      #(10*clockPeriod);
-      vender_in = 1;
-      #(10*clockPeriod);
-
-
 
       // final dos casos de teste da simulacao
       caso = 99;

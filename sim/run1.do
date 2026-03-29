@@ -21,6 +21,7 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/investir_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/resgatar_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/comprar_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/vender_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/seletor_item_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/config_display_in
 add wave -noupdate -divider Saidas
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
@@ -48,6 +49,12 @@ add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/f
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/rendimento_next
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/gastosFixos_next
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/gastosUnicos_next
+add wave -noupdate -divider CompraVenda
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/itens
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/itens_next
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/pa/preco
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/pa/seletor_valido
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/indicador_itens_out
 add wave -noupdate -divider Acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/acoes_out

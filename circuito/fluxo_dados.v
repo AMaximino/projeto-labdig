@@ -7,6 +7,7 @@ module fluxo_dados (
     input comprar,
     input vender,
     input [5:0] config_display,
+    input [9:0] seletor_item,
 
     input rstED,
     input init,
@@ -36,7 +37,8 @@ module fluxo_dados (
     output [3:0] rodada, //
 
     output ultima_rodada,
-    output [23:0] dinheiro
+    output [23:0] dinheiro,
+    output [9:0] itens_out
 );
 
     //em complemento de 2 -> bit 21 = 1 indica negativo
@@ -52,8 +54,12 @@ module fluxo_dados (
     wire [20:0] gastosFixos_next;
     wire [20:0] gastosUnicos;
     wire [20:0] gastosUnicos_next;
+    wire [9:0] itens;
+    wire [9:0] itens_next;
 
     wire [5:0] acoes_out;
+
+    assign itens_out = itens;
 
 /////////////display/////////////////////////////////
     wire sel_display;
@@ -140,6 +146,14 @@ module fluxo_dados (
         .Q      ( gastosUnicos )
     );
 
+    registrador_n #(.N(10)) reg_itens (
+        .clock  ( clock ),
+        .clear  ( zeraV ),
+        .enable ( registraV ),
+        .D      ( itens_next ),
+        .Q      ( itens )
+    );
+
     //////////////////////////////////////////////////////////////////
 ////////////////processamento//////////////////////////////////////////////
 
@@ -158,12 +172,15 @@ module fluxo_dados (
         .gastosUnicos_in     ( gastosUnicos ),
         .acao                ( acoes_out ),
         .processaE           ( processaE ),
+        .seletor_item        ( seletor_item ),
+        .itens_in            ( itens ),
         .saldo_out           ( saldo_proc ),
         .salario_out         ( salario_proc ),
         .valorInvestido_out  ( valorInvestido_proc ),
         .rendimento_out      ( rendimento_proc ),
         .gastosFixos_out     ( gastosFixos_proc ),
-        .gastosUnicos_out    ( gastosUnicos_proc )
+        .gastosUnicos_out    ( gastosUnicos_proc ),
+        .itens_out           ( itens_next )
     );
 
     wire [20:0] saldo_evento;
@@ -233,7 +250,6 @@ module fluxo_dados (
         .gastosUnicos_out      ( gastosUnicos_next )
     );
 
-
 //////////////////////////////////////////////////////////////////
 ////////////////acao//////////////////////////////////////////////
 
@@ -275,7 +291,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
-      .modulo ( 4'b010 ),  //(modulo +1) jogadas, 3 jogadas -> 3 meses por jogada (trimestre)
+      .modulo ( 4'b0010 ),  //(modulo +1) jogadas, 3 jogadas -> 3 meses por jogada (trimestre)
       .D      ( 4'b0000 ),     
       .Q      ( contagem ),
       .rco    ( fim_rodada )
@@ -289,7 +305,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b0111 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
+      .modulo ( 4'b0001 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )
