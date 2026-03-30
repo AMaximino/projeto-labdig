@@ -1,4 +1,4 @@
-module display_7seg_4dig (
+module display_bcd_4dig_cc (
     input wire clock,
     input wire reset,
 
@@ -13,8 +13,8 @@ module display_7seg_4dig (
     // Conversão HEX → DECIMAL
     // =========================
 
-    wire [3:0] rod_dez = (valor >= 10) ? 4'd1 : 4'd0;
-    wire [3:0] rod_uni = (valor >= 10) ? (valor - 10) : valor;
+    wire [3:0] atual_dez = (valor >= 10) ? 4'd1 : 4'd0;
+    wire [3:0] atual_uni = (valor >= 10) ? (valor - 10) : valor;
 
     wire [3:0] max_dez = (limite >= 10) ? 4'd1 : 4'd0;
     wire [3:0] max_uni = (limite >= 10) ? (limite - 10) : limite;
@@ -24,41 +24,33 @@ module display_7seg_4dig (
     // =========================
 
     reg [1:0] sel;
-    reg [15:0] counter;
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if (reset)
-            counter <= 0;
-        else
-            counter <= counter + 1;
-    end
-
-    always @(posedge counter[15] or posedge reset) begin
-        if (reset)
-            sel <= 0;
+            sel <= 2'b00;
         else
             sel <= sel + 1;
     end
 
     reg [3:0] val;
 
-    always @(*) begin
+    always @(posedge clock) begin
         case (sel)
             2'b00: begin
-                dig = 4'b0001; // D1
-                val = max_uni;
+                dig <= 4'b0001;
+                val <= max_uni;
             end
             2'b01: begin
-                dig = 4'b0010; // D2
-                val = max_dez;
+                dig <= 4'b0010;
+                val <= max_dez;
             end
             2'b10: begin
-                dig = 4'b0100; // D3
-                val = rod_uni;
+                dig <= 4'b0100;
+                val <= atual_uni;
             end
             2'b11: begin
-                dig = 4'b1000; // D4
-                val = rod_dez;
+                dig <= 4'b1000;
+                val <= atual_dez;
             end
         endcase
     end
