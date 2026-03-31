@@ -50,7 +50,7 @@ set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_location_assignment PIN_B16 -to clock
+set_location_assignment PIN_N21 -to clock
 set_location_assignment PIN_T12 -to reset
 set_location_assignment PIN_T13 -to iniciar
 set_location_assignment PIN_U2 -to rodada[0]
@@ -70,11 +70,6 @@ set_location_assignment PIN_Y21 -to contagem[5]
 set_location_assignment PIN_AA22 -to contagem[6]
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_location_assignment PIN_R22 -to estado[0]
-set_location_assignment PIN_M21 -to estado[1]
-set_location_assignment PIN_K22 -to estado[2]
-set_location_assignment PIN_K20 -to estado[3]
-set_location_assignment PIN_C16 -to estado[4]
 set_location_assignment PIN_M16 -to terminou
 set_location_assignment PIN_K21 -to ultima_jogada
 set_location_assignment PIN_D17 -to ultima_rodada
@@ -83,7 +78,7 @@ set_location_assignment PIN_K16 -to trabalhar
 set_location_assignment PIN_F12 -to resgatar
 set_location_assignment PIN_G15 -to investir
 set_location_assignment PIN_G12 -to estudar
-set_location_assignment PIN_E15 -to comprar
+set_location_assignment PIN_E16 -to comprar
 set_location_assignment PIN_U21 -to display_dinheiro[0]
 set_location_assignment PIN_V21 -to display_dinheiro[1]
 set_location_assignment PIN_W22 -to display_dinheiro[2]
@@ -132,6 +127,27 @@ set_location_assignment PIN_T18 -to config_display[1]
 set_location_assignment PIN_R17 -to config_display[3]
 set_location_assignment PIN_P18 -to config_display[4]
 set_location_assignment PIN_K17 -to config_display[5]
+set_location_assignment PIN_A12 -to indicador_itens[9]
+set_location_assignment PIN_B12 -to indicador_itens[8]
+set_location_assignment PIN_B13 -to indicador_itens[7]
+set_location_assignment PIN_D13 -to indicador_itens[6]
+set_location_assignment PIN_G17 -to indicador_itens[5]
+set_location_assignment PIN_J18 -to indicador_itens[4]
+set_location_assignment PIN_G11 -to indicador_itens[3]
+set_location_assignment PIN_J11 -to indicador_itens[2]
+set_location_assignment PIN_A15 -to indicador_itens[1]
+set_location_assignment PIN_L8 -to indicador_itens[0]
+set_location_assignment PIN_H16 -to seletor_item[9]
+set_location_assignment PIN_H15 -to seletor_item[8]
+set_location_assignment PIN_A13 -to seletor_item[7]
+set_location_assignment PIN_C13 -to seletor_item[6]
+set_location_assignment PIN_G18 -to seletor_item[5]
+set_location_assignment PIN_H18 -to seletor_item[4]
+set_location_assignment PIN_J19 -to seletor_item[3]
+set_location_assignment PIN_H10 -to seletor_item[2]
+set_location_assignment PIN_H14 -to seletor_item[1]
+set_location_assignment PIN_J13 -to seletor_item[0]
+set_global_assignment -name VERILOG_FILE ../circuito/display_bcd_4dig_cc.v
 set_global_assignment -name VERILOG_FILE ../circuito/sel_valor.v
 set_global_assignment -name VERILOG_FILE ../circuito/processador_evento.v
 set_global_assignment -name VERILOG_FILE ../circuito/multiplexador.v
@@ -160,24 +176,28 @@ set_global_assignment -name VERILOG_FILE ../circuito/contador_m.v
 set_global_assignment -name VERILOG_FILE ../circuito/contador_163.v
 set_global_assignment -name VERILOG_FILE ../circuito/comparador_85.v
 set_global_assignment -name VERILOG_FILE ../circuito/circuito_jogo_financeiro.v
-set_location_assignment PIN_A12 -to indicador_itens[9]
-set_location_assignment PIN_B12 -to indicador_itens[8]
-set_location_assignment PIN_B13 -to indicador_itens[7]
-set_location_assignment PIN_D13 -to indicador_itens[6]
-set_location_assignment PIN_G17 -to indicador_itens[5]
-set_location_assignment PIN_J18 -to indicador_itens[4]
-set_location_assignment PIN_G11 -to indicador_itens[3]
-set_location_assignment PIN_J11 -to indicador_itens[2]
-set_location_assignment PIN_A15 -to indicador_itens[1]
-set_location_assignment PIN_L8 -to indicador_itens[0]
-set_location_assignment PIN_H16 -to seletor_item[9]
-set_location_assignment PIN_H15 -to seletor_item[8]
-set_location_assignment PIN_A14 -to seletor_item[7]
-set_location_assignment PIN_C13 -to seletor_item[6]
-set_location_assignment PIN_G18 -to seletor_item[5]
-set_location_assignment PIN_H18 -to seletor_item[4]
-set_location_assignment PIN_J19 -to seletor_item[3]
-set_location_assignment PIN_H10 -to seletor_item[2]
-set_location_assignment PIN_H14 -to seletor_item[1]
-set_location_assignment PIN_J13 -to seletor_item[0]
+set_location_assignment PIN_R15 -to display_jogadas[11]
+set_location_assignment PIN_R21 -to display_jogadas[10]
+set_location_assignment PIN_L18 -to display_jogadas[9]
+set_location_assignment PIN_R16 -to display_jogadas[8]
+set_location_assignment PIN_T19 -to display_jogadas[7]
+set_location_assignment PIN_N20 -to display_jogadas[6]
+set_location_assignment PIN_P16 -to display_jogadas[5]
+set_location_assignment PIN_L22 -to display_jogadas[4]
+set_location_assignment PIN_K19 -to display_jogadas[3]
+set_location_assignment PIN_M22 -to display_jogadas[2]
+set_location_assignment PIN_L19 -to display_jogadas[1]
+set_location_assignment PIN_T17 -to display_jogadas[0]
+set_location_assignment PIN_B16 -to display_rodadas[11]
+set_location_assignment PIN_C16 -to display_rodadas[10]
+set_location_assignment PIN_K20 -to display_rodadas[9]
+set_location_assignment PIN_K22 -to display_rodadas[8]
+set_location_assignment PIN_M21 -to display_rodadas[7]
+set_location_assignment PIN_R22 -to display_rodadas[6]
+set_location_assignment PIN_T22 -to display_rodadas[5]
+set_location_assignment PIN_N19 -to display_rodadas[4]
+set_location_assignment PIN_P19 -to display_rodadas[3]
+set_location_assignment PIN_P17 -to display_rodadas[2]
+set_location_assignment PIN_M18 -to display_rodadas[1]
+set_location_assignment PIN_L17 -to display_rodadas[0]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

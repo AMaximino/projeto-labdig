@@ -13,11 +13,11 @@ module display_bcd_4dig_cc (
     // Conversão HEX → DECIMAL
     // =========================
 
-    wire [3:0] atual_dez = (valor >= 10) ? 4'd1 : 4'd0;
-    wire [3:0] atual_uni = (valor >= 10) ? (valor - 10) : valor;
+    wire [3:0] atual_dez = (valor >= 4'd10) ? 4'd1 : 4'd0;
+    wire [3:0] atual_uni = (valor >= 4'd10) ? (valor - 4'd10) : valor;
 
-    wire [3:0] max_dez = (limite >= 10) ? 4'd1 : 4'd0;
-    wire [3:0] max_uni = (limite >= 10) ? (limite - 10) : limite;
+    wire [3:0] max_dez = (limite >= 4'd10) ? 4'd1 : 4'd0;
+    wire [3:0] max_uni = (limite >= 4'd10) ? (limite - 4'd10) : limite;
 
     // =========================
     // Multiplexação
@@ -29,7 +29,7 @@ module display_bcd_4dig_cc (
         if (reset)
             sel <= 2'b00;
         else
-            sel <= sel + 1;
+            sel <= sel + 2'b01;
     end
 
     reg [3:0] val;
