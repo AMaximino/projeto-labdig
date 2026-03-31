@@ -37,19 +37,19 @@ module display_bcd_4dig_cc (
     always @(posedge clock) begin
         case (sel)
             2'b00: begin
-                dig <= 4'b0001;
+                dig <= 4'b1000;
                 val <= max_uni;
             end
             2'b01: begin
-                dig <= 4'b0010;
+                dig <= 4'b0100;
                 val <= max_dez;
             end
             2'b10: begin
-                dig <= 4'b0100;
+                dig <= 4'b0010;
                 val <= atual_uni;
             end
             2'b11: begin
-                dig <= 4'b1000;
+                dig <= 4'b0001;
                 val <= atual_dez;
             end
         endcase

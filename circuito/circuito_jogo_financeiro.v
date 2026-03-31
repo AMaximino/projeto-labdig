@@ -13,7 +13,7 @@ module circuito_jogo_financeiro (
 
     output [3:0] contagem, //
     output [3:0] rodada, //
-    output [4:0] estado, //
+    //output [4:0] estado, //
 
     output [11:0] display_jogadas,
     output [11:0] display_rodadas,
@@ -61,7 +61,7 @@ module circuito_jogo_financeiro (
 
     assign contagem = w_contagem;
     assign rodada = w_rodada;
-    assign estado = w_estado;
+    //assign estado = w_estado;
 
     fluxo_dados fd (
         .clock          ( clock ),
@@ -150,13 +150,13 @@ module circuito_jogo_financeiro (
     wire [3:0] dig_jogada;
     wire [7:0] seg_rodada;
     wire [3:0] dig_rodada;
-    assign display_jogadas = { seg_jogada, dig_jogada };
-    assign display_rodadas = { seg_rodada, dig_rodada };
+    assign display_jogadas = { seg_jogada, ~dig_jogada };
+    assign display_rodadas = { seg_rodada, ~dig_rodada };
 
     // --- Display de JOGADAS ---
     display_bcd_4dig_cc dispJogadas (
         .clock  ( clock ),
-        .reset  ( reset ),
+        .reset  ( ~reset ),
         .valor  ( w_contagem ), // Converte 4 bits para 8 bits
         .limite ( 4'd3 ),       // Seu limite de 3 jogadas por rodada
         .seg    ( seg_jogada ), // Conectar aos pinos A-DP do display 1
@@ -166,7 +166,7 @@ module circuito_jogo_financeiro (
     // --- Display de RODADAS ---
     display_bcd_4dig_cc dispRodadas (
         .clock  ( clock ),
-        .reset  ( reset ),
+        .reset  ( ~reset ),
         .valor  ( w_rodada ),   // Converte 4 bits para 8 bits
         .limite ( 4'd8 ),       // Seu limite de 3 jogadas por rodada
         .seg    ( seg_rodada ), // Conectar aos pinos A-DP do display 1
