@@ -163,6 +163,7 @@ module fluxo_dados (
     wire [20:0] rendimento_proc;
     wire [20:0] gastosFixos_proc;
     wire [20:0] gastosUnicos_proc;
+    wire [9:0]  itens_proc;
     processador_acao pa (
         .saldo_in            ( saldo ),
         .salario_in          ( salario ),
@@ -180,7 +181,7 @@ module fluxo_dados (
         .rendimento_out      ( rendimento_proc ),
         .gastosFixos_out     ( gastosFixos_proc ),
         .gastosUnicos_out    ( gastosUnicos_proc ),
-        .itens_out           ( itens_next )
+        .itens_out           ( itens_proc )
     );
 
     wire [20:0] saldo_evento;
@@ -212,13 +213,15 @@ module fluxo_dados (
     wire [20:0] rendimento_init;
     wire [20:0] gastosFixos_init;
     wire [20:0] gastosUnicos_init;
+    wire [9:0]  itens_init;
     inicializador i (
         .saldo          ( saldo_init ),
         .salario        ( salario_init ),
         .valorInvestido ( valorInvestido_init ),
         .rendimento     ( rendimento_init ),
         .gastosFixos    ( gastosFixos_init ),
-        .gastosUnicos   ( gastosUnicos_init )
+        .gastosUnicos   ( gastosUnicos_init ),
+        .itens          ( itens_init )
     );
 
     sel_valor MUX (
@@ -228,12 +231,14 @@ module fluxo_dados (
         .rendimento_init       ( rendimento_init ),
         .gastosFixos_init      ( gastosFixos_init ),
         .gastosUnicos_init     ( gastosUnicos_init ),
+        .itens_init            ( itens_init ),
         .saldo_proc            ( saldo_proc ),
         .salario_proc          ( salario_proc ),
         .valorInvestido_proc   ( valorInvestido_proc ),
         .rendimento_proc       ( rendimento_proc ),
         .gastosFixos_proc      ( gastosFixos_proc ),
         .gastosUnicos_proc     ( gastosUnicos_proc ),
+        .itens_proc            ( itens_proc ),
         .saldo_evento          ( saldo_evento ),
         .salario_evento        ( salario_evento ),
         .valorInvestido_evento ( valorInvestido_evento ),
@@ -247,7 +252,8 @@ module fluxo_dados (
         .valorInvestido_out    ( valorInvestido_next ),
         .rendimento_out        ( rendimento_next ),
         .gastosFixos_out       ( gastosFixos_next ),
-        .gastosUnicos_out      ( gastosUnicos_next )
+        .gastosUnicos_out      ( gastosUnicos_next ),
+        .itens_out             ( itens_next )
     );
 
 //////////////////////////////////////////////////////////////////
@@ -305,7 +311,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b0001 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
+      .modulo ( 4'b1001 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )

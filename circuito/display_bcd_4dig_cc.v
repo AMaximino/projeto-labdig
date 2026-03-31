@@ -76,33 +76,3 @@ module display_bcd_4dig_cc (
     end
 
 endmodule
-
-
-
-
-
-
-/* colocar no fluxo de dados 
- wire [7:0] seg_jogada;
-wire [3:0] dig_jogada;
-
-// --- Display de JOGADAS ---
-display_7seg_4dig dispJogadas (
-    .clock  (clock),
-    .reset  (~reset),
-    .valor  ({4'b0, w_contagem}), // Converte 4 bits para 8 bits
-    .limite (8'd3),               // Seu limite de 3 jogadas por rodada
-    .seg    (display_jogadas_seg), // Conectar aos pinos A-DP do display 1
-    .dig    (display_jogadas_dig)  // Conectar aos pinos D1-D4 do display 1
-);
-
-// --- Display de RODADAS ---
-display_7seg_4dig dispRodadas (
-    .clock  (clock),
-    .reset  (~reset),
-    .valor  ({4'b0, w_rodada}),   
-    .limite (8'd8),               // Seu limite de 8 rodadas
-    .seg    (display_rodadas_seg), // Conectar aos pinos A-DP do display 2
-    .dig    (display_rodadas_dig)  // Conectar aos pinos D1-D4 do display 2
-);
-*/
