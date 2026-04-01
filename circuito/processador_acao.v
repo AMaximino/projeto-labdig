@@ -2,7 +2,6 @@ module processador_acao (
     input signed [20:0] saldo_in,
     input signed [20:0] salario_in,
     input signed [20:0] valorInvestido_in,
-    input signed [20:0] rendimento_in,
     input signed [20:0] gastosFixos_in,
     input signed [20:0] gastosUnicos_in,
     input [5:0]  acao,
@@ -13,7 +12,6 @@ module processador_acao (
     output reg signed [20:0] saldo_out,
     output reg signed [20:0] salario_out,
     output reg signed [20:0] valorInvestido_out,
-    output reg signed [20:0] rendimento_out,
     output reg signed [20:0] gastosFixos_out,
     output reg signed [20:0] gastosUnicos_out,
     output reg [9:0] itens_out //atualizar os itens q o jogador ja tem
@@ -66,11 +64,10 @@ localparam TRABALHAR  = 6'b010000;
 localparam ESTUDAR    = 6'b100000;
 
     always @(*) begin
-        // default: mantém valor
+        // default: mantem valor
         saldo_out = saldo_in;
         salario_out = salario_in;
         valorInvestido_out = valorInvestido_in;
-        rendimento_out = valorInvestido_in >> 5;
         gastosFixos_out = gastosFixos_in;
         gastosUnicos_out = gastosUnicos_in;
         itens_out = itens_in;

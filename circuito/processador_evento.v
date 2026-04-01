@@ -10,7 +10,6 @@ module processador_evento (
     output reg signed [20:0] saldo_out,
     output reg signed [20:0] salario_out,
     output reg signed [20:0] valorInvestido_out,
-    output reg signed [20:0] rendimento_out,
     output reg signed [20:0] gastosFixos_out,
     output reg signed [20:0] gastosUnicos_out
 );
@@ -20,7 +19,6 @@ module processador_evento (
         saldo_out = saldo_in;
         salario_out = salario_in;
         valorInvestido_out = valorInvestido_in;
-        rendimento_out = valorInvestido_in >> 5; //3,125% ao trimestre (rodada)
         gastosFixos_out = gastosFixos_in;
         gastosUnicos_out = gastosUnicos_in;
         if ( rende ) begin

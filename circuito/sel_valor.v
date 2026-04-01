@@ -2,21 +2,18 @@ module sel_valor (
     input  [20:0] saldo_init,
     input  [20:0] salario_init,
     input  [20:0] valorInvestido_init,
-    input  [20:0] rendimento_init,
     input  [20:0] gastosFixos_init,
     input  [20:0] gastosUnicos_init,
     input  [9:0]  itens_init,
     input  [20:0] saldo_proc,
     input  [20:0] salario_proc,
     input  [20:0] valorInvestido_proc,
-    input  [20:0] rendimento_proc,
     input  [20:0] gastosFixos_proc,
     input  [20:0] gastosUnicos_proc,
     input  [9:0]  itens_proc,
     input  [20:0] saldo_evento,
     input  [20:0] salario_evento,
     input  [20:0] valorInvestido_evento,
-    input  [20:0] rendimento_evento,
     input  [20:0] gastosFixos_evento,
     input  [20:0] gastosUnicos_evento,
     input         init,
@@ -24,7 +21,6 @@ module sel_valor (
     output [20:0] saldo_out,
     output [20:0] salario_out,
     output [20:0] valorInvestido_out,
-    output [20:0] rendimento_out,
     output [20:0] gastosFixos_out,
     output [20:0] gastosUnicos_out,
     output [9:0]  itens_out
@@ -53,14 +49,6 @@ module sel_valor (
         .ctrl1 ( init ),
         .ctrl2 ( processaE ),
         .out   ( valorInvestido_out )
-    );
-    multiplexador #(.N(21)) muxRendimento (
-        .s1    ( rendimento_init ),
-        .s2    ( rendimento_proc ),
-        .s3    ( rendimento_evento ),
-        .ctrl1 ( init ),
-        .ctrl2 ( processaE ),
-        .out   ( rendimento_out )
     );
     multiplexador #(.N(21)) muxGastosFixos (
         .s1    ( gastosFixos_init ),

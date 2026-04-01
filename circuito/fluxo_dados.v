@@ -124,13 +124,14 @@ module fluxo_dados (
         .D      ( valorInvestido_next ),
         .Q      ( valorInvestido )
     );
-    registrador_n #(.N(21)) reg_rendimento (
+    /*registrador_n #(.N(21)) reg_rendimento (
         .clock  ( clock ),
         .clear  ( zeraV ),
         .enable ( registraV ),
         .D      ( rendimento_next ),
         .Q      ( rendimento )
-    );
+    );*/
+    assign rendimento = valorInvestido >> 5; //3,125% ao trimestre (rodada)
     registrador_n #(.N(21)) reg_gastosFixos (
         .clock  ( clock ),
         .clear  ( zeraV ),
@@ -154,13 +155,12 @@ module fluxo_dados (
         .Q      ( itens )
     );
 
-    //////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 ////////////////processamento//////////////////////////////////////////////
 
     wire [20:0] saldo_proc;
     wire [20:0] salario_proc;
     wire [20:0] valorInvestido_proc;
-    wire [20:0] rendimento_proc;
     wire [20:0] gastosFixos_proc;
     wire [20:0] gastosUnicos_proc;
     wire [9:0]  itens_proc;
@@ -168,7 +168,6 @@ module fluxo_dados (
         .saldo_in            ( saldo ),
         .salario_in          ( salario ),
         .valorInvestido_in   ( valorInvestido ),
-        .rendimento_in       ( rendimento ),
         .gastosFixos_in      ( gastosFixos ),
         .gastosUnicos_in     ( gastosUnicos ),
         .acao                ( acoes_out ),
@@ -178,7 +177,6 @@ module fluxo_dados (
         .saldo_out           ( saldo_proc ),
         .salario_out         ( salario_proc ),
         .valorInvestido_out  ( valorInvestido_proc ),
-        .rendimento_out      ( rendimento_proc ),
         .gastosFixos_out     ( gastosFixos_proc ),
         .gastosUnicos_out    ( gastosUnicos_proc ),
         .itens_out           ( itens_proc )
@@ -187,7 +185,6 @@ module fluxo_dados (
     wire [20:0] saldo_evento;
     wire [20:0] salario_evento;
     wire [20:0] valorInvestido_evento;
-    wire [20:0] rendimento_evento;
     wire [20:0] gastosFixos_evento;
     wire [20:0] gastosUnicos_evento;
     processador_evento pe (
@@ -202,7 +199,6 @@ module fluxo_dados (
         .saldo_out           ( saldo_evento ),
         .salario_out         ( salario_evento ),
         .valorInvestido_out  ( valorInvestido_evento ),
-        .rendimento_out      ( rendimento_evento ),
         .gastosFixos_out     ( gastosFixos_evento ),
         .gastosUnicos_out    ( gastosUnicos_evento )
     );
@@ -210,7 +206,6 @@ module fluxo_dados (
     wire [20:0] saldo_init;
     wire [20:0] salario_init;
     wire [20:0] valorInvestido_init;
-    wire [20:0] rendimento_init;
     wire [20:0] gastosFixos_init;
     wire [20:0] gastosUnicos_init;
     wire [9:0]  itens_init;
@@ -218,7 +213,6 @@ module fluxo_dados (
         .saldo          ( saldo_init ),
         .salario        ( salario_init ),
         .valorInvestido ( valorInvestido_init ),
-        .rendimento     ( rendimento_init ),
         .gastosFixos    ( gastosFixos_init ),
         .gastosUnicos   ( gastosUnicos_init ),
         .itens          ( itens_init )
@@ -228,21 +222,18 @@ module fluxo_dados (
         .saldo_init            ( saldo_init ),
         .salario_init          ( salario_init ),
         .valorInvestido_init   ( valorInvestido_init ),
-        .rendimento_init       ( rendimento_init ),
         .gastosFixos_init      ( gastosFixos_init ),
         .gastosUnicos_init     ( gastosUnicos_init ),
         .itens_init            ( itens_init ),
         .saldo_proc            ( saldo_proc ),
         .salario_proc          ( salario_proc ),
         .valorInvestido_proc   ( valorInvestido_proc ),
-        .rendimento_proc       ( rendimento_proc ),
         .gastosFixos_proc      ( gastosFixos_proc ),
         .gastosUnicos_proc     ( gastosUnicos_proc ),
         .itens_proc            ( itens_proc ),
         .saldo_evento          ( saldo_evento ),
         .salario_evento        ( salario_evento ),
         .valorInvestido_evento ( valorInvestido_evento ),
-        .rendimento_evento     ( rendimento_evento ),
         .gastosFixos_evento    ( gastosFixos_evento ),
         .gastosUnicos_evento   ( gastosUnicos_evento ),
         .init                  ( init ),
@@ -250,7 +241,6 @@ module fluxo_dados (
         .saldo_out             ( saldo_next ),
         .salario_out           ( salario_next ),
         .valorInvestido_out    ( valorInvestido_next ),
-        .rendimento_out        ( rendimento_next ),
         .gastosFixos_out       ( gastosFixos_next ),
         .gastosUnicos_out      ( gastosUnicos_next ),
         .itens_out             ( itens_next )
