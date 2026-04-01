@@ -23,12 +23,6 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/comprar_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/vender_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/seletor_item_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/config_display_in
-add wave -noupdate -divider Saidas
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_rodada_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_dinheiro_out
 add wave -noupdate -divider valoresFinanceiros
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/saldo
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/dut/fd/salario
@@ -84,6 +78,28 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraV
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraV
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/zeraM
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/fd/registraM
+add wave -noupdate -divider Saidas
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_jogada_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/ultima_rodada_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/terminou_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_jogadas_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_rodadas_out
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_dinheiro_out
+add wave -noupdate -divider BCD Jogada
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/val
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/sel
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/atual_dez
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/atual_uni
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/max_dez
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/max_uni
+add wave -noupdate -divider BCD Rodada
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/val
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/sel
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/atual_dez
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/atual_uni
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/max_dez
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/max_uni
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ns} 0}
 quietly wave cursor active 1

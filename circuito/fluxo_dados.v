@@ -311,7 +311,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b1001 ),  //(modulo + 1) rodadas, 8 rodadas -> 8 trimestres no jogo, 2 anos 
+      .modulo ( 4'b1001 ),  //(modulo + 1) rodadas, 10 rodadas -> 10 trimestres no jogo
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )

@@ -11,12 +11,12 @@ module circuito_jogo_financeiro (
     input [9:0] seletor_item,
     input [5:0] config_display,
 
-    output [3:0] contagem, //
-    output [3:0] rodada, //
     //output [4:0] estado, //
 
     output [11:0] display_jogadas,
     output [11:0] display_rodadas,
+    // A, B, C, D, E, F, G, DP, D1, D2, D3, D4
+
     output [41:0] display_dinheiro,
     output [9:0] indicador_itens,
     output ultima_jogada,
@@ -58,9 +58,6 @@ module circuito_jogo_financeiro (
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
 
-
-    assign contagem = w_contagem;
-    assign rodada = w_rodada;
     //assign estado = w_estado;
 
     fluxo_dados fd (
@@ -157,20 +154,20 @@ module circuito_jogo_financeiro (
     display_bcd_4dig_cc dispJogadas (
         .clock  ( clock ),
         .reset  ( ~reset ),
-        .valor  ( w_contagem ), // Converte 4 bits para 8 bits
-        .limite ( 4'd3 ),       // Seu limite de 3 jogadas por rodada
-        .seg    ( seg_jogada ), // Conectar aos pinos A-DP do display 1
-        .dig    ( dig_jogada )  // Conectar aos pinos D1-D4 do display 1
+        .valor  ( w_contagem ),
+        .limite ( 4'd3 ),       // Limite de 3 jogadas por rodada
+        .seg    ( seg_jogada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
+        .dig    ( dig_jogada )  // Conectar aos pinos D1-D4 do display 1 (ativo baixo)
     );
 
     // --- Display de RODADAS ---
     display_bcd_4dig_cc dispRodadas (
         .clock  ( clock ),
         .reset  ( ~reset ),
-        .valor  ( w_rodada ),   // Converte 4 bits para 8 bits
-        .limite ( 4'd8 ),       // Seu limite de 3 jogadas por rodada
-        .seg    ( seg_rodada ), // Conectar aos pinos A-DP do display 1
-        .dig    ( dig_rodada )  // Conectar aos pinos D1-D4 do display 1
+        .valor  ( w_rodada ),
+        .limite ( 4'd10 ),      // Total de 10 rodadas
+        .seg    ( seg_rodada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
+        .dig    ( dig_rodada )  // Conectar aos pinos D1-D4 do display 1 (ativo baixo)
     );
 
 endmodule

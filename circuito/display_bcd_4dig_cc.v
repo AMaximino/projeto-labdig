@@ -52,6 +52,7 @@ module display_bcd_4dig_cc (
                 dig <= 4'b0001;
                 val <= atual_dez;
             end
+            // dig <= {D1, D2, D3, D4}
         endcase
     end
 
@@ -72,7 +73,24 @@ module display_bcd_4dig_cc (
             4'd8: seg = 8'b11111110;
             4'd9: seg = 8'b11110110;
             default: seg = 8'b00000000;
+            // seg = 8'b ABCDEFG. ;
         endcase
     end
+
+
+
+
+    /*
+     *    ---
+     *   | 7 |
+     * 2 |   | 6
+     *   |   |
+     *    ---
+     *   | 1 |
+     * 3 |   | 5
+     *   |   |
+     *    ---     .0
+     *     4
+     */
 
 endmodule

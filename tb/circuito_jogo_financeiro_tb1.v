@@ -16,12 +16,10 @@ module circuito_jogo_financeiro_tb1;
     reg  [9:0] seletor_item_in = 10'b1111111111;
     reg  [5:0] config_display_in = 6'b111111;
 
-    wire [3:0]  contagem_out;
-    wire [3:0]  rodada_out;
     wire [4:0]  estado_out;
 
-    //wire [11:0] display_jogadas_out;
-    //wire [11:0] display_rodadas_out;
+    wire [11:0] display_jogadas_out;
+    wire [11:0] display_rodadas_out;
     wire [41:0] display_dinheiro_out;
     wire [9:0]  indicador_itens_out;
     wire        ultima_jogada_out;
@@ -52,11 +50,9 @@ module circuito_jogo_financeiro_tb1;
       .vender           ( vender_in ),
       .seletor_item     ( seletor_item_in ),
       .config_display   ( config_display_in ),
-      .contagem         ( contagem_out ),
-      .rodada           ( rodada_out ),
-      .estado           ( estado_out ),
-      //.display_jogadas  ( display_jogadas_out ),
-      //.display_rodadas  ( display_rodadas_out ),
+      //.estado           ( estado_out ),
+      .display_jogadas  ( display_jogadas_out ),
+      .display_rodadas  ( display_rodadas_out ),
       .display_dinheiro ( display_dinheiro_out ),
       .indicador_itens  ( indicador_itens_out ),
       .ultima_jogada    ( ultima_jogada_out ),
@@ -101,7 +97,7 @@ module circuito_jogo_financeiro_tb1;
       iniciar_in = 1;
       #(10*clockPeriod);
 
-      //RODADA 1
+      // RODADA 1
       // Teste 3. jogada #1
       caso = 3;
       @(negedge clock_in);
@@ -134,6 +130,7 @@ module circuito_jogo_financeiro_tb1;
       estudar_in = 1;
       #(10*clockPeriod);
 
+      // RODADA 2
       // Teste 7. jogada #1
       caso = 7;
       @(negedge clock_in);
@@ -193,18 +190,101 @@ module circuito_jogo_financeiro_tb1;
       // Teste 13. jogada #3; fim_rodada
       caso = 13;
       @(negedge clock_in);
+      estudar_in = 0;
+      #(10*clockPeriod);
+      estudar_in = 1;
+      #(10*clockPeriod);
+
+      // RODADA 3
+      // Teste 14.
+      caso = 14;
+      @(negedge clock_in);
+      investir_in = 0;
+      #(10*clockPeriod);
+      investir_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 15.
+      caso = 15;
+      @(negedge clock_in);
+      investir_in = 0;
+      #(10*clockPeriod);
+      investir_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 16. jogada #1
+      caso = 16;
+      @(negedge clock_in);
       trabalhar_in = 0;
       #(10*clockPeriod);
       trabalhar_in = 1;
       #(10*clockPeriod);
 
-      // Teste 14. muda_display
-      caso = 14;
+      // Teste 17. jogada #2
+      caso = 17;
+      @(negedge clock_in);
+      trabalhar_in = 0;
+      #(10*clockPeriod);
+      trabalhar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 18. jogada #3; fim_rodada
+      caso = 18;
+      @(negedge clock_in);
+      trabalhar_in = 0;
+      #(10*clockPeriod);
+      trabalhar_in = 1;
+      #(10*clockPeriod);
+
+      // RODADA 4
+      // Teste 19. jogada #1
+      caso = 19;
+      @(negedge clock_in);
+      trabalhar_in = 0;
+      #(10*clockPeriod);
+      trabalhar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 20.
+      caso = 20;
+      @(negedge clock_in);
+      resgatar_in = 0;
+      #(10*clockPeriod);
+      resgatar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 21.
+      caso = 21;
+      @(negedge clock_in);
+      resgatar_in = 0;
+      #(10*clockPeriod);
+      resgatar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 22.
+      caso = 22;
+      @(negedge clock_in);
+      resgatar_in = 0;
+      #(10*clockPeriod);
+      resgatar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 23.
+      caso = 23;
+      @(negedge clock_in);
+      resgatar_in = 0;
+      #(10*clockPeriod);
+      resgatar_in = 1;
+      #(10*clockPeriod);
+
+      // Teste 24. muda_display
+      caso = 24;
       @(negedge clock_in);
       config_display_in = 6'b101111;
       #(10*clockPeriod);
       config_display_in = 6'b111111;
       #(10*clockPeriod);
+      
 
       // final dos casos de teste da simulacao
       caso = 99;

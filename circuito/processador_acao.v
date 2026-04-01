@@ -90,8 +90,14 @@ localparam ESTUDAR    = 6'b100000;
                     end
                 end
                 RESGATAR: begin
-                    saldo_out = saldo_in + investimento;
-                    valorInvestido_out = valorInvestido_in - investimento;
+                    if (valorInvestido_in > investimento ) begin
+                        saldo_out = saldo_in + investimento;
+                        valorInvestido_out = valorInvestido_in - investimento;
+                    end
+                    else begin
+                        saldo_out = saldo_in + valorInvestido_in;
+                        valorInvestido_out = 21'b0;
+                    end
                 end
                 INVESTIR: begin
                     saldo_out = saldo_in - investimento;
