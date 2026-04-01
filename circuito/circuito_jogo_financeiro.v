@@ -57,11 +57,20 @@ module circuito_jogo_financeiro (
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
+	 
+	 wire clock_ajustado;
 
     //assign estado = w_estado;
+	 
+	 i2s_master_clock_gen  #(.CLOCK_DIV(781)) divisor_clock(
+    .clk (clock),
+    .rst(1'b0),
+    .sck_o(),
+    .ws_o (clock_ajustado)
+);
 
     fluxo_dados fd (
-        .clock          ( clock ),
+        .clock          ( clock_ajustado ),
         .estudar        ( ~estudar ),
         .trabalhar      ( ~trabalhar ),
         .investir       ( ~investir ),
@@ -104,7 +113,7 @@ module circuito_jogo_financeiro (
     );
 
     unidade_controle uc (
-        .clock         ( clock ),
+        .clock         ( clock_ajustado ),
         .reset         ( ~reset ),
         .iniciar       ( ~iniciar ),
         .acao_pulso    ( w_acao_pulso ),
@@ -152,7 +161,7 @@ module circuito_jogo_financeiro (
 
     // --- Display de JOGADAS ---
     display_bcd_4dig_cc dispJogadas (
-        .clock  ( clock ),
+        .clock  ( clock_ajustado ),
         .reset  ( ~reset ),
         .valor  ( w_contagem ),
         .limite ( 4'd3 ),       // Limite de 3 jogadas por rodada
@@ -162,7 +171,7 @@ module circuito_jogo_financeiro (
 
     // --- Display de RODADAS ---
     display_bcd_4dig_cc dispRodadas (
-        .clock  ( clock ),
+        .clock  ( clock_ajustado ),
         .reset  ( ~reset ),
         .valor  ( w_rodada ),
         .limite ( 4'd10 ),      // Total de 10 rodadas
