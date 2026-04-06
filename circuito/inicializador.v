@@ -7,11 +7,12 @@ module inicializador (
     output [9:0] itens
 );
 
-assign saldo = 21'd1500;
-assign salario = 21'd100;
-assign valorInvestido = 21'd0;
-assign gastosFixos = 21'd50;
-assign gastosUnicos = 21'd0;
+
+assign saldo = 21'd150;        // 15000
+assign salario = 21'd64;       // 6400 por quadrimestre
+assign valorInvestido = 21'd0; // 0
+assign gastosFixos = 21'd40;   // 4000 por quadrimestre
+assign gastosUnicos = 21'd0;   // 0
 assign itens = 10'd0;
 
 endmodule

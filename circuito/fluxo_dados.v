@@ -131,7 +131,7 @@ module fluxo_dados (
         .D      ( rendimento_next ),
         .Q      ( rendimento )
     );*/
-    assign rendimento = valorInvestido >> 5; //3,125% ao trimestre (rodada)
+    assign rendimento = valorInvestido >> 2; //25% ao ano (rodada)
     registrador_n #(.N(21)) reg_gastosFixos (
         .clock  ( clock ),
         .clear  ( zeraV ),
@@ -287,11 +287,12 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCJ ),
-      .modulo ( 4'b0010 ),  //(modulo +1) jogadas, 3 jogadas -> 3 meses por jogada (trimestre)
+      .modulo ( 4'b0010 ),  //(modulo +1) jogadas, 3 jogadas -> 3 quadris por rodada (ano)
       .D      ( 4'b0000 ),     
       .Q      ( contagem ),
       .rco    ( fim_rodada )
     );
+    // 1 jogada -> 1 quadrimestre
 
 
     // contador_modulo_n contadorRodada
@@ -301,7 +302,7 @@ module fluxo_dados (
       .ld     ( 1'b1 ),
       .ent    ( 1'b1 ),
       .enp    ( contaCR ),
-      .modulo ( 4'b1001 ),  //(modulo + 1) rodadas, 10 rodadas -> 10 trimestres no jogo
+      .modulo ( 4'b1110),  //(modulo + 1) rodadas, 15 rodadas -> 15 trimestres no jogo
       .D      ( 4'b0000 ),     
       .Q      ( rodada ),
       .rco    ( ultima_rodada )
