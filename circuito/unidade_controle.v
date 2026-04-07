@@ -40,12 +40,14 @@ module unidade_controle (
     parameter espera            = 5'b00100;  // 4
     parameter registraAcao      = 5'b00101;  // 5
     parameter processarAcao     = 5'b00110;  // 6
+    parameter aplicarDespesa    = 5'b01101;  // D
     parameter verificaPerdeu    = 5'b00111;  // 7
     parameter jogadaOuAcao      = 5'b01000;  // 8
     parameter verificaFim       = 5'b01001;  // 9
     parameter verificaFimRodada = 5'b01010;  // A
     parameter proximaJogada     = 5'b01011;  // B
     parameter novaRodada        = 5'b01100;  // C
+
 
     parameter registraDisplay   = 5'b11010;
     parameter registraDisplayF  = 5'b11011;
@@ -90,7 +92,8 @@ module unidade_controle (
                                Eprox = espera;
             espera:            Eprox = (acao_pulso) ? registraAcao : ((display_pulso) ? registraDisplay : espera);
             registraAcao:      Eprox = processarAcao;
-            processarAcao:     Eprox = verificaPerdeu;
+            processarAcao:     Eprox = aplicarDespesa;
+            aplicarDespesa:    Eprox = verificaPerdeu;
             verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
             jogadaOuAcao:      Eprox = (eh_jogada) ? verificaFim : espera;
             verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
@@ -114,7 +117,7 @@ module unidade_controle (
         processaE        = (Eatual == processarAcao) ? 1'b1 : 1'b0;
         zeraCJ           = (Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
         rende            = (Eatual == novaRodada) ? 1'b1 : 1'b0;
-        despesa          = (Eatual == proximaJogada || Eatual == novaRodada) ? 1'b1 : 1'b0;
+        despesa          = (Eatual == aplicarDespesa) ? 1'b1 : 1'b0;
         contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
         zeraCR           = (Eatual == preparacao) ? 1'b1 : 1'b0;
         contaCR          = (Eatual == novaRodada) ? 1'b1 : 1'b0;
@@ -123,7 +126,7 @@ module unidade_controle (
         zeraA            = (Eatual == start) ? 1'b1 : 1'b0;
         registraA        = (Eatual == registraAcao) ? 1'b1 : 1'b0;
         zeraV            = (Eatual == start) ? 1'b1 : 1'b0;
-        registraV        = (Eatual == inicializar || Eatual == processarAcao || Eatual == proximaJogada || Eatual == novaRodada) ? 1'b1 : 1'b0;
+        registraV        = (Eatual == inicializar || Eatual == processarAcao || Eatual == aplicarDespesa || Eatual == novaRodada) ? 1'b1 : 1'b0;
         zeraM            = (Eatual == start) ? 1'b1 : 1'b0;
         registraM        = (Eatual == registraModo || Eatual == fim || Eatual == fimPerdeu) ? 1'b1 : 1'b0;
         /*registraV[0]     =

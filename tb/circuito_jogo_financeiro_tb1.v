@@ -29,13 +29,14 @@ module circuito_jogo_financeiro_tb1;
     
 
     // Configuração do clock
-    parameter clockPeriod = 1_000; // in ns, f=1MHz
+    parameter clockPeriod_FPGA = 20; // in ns, f = 50 MHz
+    parameter clockPeriod = 100000*clockPeriod_FPGA; // f = 500 Hz
 
     // Identificacao do caso de teste
     reg [31:0] caso = 0;
 
     // Gerador de clock
-    always #((clockPeriod / 2)) clock_in = ~clock_in;
+    always #((clockPeriod_FPGA / 2)) clock_in = ~clock_in;
 
     // instanciacao do DUT (Device Under Test)
     circuito_jogo_financeiro dut (

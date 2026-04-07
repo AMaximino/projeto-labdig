@@ -58,16 +58,16 @@ module circuito_jogo_financeiro (
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
 	 
-	 wire clock_ajustado;
+	wire clock_ajustado;
 
     //assign estado = w_estado;
 	 
-	 i2s_master_clock_gen  #(.CLOCK_DIV(781)) divisor_clock(
-    .clk (clock),
-    .rst(1'b0),
-    .sck_o(),
-    .ws_o (clock_ajustado)
-);
+	i2s_master_clock_gen  #(.CLOCK_DIV(781)) divisor_clock (
+        .clk    ( clock ),
+        .rst    ( ~reset ),
+        .sck_o  (  ),  // ~ 32 kHz
+        .ws_o   ( clock_ajustado )  // 500 Hz
+    );
 
     fluxo_dados fd (
         .clock          ( clock_ajustado ),

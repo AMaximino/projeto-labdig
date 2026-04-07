@@ -9,7 +9,7 @@ vsim circuito_jogo_financeiro_tb1
 
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/clock_in
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/clock_ajustado
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/caso
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/Eatual
 add wave -noupdate -divider Entradas
@@ -86,14 +86,14 @@ add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/perdeu_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_jogadas_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_rodadas_out
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/display_dinheiro_out
-add wave -noupdate -divider BCD Jogada
+add wave -noupdate -divider BCD_Jogada
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/val
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/sel
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/atual_dez
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/atual_uni
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/max_dez
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispJogadas/max_uni
-add wave -noupdate -divider BCD Rodada
+add wave -noupdate -divider BCD_Rodada
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/val
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/sel
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/dispRodadas/atual_dez
@@ -117,7 +117,7 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ns} {29864 ns}
+WaveRestoreZoom {21658652 ns} {73519904 ns}
 
 
 run -all
