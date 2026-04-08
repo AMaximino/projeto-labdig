@@ -115,11 +115,11 @@ module unidade_controle (
         rstED            = (Eatual == start) ? 1'b1 : 1'b0;
         init             = (Eatual == inicializar) ? 1'b1 : 1'b0;
         processaE        = (Eatual == processarAcao) ? 1'b1 : 1'b0;
-        zeraCJ           = (Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
+        zeraCJ           = (Eatual == start || Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
         rende            = (Eatual == novaRodada) ? 1'b1 : 1'b0;
         despesa          = (Eatual == aplicarDespesa) ? 1'b1 : 1'b0;
         contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
-        zeraCR           = (Eatual == preparacao) ? 1'b1 : 1'b0;
+        zeraCR           = (Eatual == start || Eatual == preparacao) ? 1'b1 : 1'b0;
         contaCR          = (Eatual == novaRodada) ? 1'b1 : 1'b0;
         zeraD            = (Eatual == start) ? 1'b1 : 1'b0;
         registraD        = (Eatual == registraDisplay || Eatual == registraDisplayF || Eatual == registraDisplayFP) ? 1'b1 : 1'b0;
