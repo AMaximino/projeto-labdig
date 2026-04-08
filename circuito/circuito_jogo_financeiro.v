@@ -163,7 +163,7 @@ module circuito_jogo_financeiro (
     display_bcd_4dig_cc dispJogadas (
         .clock  ( clock_ajustado ),
         .reset  ( ~reset ),
-        .valor  ( w_contagem+4'd1 ),
+        .valor  ( w_contagem + 4'd1 ),
         .limite ( 4'd3 ),       // Limite de 3 jogadas por rodada
         .seg    ( seg_jogada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
         .dig    ( dig_jogada )  // Conectar aos pinos D1-D4 do display 1 (ativo baixo)
@@ -173,8 +173,8 @@ module circuito_jogo_financeiro (
     display_bcd_4dig_cc dispRodadas (
         .clock  ( clock_ajustado ),
         .reset  ( ~reset ),
-        .valor  ( w_rodada+4'd1 ),
-        .limite ( 4'd10 ),      // Total de 10 rodadas
+        .valor  ( w_rodada + 4'd1 ),
+        .limite ( 4'd15 ),      // Total de 15 rodadas
         .seg    ( seg_rodada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
         .dig    ( dig_rodada )  // Conectar aos pinos D1-D4 do display 1 (ativo baixo)
     );
