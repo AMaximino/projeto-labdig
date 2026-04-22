@@ -93,10 +93,10 @@ module unidade_controle (
                                Eprox = espera;
             espera:            Eprox = (acao_pulso) ? registraAcao : ((display_pulso) ? registraDisplay : espera);
             registraAcao:      Eprox = processarAcao;
-            processarAcao:     Eprox = aplicarDespesa;
-            aplicarDespesa:    Eprox = verificaPerdeu;
+            processarAcao:     Eprox = verificaPerdeu;
+            aplicarDespesa:    Eprox = verificaFim;
             verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
-            jogadaOuAcao:      Eprox = (eh_jogada) ? verificaFim : espera;
+            jogadaOuAcao:      Eprox = (eh_jogada) ? aplicarDespesa : espera;
             verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
             verificaFimRodada: Eprox = (fim_rodada) ? novaRodada : proximaJogada;
             proximaJogada:     Eprox = espera;
