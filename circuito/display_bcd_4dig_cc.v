@@ -35,6 +35,10 @@ module display_bcd_4dig_cc (
     reg [3:0] val;
 
     always @(posedge clock) begin
+        if (reset) begin
+            dig <= 4'b0000;
+            val <= 4'b0000;
+        end
         case (sel)
             2'b00: begin
                 dig <= 4'b1000;

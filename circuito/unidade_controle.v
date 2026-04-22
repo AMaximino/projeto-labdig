@@ -9,6 +9,7 @@ module unidade_controle (
     input      fim_perdeu,
     input      fim_rodada,
 
+    output reg desligaDisplay,
     output reg rstED,
     output reg init,
     output reg processaE,
@@ -112,6 +113,7 @@ module unidade_controle (
 
     // Logica de saida (maquina Moore)
     always @* begin
+        desligaDisplay   = (Eatual == registraModo) ? 1'b1 : 1'b0;
         rstED            = (Eatual == start) ? 1'b1 : 1'b0;
         init             = (Eatual == inicializar) ? 1'b1 : 1'b0;
         processaE        = (Eatual == processarAcao) ? 1'b1 : 1'b0;

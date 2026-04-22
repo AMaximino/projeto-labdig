@@ -37,16 +37,16 @@ initial begin
     precos_item[5] = 21'd19000; // casa 1900k
     precos_item[6] = 21'd120;   // pc gamer 12k
     precos_item[7] = 21'd80;    // coleçao de jogos de tabuleiro 8k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
-    precos_item[8] = 21'd420;   // coleçao de legos 42k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
-    precos_item[9] = 21'd350;   // viajar pelo mundo 35k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
+    precos_item[8] = 21'd200;   // colecao de livros -> implementar futuramente algo q de pra ficar comprando e faça show de luz
+    precos_item[9] = 21'd420;   // colecao de legos 42k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
 end
 
 initial begin
     despesas_item[0] = 21'd36;  // carro 60k -> despesa 3600
     despesas_item[1] = 21'd48;  // carro 100k -> despesa 4800
     despesas_item[2] = 21'd80;  // carro 200k -> despesa 8000
-    despesas_item[3] = 21'd24;   // casa 500k -> despesa 2400
-    despesas_item[4] = 21'd32;   // casa 900k -> despesa 3200
+    despesas_item[3] = 21'd24;  // casa 500k -> despesa 2400
+    despesas_item[4] = 21'd32;  // casa 900k -> despesa 3200
     despesas_item[5] = 21'd60;  // casa 1900k -> despesa 6000
     despesas_item[6] = 21'd0;   // pc gamer 12k -> sem despesa
     despesas_item[7] = 21'd0;   // colecao de jogos de tabuleiro 8k -> sem despesa

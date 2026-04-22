@@ -33,6 +33,7 @@ module circuito_jogo_financeiro (
     assign ultima_jogada = w_fim_rodada;
     wire [23:0] dinheiro;
 
+    wire w_desligaDisplay;
     wire w_rstED;
     wire w_init;
     wire w_processaE;
@@ -113,36 +114,37 @@ module circuito_jogo_financeiro (
     );
 
     unidade_controle uc (
-        .clock         ( clock_ajustado ),
-        .reset         ( ~reset ),
-        .iniciar       ( ~iniciar ),
-        .acao_pulso    ( w_acao_pulso ),
-        .eh_jogada     ( w_eh_jogada ),
-        .display_pulso ( w_display_pulso ),
-        .fim_jogo      ( w_fim_jogo ),
-        .fim_perdeu    ( w_fim_perdeu ),
-        .fim_rodada    ( w_fim_rodada ),
+        .clock          ( clock_ajustado ),
+        .reset          ( ~reset ),
+        .iniciar        ( ~iniciar ),
+        .acao_pulso     ( w_acao_pulso ),
+        .eh_jogada      ( w_eh_jogada ),
+        .display_pulso  ( w_display_pulso ),
+        .fim_jogo       ( w_fim_jogo ),
+        .fim_perdeu     ( w_fim_perdeu ),
+        .fim_rodada     ( w_fim_rodada ),
 
-        .rstED         ( w_rstED ),
-        .init          ( w_init ),
-        .processaE     ( w_processaE ),
-        .rende         ( w_rende ),
-        .despesa       ( w_despesa ),
-        .zeraCJ        ( w_zeraCJ ),
-        .contaCJ       ( w_contaCJ ),
-        .zeraCR        ( w_zeraCR ),
-        .contaCR       ( w_contaCR ),
-        .zeraD         ( w_zeraD ),
-        .registraD     ( w_registraD ),
-        .zeraA         ( w_zeraA ),
-        .registraA     ( w_registraA ),
-        .zeraV         ( w_zeraV ),
-        .registraV     ( w_registraV ),
-        .zeraM         ( w_zeraM ),
-        .registraM     ( w_registraM ),
-        .terminou      ( terminou ),
-        .perdeu        ( perdeu ),
-        .estado        ( w_estado )
+        .desligaDisplay ( w_desligaDisplay ),
+        .rstED          ( w_rstED ),
+        .init           ( w_init ),
+        .processaE      ( w_processaE ),
+        .rende          ( w_rende ),
+        .despesa        ( w_despesa ),
+        .zeraCJ         ( w_zeraCJ ),
+        .contaCJ        ( w_contaCJ ),
+        .zeraCR         ( w_zeraCR ),
+        .contaCR        ( w_contaCR ),
+        .zeraD          ( w_zeraD ),
+        .registraD      ( w_registraD ),
+        .zeraA          ( w_zeraA ),
+        .registraA      ( w_registraA ),
+        .zeraV          ( w_zeraV ),
+        .registraV      ( w_registraV ),
+        .zeraM          ( w_zeraM ),
+        .registraM      ( w_registraM ),
+        .terminou       ( terminou ),
+        .perdeu         ( perdeu ),
+        .estado         ( w_estado )
     );
 
 
@@ -162,7 +164,7 @@ module circuito_jogo_financeiro (
     // --- Display de JOGADAS ---
     display_bcd_4dig_cc dispJogadas (
         .clock  ( clock_ajustado ),
-        .reset  ( ~reset ),
+        .reset  ( ~reset || w_desligaDisplay ),
         .valor  ( w_contagem + 4'd1 ),
         .limite ( 4'd3 ),       // Limite de 3 jogadas por rodada
         .seg    ( seg_jogada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
@@ -172,7 +174,7 @@ module circuito_jogo_financeiro (
     // --- Display de RODADAS ---
     display_bcd_4dig_cc dispRodadas (
         .clock  ( clock_ajustado ),
-        .reset  ( ~reset ),
+        .reset  ( ~reset || w_desligaDisplay ),
         .valor  ( w_rodada + 4'd1 ),
         .limite ( 4'd15 ),      // Total de 15 rodadas
         .seg    ( seg_rodada ), // Conectar aos pinos A-DP do display 1 (ativo alto)
