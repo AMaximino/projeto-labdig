@@ -48,6 +48,7 @@ module unidade_controle (
     parameter verificaFimRodada = 5'b01010;  // A
     parameter proximaJogada     = 5'b01011;  // B
     parameter novaRodada        = 5'b01100;  // C
+    parameter verPerdeuDespesa  = 5'b01110;  // E
 
 
     parameter registraDisplay   = 5'b11010;
@@ -94,9 +95,11 @@ module unidade_controle (
             espera:            Eprox = (acao_pulso) ? registraAcao : ((display_pulso) ? registraDisplay : espera);
             registraAcao:      Eprox = processarAcao;
             processarAcao:     Eprox = verificaPerdeu;
-            aplicarDespesa:    Eprox = verificaFim;
+            
             verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
             jogadaOuAcao:      Eprox = (eh_jogada) ? aplicarDespesa : espera;
+            aplicarDespesa:    Eprox = verPerdeuDespesa;
+            verPerdeuDespesa:  Eprox = (fim_perdeu) ? fimPerdeu : verificaFim;
             verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
             verificaFimRodada: Eprox = (fim_rodada) ? novaRodada : proximaJogada;
             proximaJogada:     Eprox = espera;

@@ -31,13 +31,13 @@ assign seletor_valido = (seletor_item != 0) && ((seletor_item & (seletor_item - 
 initial begin
     precos_item[0] = 21'd600;   // carro 60k, lembrando q é x100
     precos_item[1] = 21'd1000;  // carro 100k
-    precos_item[2] = 21'd2500;  // carro 200k
+    precos_item[2] = 21'd2000;  // carro 200k
     precos_item[3] = 21'd5000;  // casa 500k
     precos_item[4] = 21'd9000;  // casa 900k
     precos_item[5] = 21'd19000; // casa 1900k
     precos_item[6] = 21'd120;   // pc gamer 12k
     precos_item[7] = 21'd80;    // coleçao de jogos de tabuleiro 8k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
-    precos_item[8] = 21'd200;   // colecao de livros -> implementar futuramente algo q de pra ficar comprando e faça show de luz
+    precos_item[8] = 21'd200;   // colecao de livros 20k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
     precos_item[9] = 21'd420;   // colecao de legos 42k -> implementar futuramente algo q de pra ficar comprando e faça show de luz
 end
 
@@ -50,8 +50,8 @@ initial begin
     despesas_item[5] = 21'd60;  // casa 1900k -> despesa 6000
     despesas_item[6] = 21'd0;   // pc gamer 12k -> sem despesa
     despesas_item[7] = 21'd0;   // colecao de jogos de tabuleiro 8k -> sem despesa
-    despesas_item[8] = 21'd0;   // colecao de legos 42k -> sem despesa
-    despesas_item[9] = 21'd0;   // viajar pelo mundo 35k -> sem despesa
+    despesas_item[8] = 21'd0;   // colecao de livros 20k -> sem despesa
+    despesas_item[9] = 21'd0;   // colecao de legos 42k -> sem despesa
 end
 
 always @(*) begin
