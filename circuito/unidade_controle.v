@@ -134,12 +134,6 @@ module unidade_controle (
         registraV        = (Eatual == inicializar || Eatual == processarAcao || Eatual == aplicarDespesa || Eatual == novaRodada) ? 1'b1 : 1'b0;
         zeraM            = (Eatual == start) ? 1'b1 : 1'b0;
         registraM        = (Eatual == registraModo || Eatual == fim || Eatual == fimPerdeu) ? 1'b1 : 1'b0;
-        /*registraV[0]     =
-        registraV[1]     =
-        registraV[2]     =
-        registraV[3]     =
-        registraV[4]     =
-        registraV[5]     =*/
         terminou         = (Eatual == fim) ? 1'b1 : 1'b0;
         perdeu           = (Eatual == fimPerdeu) ? 1'b1 : 1'b0;
         
