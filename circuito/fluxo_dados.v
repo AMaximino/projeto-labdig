@@ -38,7 +38,16 @@ module fluxo_dados (
 
     output ultima_rodada,
     output [23:0] dinheiro,
-    output [9:0] itens_out
+    output [9:0] itens_out,
+    output reg telemetry_send,
+    output reg [7:0] telemetry_event,
+    output reg [1:0] telemetry_status,
+    output reg [3:0] telemetry_item,
+    output signed [20:0] telemetry_balance,
+    output signed [20:0] telemetry_salary,
+    output signed [20:0] telemetry_investment,
+    output signed [20:0] telemetry_fixed_expenses,
+    output signed [20:0] telemetry_unique_expenses
 );
 
     //em complemento de 2 -> bit 21 = 1 indica negativo
@@ -60,6 +69,13 @@ module fluxo_dados (
     wire [5:0] acoes_out;
 
     assign itens_out = itens;
+    assign telemetry_balance = saldo;
+    assign telemetry_salary = salario;
+    assign telemetry_investment = valorInvestido;
+    assign telemetry_fixed_expenses = gastosFixos;
+    assign telemetry_unique_expenses = gastosUnicos;
+
+    reg terminal_sent;
 
 /////////////display/////////////////////////////////
     wire sel_display;
@@ -164,6 +180,7 @@ module fluxo_dados (
     wire [20:0] gastosFixos_proc;
     wire [20:0] gastosUnicos_proc;
     wire [9:0]  itens_proc;
+    wire acao_aceita;
     processador_acao pa (
         .saldo_in            ( saldo ),
         .salario_in          ( salario ),
@@ -179,8 +196,82 @@ module fluxo_dados (
         .valorInvestido_out  ( valorInvestido_proc ),
         .gastosFixos_out     ( gastosFixos_proc ),
         .gastosUnicos_out    ( gastosUnicos_proc ),
-        .itens_out           ( itens_proc )
+        .itens_out           ( itens_proc ),
+        .acao_aceita         ( acao_aceita )
     );
+
+    function [3:0] item_id;
+        input [9:0] seletor;
+        begin
+            case (seletor)
+                10'b0000000001: item_id = 4'd1;
+                10'b0000000010: item_id = 4'd2;
+                10'b0000000100: item_id = 4'd3;
+                10'b0000001000: item_id = 4'd4;
+                10'b0000010000: item_id = 4'd5;
+                10'b0000100000: item_id = 4'd6;
+                10'b0001000000: item_id = 4'd7;
+                10'b0010000000: item_id = 4'd8;
+                10'b0100000000: item_id = 4'd9;
+                10'b1000000000: item_id = 4'd10;
+                default: item_id = 4'd0;
+            endcase
+        end
+    endfunction
+
+    always @(posedge clock) begin
+        if (rstED) begin
+            telemetry_send <= 1'b0;
+            telemetry_event <= 8'd0;
+            telemetry_status <= 2'd0;
+            telemetry_item <= 4'd0;
+            terminal_sent <= 1'b0;
+        end else if (init) begin
+            telemetry_send <= 1'b1;
+            telemetry_event <= 8'd1;
+            telemetry_status <= 2'd0;
+            telemetry_item <= 4'd0;
+            terminal_sent <= 1'b0;
+        end else begin
+            telemetry_send <= 1'b0;
+            if (processaE && (acoes_out != 6'b010000) && (acoes_out != 6'b100000)) begin
+                telemetry_send <= 1'b1;
+                telemetry_item <= item_id(seletor_item);
+                telemetry_status <= acao_aceita ? 2'd1 : 2'd2;
+                case (acoes_out)
+                    6'b010000: telemetry_event <= 8'd2;
+                    6'b100000: telemetry_event <= 8'd3;
+                    6'b001000: telemetry_event <= 8'd4;
+                    6'b000100: telemetry_event <= 8'd5;
+                    6'b000010: telemetry_event <= acao_aceita ? 8'd6 : 8'd7;
+                    6'b000001: telemetry_event <= acao_aceita ? 8'd8 : 8'd9;
+                    default:   telemetry_event <= 8'd0;
+                endcase
+            end else if (despesa) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= acoes_out == 6'b010000 ? 8'd2 : 8'd3;
+                telemetry_status <= 2'd1;
+                telemetry_item <= 4'd0;
+            end else if (rende) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= 8'd11;
+                telemetry_status <= 2'd0;
+                telemetry_item <= 4'd0;
+            end else if (!terminal_sent && fim_jogo) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= 8'd12;
+                telemetry_status <= 2'd0;
+                telemetry_item <= 4'd0;
+                terminal_sent <= 1'b1;
+            end else if (!terminal_sent && fim_perdeu) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= 8'd13;
+                telemetry_status <= 2'd0;
+                telemetry_item <= 4'd0;
+                terminal_sent <= 1'b1;
+            end
+        end
+    end
 
     wire [20:0] saldo_evento;
     wire [20:0] salario_evento;

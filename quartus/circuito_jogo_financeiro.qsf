@@ -197,6 +197,7 @@ set_global_assignment -name VERILOG_FILE ../circuito/edge_detector.v
 set_global_assignment -name VERILOG_FILE ../circuito/display6digitos.v
 set_global_assignment -name VERILOG_FILE ../circuito/display_4_digitos.v
 set_global_assignment -name VERILOG_FILE ../circuito/contador_modulo_n.v
+set_global_assignment -name VERILOG_FILE ../circuito/telemetria_uart.v
 set_global_assignment -name VERILOG_FILE ../circuito/contador_m.v
 set_global_assignment -name VERILOG_FILE ../circuito/contador_163.v
 set_global_assignment -name VERILOG_FILE ../circuito/comparador_85.v

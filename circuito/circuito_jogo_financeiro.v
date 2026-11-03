@@ -22,7 +22,8 @@ module circuito_jogo_financeiro (
     output ultima_jogada,
     output ultima_rodada,
     output terminou,
-    output perdeu
+    output perdeu,
+    output uart_tx
 );
     
 
@@ -58,7 +59,16 @@ module circuito_jogo_financeiro (
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
-	 
+    wire telemetry_send;
+    wire [7:0] telemetry_event;
+    wire [1:0] telemetry_status;
+    wire [3:0] telemetry_item;
+    wire signed [20:0] telemetry_balance;
+    wire signed [20:0] telemetry_salary;
+    wire signed [20:0] telemetry_investment;
+    wire signed [20:0] telemetry_fixed_expenses;
+    wire signed [20:0] telemetry_unique_expenses;
+
 	wire clock_ajustado;
 
     //assign estado = w_estado;
@@ -110,7 +120,34 @@ module circuito_jogo_financeiro (
 
         .ultima_rodada  ( ultima_rodada ),
         .dinheiro       ( dinheiro ),
-        .itens_out      ( indicador_itens )
+        .itens_out      ( indicador_itens ),
+        .telemetry_send ( telemetry_send ),
+        .telemetry_event ( telemetry_event ),
+        .telemetry_status ( telemetry_status ),
+        .telemetry_item ( telemetry_item ),
+        .telemetry_balance ( telemetry_balance ),
+        .telemetry_salary ( telemetry_salary ),
+        .telemetry_investment ( telemetry_investment ),
+        .telemetry_fixed_expenses ( telemetry_fixed_expenses ),
+        .telemetry_unique_expenses ( telemetry_unique_expenses )
+    );
+
+    telemetria_uart uart_telemetria (
+        .clock          ( clock ),
+        .reset          ( ~reset ),
+        .event_send     ( telemetry_send ),
+        .event_code     ( telemetry_event ),
+        .event_status   ( telemetry_status ),
+        .item_id        ( telemetry_item ),
+        .balance        ( telemetry_balance ),
+        .salary         ( telemetry_salary ),
+        .investment     ( telemetry_investment ),
+        .fixed_expenses ( telemetry_fixed_expenses ),
+        .unique_expenses( telemetry_unique_expenses ),
+        .inventory_mask ( indicador_itens ),
+        .round_index    ( w_rodada ),
+        .move_index     ( w_contagem ),
+        .tx             ( uart_tx )
     );
 
     unidade_controle uc (

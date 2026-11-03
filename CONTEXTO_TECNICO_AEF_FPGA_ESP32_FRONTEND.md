@@ -1,7 +1,7 @@
-# Aventura Financeira Evolution — contexto para FPGA, ESP32 e interface
+# Aventura Financeira Evolution — contexto para FPGA, ESP8266 e interface
 
 Este documento é um handoff técnico para desenvolver a telemetria do jogo sem
-substituir nem deslocar as regras que já são executadas na FPGA. FPGA, ESP32,
+substituir nem deslocar as regras que já são executadas na FPGA. FPGA, ESP8266,
 backend e front-end devem ser implementáveis separadamente, mas precisam
 compartilhar o contrato de dados descrito aqui.
 
@@ -10,7 +10,7 @@ compartilhar o contrato de dados descrito aqui.
 - A FPGA continua sendo a autoridade da partida: lê os botões físicos, aplica
   as regras, atualiza saldo, inventário, rodada e jogada, e decide se uma ação
   foi aceita ou recusada.
-- A ESP32 atua como ponte de comunicação. Ela recebe telemetria da FPGA por
+- A ESP8266 atua como ponte de comunicação. Ela recebe telemetria da FPGA por
   UART, converte-a para JSON e publica no MQTT. Não decide compras nem recalcula
   o estado do jogo.
 - O backend recebe os eventos publicados no broker, valida e registra a sessão
@@ -29,7 +29,7 @@ Botões/sensores físicos
 FPGA (regras e estado autoritativos)
           │ UART TX — 115200, 8-N-1
           ▼
-ESP32 (ponte UART → JSON)
+ESP8266 (ponte UART → JSON)
           │ Wi-Fi / MQTT publish
           ▼
 Broker MQTT ──► Backend (subscriber, validação, histórico)
@@ -41,7 +41,7 @@ Broker MQTT ──► Backend (subscriber, validação, histórico)
 O projeto atual já possui uma conexão MQTT sobre WebSocket diretamente no
 navegador. Ela serve como caminho de demonstração/compatibilidade, mas não é um
 backend de aplicação. Para a arquitetura acima, a implementação futura deve
-adicionar um modo WebSocket do backend e deixar a FPGA/ESP32 independentes do
+adicionar um modo WebSocket do backend e deixar a FPGA/ESP8266 independentes do
 protocolo interno do navegador.
 
 ## 2. Contexto do jogo existente
@@ -53,13 +53,17 @@ Os arquivos Verilog atuais são a referência para preservar a lógica:
   `indicador_itens`, `ultima_jogada`, `ultima_rodada`, `terminou` e `perdeu`.
 - `circuito/fluxo_dados.v`: registra o saldo, salário, investimento, despesas e
   máscara de itens; liga o processador de ações/eventos; controla contadores.
-- `circuito/unidade_controle.v`: FSM que inicializa, espera botões, processa a
-  ação, verifica falência e encerra jogadas/rodadas.
+- `circuito/unidade_controle.v`: máquina de Moore com estados separados e
+  nomes explícitos para iniciar, esperar, registrar, processar, verificar e
+  encerrar. As saídas dependem somente do estado atual; preservar esse padrão
+  ao alterar a sequência do jogo. Não juntar estados de registro, processamento
+  e verificação só para reduzir a quantidade: a sequência explícita facilita
+  simulação e diagnóstico.
 - `circuito/processador_acao.v`: ações e catálogo de preços/despesas.
 - `circuito/processador_evento.v`: aplica rendimento e despesas no fluxo de
   eventos/rodadas.
 - `circuito/inicializador.v`: valores iniciais.
-- `frontend/docs/AEX5_T6BA6_Spec.pdf`: especifica FPGA → UART → ESP32 → MQTT,
+- `frontend/docs/AEX5_T6BA6_Spec.pdf`: especifica FPGA → UART → ESP8266 → MQTT,
   dashboard, registro da sessão e clareza/acessibilidade para pessoas com TEA.
 - `frontend/docs/Semana1_T6BA6_Relato.pdf`: relata a arquitetura e o fluxo de
   dados/FSM da implementação.
@@ -86,7 +90,7 @@ Os arquivos Verilog atuais são a referência para preservar a lógica:
 Os valores de dinheiro da RTL não são reais nem centavos: o comentário do
 `inicializador.v` associa `150` a R$ 15.000, `64` a R$ 6.400 e `40` a R$ 4.000.
 Portanto, **1 unidade interna RTL equivale a R$ 100,00**. Para transportar
-dinheiro como centavos no JSON, a ESP32 deve converter:
+dinheiro como centavos no JSON, a ESP8266 deve converter:
 
 ```text
 valor_centavos = valor_unidades_rtl × 10.000
@@ -96,65 +100,87 @@ Exemplo: saldo RTL `150` → `1.500.000` centavos → R$ 15.000,00. Não enviar 
 como se fossem R$ 150,00, centavos ou reais. Se a implementação alterar a escala
 da RTL, documentar a nova escala e atualizar o conversor e os testes juntos.
 
-## 3. Contrato recomendado entre FPGA e ESP32
+## 3. Contrato FPGA-UART-ESP8266 implementado
 
 ### Requisitos já presentes na especificação
 
 - UART transmissora na FPGA, 115200 bps, 8 bits, sem paridade, 1 stop bit
   (8-N-1).
 - A FPGA informa pelo menos código do evento, item e saldo resultante.
-- A ESP32 interpreta a UART, formata JSON e publica no tópico
+- A ESP8266 interpreta a UART, formata JSON e publica no tópico
   `aventura_financeira/telemetria`.
 - Compra recusada deve ser comunicada; não acionar o atuador quando o saldo
   for insuficiente.
 
-### Proposta de enquadramento UART para os dois implementadores
+### Enquadramento UART
 
-O PDF não fixa codificação dos bytes, framing, checksum nem os nomes/valores dos
-códigos de evento. Acordar esse enquadramento entre as implementações antes de
-codificar ambas. Proposta simples de depurar em terminal: uma linha ASCII por
-evento, terminada por `\n`, separada por vírgulas, sem JSON na FPGA:
+O PDF não fixa framing nem códigos de evento. A implementação usa uma linha
+ASCII por evento, terminada por `\n`, separada por vírgulas, sem JSON na FPGA.
+Todos os campos numéricos têm largura fixa:
 
 ```text
-AEF1,seq,event,item_id,balance_raw,salary_raw,investment_raw,fixed_raw,unique_raw,inventory_mask,round0,move0,status\n
+AEF1,000001,06,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,00,00,1\n
 ```
 
-- `AEF1`: identificação e versão do framing UART.
-- `seq`: contador monotônico por sessão/dispositivo.
-- `event`: código numérico estável, a ser definido numa tabela única
-  compartilhada pela FPGA e ESP32; reservar códigos para início, ação aprovada,
-  ação recusada, fim de jogada, fim de rodada, fim de jogo e falência.
-- `item_id`: 0 quando não se aplica; 1–10 conforme catálogo.
-- `*_raw`: unidade interna da RTL descrita acima; inteiros com sinal quando
-  aplicável. A ESP32 converte para centavos.
-- `inventory_mask`: decimal sem sinal ou hexadecimal, desde que a escolha seja
-  única e documentada; a proposta acima usa decimal.
-- `round0` e `move0`: contadores originais base zero; o JSON publicado deve
-  adicionar 1 para apresentar valores humanos.
-- `status`: código explícito de aceito/recusado/normal/fim, definido em conjunto.
+- `AEF1`: identificador/versão do framing; `seq`: sequência decimal de 6
+  dígitos, de 1 a 999999 (reinicia com reset da FPGA).
+- `event`: código decimal de 2 dígitos; `item_id`: índice decimal de 2 dígitos,
+  00 quando não aplicável e 01–10 conforme catálogo.
+- Os cinco campos financeiros são complemento de dois convertido para decimal
+  com sinal explícito e sete dígitos (`+0000150`, `-0000120`), na escala RTL.
+- `inventory_mask`: quatro dígitos hexadecimais maiúsculos, com zeros à
+  esquerda; bit 0 representa o item 1.
+- `round0` e `move0`: contadores base zero, dois dígitos; o JSON soma 1.
+- `status`: `0` normal/fim, `1` ação aceita, `2` ação recusada.
+- A linha tem 76 bytes contando o `\n`. Não há checksum; o firmware rejeita
+  linhas incompletas, compridas, com campos fora do formato ou códigos
+  desconhecidos, mas não consegue detectar toda corrupção que ainda forme
+  caracteres válidos.
+
+Tabela compartilhada de `event`:
+
+| Código | Nome JSON | Significado |
+|---|---|---|
+| 01 | `inicio_sessao` | Estado inicial registrado |
+| 02 | `trabalhar` | Trabalho aceito |
+| 03 | `estudar` | Estudo aceito |
+| 04 | `investir` | Investimento aceito |
+| 05 | `resgatar` | Resgate aceito |
+| 06 / 07 | `compra_aprovada` / `compra_recusada` | Compra aceita / recusada |
+| 08 / 09 | `venda_aprovada` / `venda_recusada` | Venda aceita / recusada |
+| 10 | reservado | `fim_jogada` não é emitido nesta versão |
+| 11 | `fim_rodada` | Rendimento e contador de rodada atualizados |
+| 12 | `fim_jogo` | Fim normal |
+| 13 | `falencia` | Saldo negativo |
 
 A linha completa precisa ser transmitida somente após a FPGA registrar os novos
 valores do evento; não amostrar barramentos combinacionais durante a transição
-da FSM. A UART não deve bloquear nem atrasar o fluxo do jogo. Implementar fila
-ou captura dos dados/evento em registradores e transmissão serial independente.
-Uma falha de Wi-Fi/MQTT não pode interromper os botões ou a lógica local.
+da FSM. A RTL registra evento/status e a UART transmite pelo clock de 50 MHz,
+sem alterar os botões ou displays. `uart_tx` é uma saída de topo nova e ainda
+precisa de uma atribuição QSF para um pino de expansão livre confirmado na
+placa. O nível elétrico depende do banco/padrão IO; confirmar compatibilidade
+com 3,3 V e usar conversão de nível se necessário.
 
-**Não considerar o framing acima um protocolo já existente no repositório.** É
-uma proposta de integração para os implementadores aprovarem antes de congelar
-os dois lados. Qualquer ajuste precisa manter versão/framing explícitos e
-atualizar este documento.
+O firmware ESP8266 usa `SoftwareSerial` RX configurável e buffer de recepção
+de 256 bytes. Ele valida a linha, converte cada unidade RTL para 10.000
+centavos, cria `session_id` ao receber `inicio_sessao` e publica JSON em QoS 0.
+Uma fila RAM comporta quatro mensagens; se excedida, o firmware registra
+descarte no Serial, mas não bloqueia a partida. Testar a recepção a 115200 baud
+com Wi-Fi ativo na placa escolhida; em caso de perda, usar o RX UART0 de
+hardware e desligar o diagnóstico USB. O backend é idempotente para mensagens
+repetidas.
 
 ## 4. Contrato recomendado MQTT → backend → front-end
 
 ### MQTT
 
 - Tópico de telemetria: `aventura_financeira/telemetria`.
-- Direção ESP32 → broker; o front-end/backend não enviam comandos ao tópico.
-- MQTT QoS 0 ou 1; usar QoS 1 se a entrega do evento for mais importante que a
-  simplicidade. Tornar o processamento idempotente por `device_id + session_id
+- Direção ESP8266 → broker; o front-end/backend não enviam comandos ao tópico.
+- O firmware atual usa MQTT QoS 0. O backend torna o processamento idempotente
+  por `device_id + session_id
   + seq`.
 - Publicar JSON UTF-8. O broker deve ser configurado para acesso somente de
-  publicação para a ESP32 e somente de leitura para o backend.
+  publicação para a ESP8266 e somente de leitura para o backend.
 
 Exemplo de estado após uma compra aprovada (valores monetários sempre em
 **centavos de BRL**, não em unidade interna Verilog):
@@ -188,9 +214,10 @@ Convenções:
 - `item_id` é o índice 1–10; `inventario_mask` usa bit 0 para item 1.
 - `delta_saldo_centavos` é o delta efetivo assinado (positivo quando o saldo
   aumenta). Recusa tem delta zero, estado inalterado e `status: "recusada"`.
-- `event` recomendado: `inicio_sessao`, `trabalhar`, `estudar`, `investir`,
+- `event` permitido: `inicio_sessao`, `trabalhar`, `estudar`, `investir`,
   `resgatar`, `compra_aprovada`, `compra_recusada`, `venda_aprovada`,
-  `fim_jogada`, `fim_rodada`, `fim_jogo`, `falencia`, `snapshot`.
+  `venda_recusada`, `fim_rodada`, `fim_jogo` ou `falencia`. O código 10 está
+  reservado no framing e não é publicado pela FPGA atual.
 - Cada evento deve carregar um snapshot completo dos campos financeiros e do
   inventário. Assim o backend/front não precisam inferir o saldo ou reconstruir
   a máscara a partir de eventos perdidos.
@@ -200,19 +227,21 @@ Convenções:
 
 ### Backend e transporte para o navegador
 
-O backend deve:
+O backend implementado em `backend/`:
 
-1. Assinar o tópico MQTT e validar versão, tipos, limites, campos obrigatórios e
-   duplicidade (`device_id`, `session_id`, `seq`).
-2. Preservar a mensagem recebida; rejeições de schema devem ser registradas
-   como erro observável, não convertidas em um estado financeiro falso.
-3. Persistir eventos por sessão e expor snapshot/histórico; não inventar eventos
-   quando há lacunas na sequência.
-4. Distribuir atualizações ao navegador por WebSocket, por exemplo
-   `ws://localhost:3000/ws/telemetria` em desenvolvimento e `wss://...` em
-   produção. O endpoint e autenticação devem ser configuráveis no front.
-5. Ao conectar um navegador, enviar primeiro o último snapshot válido e depois
-   eventos em tempo real. A desconexão deve mostrar estado claro no painel.
+1. Assina o tópico MQTT, valida versão, tipos, limites, campos obrigatórios e
+   sequência por dispositivo/sessão; mensagens duplicadas ou antigas são
+   ignoradas e lacunas são registradas sem inventar eventos.
+2. Registra erros de JSON/schema no log; valores inválidos não atualizam estado.
+3. Persiste eventos em `backend/data/events.jsonl` e expõe `GET /health`,
+   `GET /api/sessions`, `GET /api/sessions/<device_id>%3A<session_id>/snapshot`
+   e `GET /api/sessions/<device_id>%3A<session_id>/events?limit=100`.
+4. Distribui mensagens em `ws://localhost:3000/ws/telemetria`. Ao conectar,
+   envia `{"type":"snapshot","data":...}` se houver estado e, depois, envelopes
+   `{"type":"event","data":...}`. Configure TLS/autenticação em um proxy antes
+   de disponibilizar fora da rede local.
+5. Se o ESP8266 ainda não sincronizou o relógio, aceita `timestamp: null`, grava
+   o instante de recebimento em `timestamp` e mantém `device_timestamp: null`.
 
 O backend encaminha o JSON canônico (ou um envelope equivalente com
 `type: "snapshot" | "event"` e `data`) sem mudar unidades. O navegador pode
@@ -222,23 +251,15 @@ WebSocket do backend. Ambos os modos são somente de leitura.
 ## 5. Pontos de verificação na RTL antes de transmitir
 
 Preservar a estrutura original e incluir telemetria nos pontos de registro já
-existentes; não substituir a FSM nem transferir regras para a ESP32. A revisão
+existentes; manter a máquina de Moore e não transferir regras para a ESP8266. A revisão
 dos arquivos atuais encontrou questões que os implementadores devem verificar
 antes de chamar o dado de telemetria de "aprovado":
 
-- `processador_acao.v` comenta que compra deve deduzir saldo, mas o bloco
-  `COMPRAR` mostrado subtrai preço sem verificar `saldo_in >= preco`; a
-  especificação exige recusa por saldo insuficiente e LED vermelho. Criar uma
-  decisão explícita de aprovado/recusado na FPGA, sem alterar o saldo,
-  inventário, despesas ou atuador em caso de recusa.
-- O caminho atual de `processador_acao.v` não expõe um pulso/código de evento
-  nem resultado aprovado/recusado dedicado. A FSM/fluxo precisa capturar
-  evento, item e novo snapshot de modo sincronizado ao commit da ação.
-- A interface de topo não expõe os sinais UART nem um barramento de snapshot.
-  Acrescentar uma interface dedicada ou um submódulo UART sem alterar a
-  interface dos botões/displays existentes. Confirmar os pinos/tensão elétrica
-  com o hardware; os arquivos de pinagem não definem por si só o mapeamento
-  UART-to-ESP32.
+- `processador_acao.v` agora exige saldo suficiente para compra e informa
+  aprovação/recusa; em recusa, saldo, inventário e despesas permanecem iguais.
+- `fluxo_dados.v` captura eventos e snapshot após registro; a UART fica em
+  `circuito/telemetria_uart.v`. A saída de topo `uart_tx` não tem pino físico
+  escolhido, pois o mapeamento FPGA→ESP8266 não consta nos arquivos de pinagem.
 - `fluxo_dados.v` tem comparadores de contagem internos e sinais `fim_rodada`,
   `ultima_rodada`; confirmar a sequência exata de três jogadas/quinze rodadas
   em simulação. O framing deve converter contadores zero-based em 1-based sem
@@ -280,16 +301,24 @@ antes de chamar o dado de telemetria de "aprovado":
 
 - Build e simulação preservam inicialização, botões, displays, itens, ordem de
   jogadas/rodadas e encerramento.
+- A FSM de jogo continua Moore; estados mantêm nomes claros e etapas separadas.
+  `fpga/testbench/unidade_controle_moore_tb.v` verifica que entradas não mudam as saídas
+  antes da transição de estado.
+- Executar `vsim -do fpga/testbench/run_all.do` na raiz para os testbenches
+  focados e manter `fpga/testbench/circuito_jogo_financeiro_tb1.v` para a
+  simulação completa do jogo.
 - Cada decisão física gera no máximo um evento UART com sequência crescente e
   snapshot pós-decisão.
 - Compra insuficiente gera evento recusado, sem alteração de saldo/inventário
   nem acionamento do motor.
-- UART 115200 8-N-1 é observável e a perda de rede da ESP32 não bloqueia o jogo.
+- UART 115200 8-N-1 é observável e a perda de rede da ESP8266 não bloqueia o jogo.
 
-### ESP32/backend
+### ESP8266/backend
 
 - Teste com linhas UART válidas, incompletas, corrompidas e desconhecidas; erro
   não deve publicar payload de sucesso.
+- Executar `sh esp8266/testbench/run_tests.sh`; o teste de parser usa o mesmo
+  header incluído pelo firmware e não depende de conexão à placa.
 - Conversão de escala validada: `150` → `1500000` centavos (R$ 15.000,00).
 - MQTT publica no tópico combinado; reconexão Wi-Fi/MQTT não duplica o mesmo
   `seq` na sessão.
@@ -312,15 +341,15 @@ antes de chamar o dado de telemetria de "aprovado":
 - Interface e compatibilidade MQTT atual: `frontend/README.md`,
   `frontend/index.html`, `frontend/app.js` e `frontend/styles.css`
 - Pinagem atualmente registrada: `configuracoes_e_pinagens/` e PDFs na raiz.
-  Confirmar a pinagem elétrica da UART antes de conectar FPGA e ESP32.
+  Confirmar a pinagem elétrica da UART antes de conectar FPGA e ESP8266.
 
 ## 9. Instrução resumida para a IA implementadora
 
 > Leia este handoff e os módulos Verilog/documentos citados antes de editar.
 > Desenvolva a telemetria sem trocar a FSM nem mover a lógica do jogo para a
-> ESP32 ou para o navegador. Entregue separadamente: (1) alterações HDL e
+> ESP8266 ou para o navegador. Entregue separadamente: (1) alterações HDL e
 > testbench para registrar evento/snapshot e transmitir UART 115200 8-N-1;
-> (2) firmware ESP32 que enquadra/valida UART, converte a escala monetária e
+> (2) firmware ESP8266 que enquadra/valida UART, converte a escala monetária e
 > publica JSON versão 1 em `aventura_financeira/telemetria`; (3) testes de cada
 > lado e instruções de ligação/execução. Use a proposta de framing e o schema
 > deste documento, ou explique e atualize antes qualquer incompatibilidade.

@@ -2,7 +2,7 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/clock_ajustado
 add wave -noupdate -height 22 -radix decimal /circuito_jogo_financeiro_tb1/caso
-add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/Eatual
+add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/dut/uc/estado_atual
 add wave -noupdate -divider Entradas
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/reset_in
 add wave -noupdate -height 22 /circuito_jogo_financeiro_tb1/iniciar_in

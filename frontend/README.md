@@ -24,15 +24,33 @@ python3 -m http.server 8000 --directory frontend
 Depois, acesse `http://localhost:8000`. Sem conexão, o painel exibe os valores
 iniciais da demonstração.
 
+## Executar o backend
+
+O caminho FPGA → ESP8266 → MQTT → backend → painel está implementado em pastas
+separadas. Com um broker MQTT disponível, execute o backend:
+
+```sh
+cd backend
+npm install
+MQTT_URL=mqtt://localhost:1883 npm start
+```
+
+Sirva o front-end em outro terminal conforme acima. No botão **Conexão de
+dados**, selecione **Backend do jogo** e use
+`ws://localhost:3000/ws/telemetria`. O backend valida e persiste eventos em
+`backend/data/events.jsonl`; detalhes de configuração estão em
+[`../backend/README.md`](../backend/README.md) e
+[`../esp8266/README.md`](../esp8266/README.md).
+
 ## Fluxo de integração
 
 O fluxo recomendado é:
 
 ```text
-FPGA → UART → ESP32 → MQTT → backend → WebSocket → front-end
+FPGA → UART → ESP8266 → MQTT → backend → WebSocket → front-end
 ```
 
-A FPGA mantém as regras e o estado oficiais do jogo. A ESP32 transforma os
+A FPGA mantém as regras e o estado oficiais do jogo. A ESP8266 transforma os
 eventos da UART em JSON e publica no tópico `aventura_financeira/telemetria`.
 O backend assina esse tópico, valida e registra os dados e os encaminha ao
 navegador. O front-end não envia comandos de volta.
@@ -90,8 +108,12 @@ O inventário é uma máscara de 10 bits: bit 0 representa o item 1 e bit 9 o it
 tela. Recomenda-se que cada evento contenha um snapshot financeiro completo,
 além do identificador de sequência para detectar duplicatas/lacunas.
 
-O documento de integração para as implementações de FPGA, ESP32 e backend fica
+O documento de integração para as implementações de FPGA, ESP8266 e backend fica
 em [`../CONTEXTO_TECNICO_AEF_FPGA_ESP32_FRONTEND.md`](../CONTEXTO_TECNICO_AEF_FPGA_ESP32_FRONTEND.md).
+
+Os testbenches da FPGA para ModelSim estao separados em
+[`../fpga/testbench/`](../fpga/testbench/); o teste do firmware ESP8266 fica em
+[`../esp8266/testbench/`](../esp8266/testbench/).
 
 ## Arquivos e dados
 

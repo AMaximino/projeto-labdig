@@ -33,45 +33,41 @@ module unidade_controle (
     output reg [4:0] estado
 );
 
-    // Define estados
-    parameter start             = 5'b00000;  // 0
-    parameter registraModo      = 5'b00001;  // 1
-    parameter inicializar       = 5'b00010;  // 2
-    parameter preparacao        = 5'b00011;  // 3
-    parameter espera            = 5'b00100;  // 4
-    parameter registraAcao      = 5'b00101;  // 5
-    parameter processarAcao     = 5'b00110;  // 6
-    parameter aplicarDespesa    = 5'b01101;  // D
-    parameter verificaPerdeu    = 5'b00111;  // 7
-    parameter jogadaOuAcao      = 5'b01000;  // 8
-    parameter verificaFim       = 5'b01001;  // 9
-    parameter verificaFimRodada = 5'b01010;  // A
-    parameter proximaJogada     = 5'b01011;  // B
-    parameter novaRodada        = 5'b01100;  // C
-    parameter verPerdeuDespesa  = 5'b01110;  // E
+    localparam [4:0] INICIO                    = 5'b00000;
+    localparam [4:0] ESPERA_INICIO             = 5'b00001;
+    localparam [4:0] INICIALIZA_JOGO           = 5'b00010;
+    localparam [4:0] PREPARA_JOGO              = 5'b00011;
+    localparam [4:0] ESPERA_ACAO               = 5'b00100;
+    localparam [4:0] REGISTRA_ACAO             = 5'b00101;
+    localparam [4:0] PROCESSA_ACAO             = 5'b00110;
+    localparam [4:0] APLICA_DESPESA            = 5'b01101;
+    localparam [4:0] VERIFICA_FALENCIA         = 5'b00111;
+    localparam [4:0] VERIFICA_JOGADA           = 5'b01000;
+    localparam [4:0] VERIFICA_FIM_JOGO         = 5'b01001;
+    localparam [4:0] VERIFICA_FIM_RODADA       = 5'b01010;
+    localparam [4:0] AVANCA_JOGADA             = 5'b01011;
+    localparam [4:0] AVANCA_RODADA             = 5'b01100;
+    localparam [4:0] VERIFICA_FALENCIA_DESPESA = 5'b01110;
+    localparam [4:0] REGISTRA_DISPLAY          = 5'b11010;
+    localparam [4:0] REGISTRA_DISPLAY_FINAL    = 5'b11011;
+    localparam [4:0] REGISTRA_DISPLAY_FALENCIA = 5'b11100;
+    localparam [4:0] FIM_JOGO                  = 5'b11101;
+    localparam [4:0] FIM_FALENCIA              = 5'b11110;
 
-
-    parameter registraDisplay   = 5'b11010;
-    parameter registraDisplayF  = 5'b11011;
-    parameter registraDisplayFP = 5'b11100;
-    parameter fim               = 5'b11101;
-    parameter fimPerdeu         = 5'b11110;
-
-    // Variaveis de estado
-    reg [4:0] Eatual, Eprox;
+    reg [4:0] estado_atual, proximo_estado;
     reg prep_count;
 
     // contador para estados que duram mais de 1 ciclo de clock
     always @(posedge clock or posedge reset) begin
         if (reset) begin
-            Eatual <= start;
+            estado_atual <= INICIO;
             prep_count <= 0;
         end
         else begin
-            Eatual <= Eprox;
+            estado_atual <= proximo_estado;
 
-            // Contador ativo no estado preparacao
-            if (Eatual == preparacao)
+            // Contador ativo enquanto o jogo esta sendo preparado.
+            if (estado_atual == PREPARA_JOGO)
                 prep_count <= prep_count + 1;
             else
                 prep_count <= 0;
@@ -80,65 +76,68 @@ module unidade_controle (
 
     // Logica de proximo estado
     always @* begin
-        Eprox = Eatual;
-        case (Eatual)
-            start:            Eprox = registraModo;
-            registraModo:     Eprox = (iniciar) ? inicializar : registraModo;
-            inicializar:      Eprox = preparacao;
-            preparacao: /*begin
-                            if (prep_count == 1)
-                                Eprox = espera;
-                            else
-                                Eprox = preparacao;
-                        end */ 
-                               Eprox = espera;
-            espera:            Eprox = (acao_pulso) ? registraAcao : ((display_pulso) ? registraDisplay : espera);
-            registraAcao:      Eprox = processarAcao;
-            processarAcao:     Eprox = verificaPerdeu;
-            
-            verificaPerdeu:    Eprox = (fim_perdeu) ? fimPerdeu : jogadaOuAcao;
-            jogadaOuAcao:      Eprox = (eh_jogada) ? aplicarDespesa : espera;
-            aplicarDespesa:    Eprox = verPerdeuDespesa;
-            verPerdeuDespesa:  Eprox = (fim_perdeu) ? fimPerdeu : verificaFim;
-            verificaFim:       Eprox = (fim_jogo) ? fim : verificaFimRodada;
-            verificaFimRodada: Eprox = (fim_rodada) ? novaRodada : proximaJogada;
-            proximaJogada:     Eprox = espera;
-            novaRodada:        Eprox = espera;
-            registraDisplay:   Eprox = espera;
-            registraDisplayF:  Eprox = fim;
-            registraDisplayFP: Eprox = fimPerdeu;
-            fim:               Eprox = (iniciar) ? inicializar : ((display_pulso) ? registraDisplayF : fim);
-            fimPerdeu:         Eprox = (iniciar) ? inicializar : ((display_pulso) ? registraDisplayFP : fimPerdeu);
-
-            default:           Eprox = start;
+        proximo_estado = estado_atual;
+        case (estado_atual)
+            INICIO:                    proximo_estado = ESPERA_INICIO;
+            ESPERA_INICIO:             proximo_estado = iniciar ? INICIALIZA_JOGO : ESPERA_INICIO;
+            INICIALIZA_JOGO:           proximo_estado = PREPARA_JOGO;
+            PREPARA_JOGO:              proximo_estado = ESPERA_ACAO;
+            ESPERA_ACAO:               proximo_estado = acao_pulso ? REGISTRA_ACAO :
+                                                        display_pulso ? REGISTRA_DISPLAY : ESPERA_ACAO;
+            REGISTRA_ACAO:             proximo_estado = PROCESSA_ACAO;
+            PROCESSA_ACAO:             proximo_estado = VERIFICA_FALENCIA;
+            VERIFICA_FALENCIA:         proximo_estado = fim_perdeu ? FIM_FALENCIA : VERIFICA_JOGADA;
+            VERIFICA_JOGADA:           proximo_estado = eh_jogada ? APLICA_DESPESA : ESPERA_ACAO;
+            APLICA_DESPESA:            proximo_estado = VERIFICA_FALENCIA_DESPESA;
+            VERIFICA_FALENCIA_DESPESA: proximo_estado = fim_perdeu ? FIM_FALENCIA : VERIFICA_FIM_JOGO;
+            VERIFICA_FIM_JOGO:         proximo_estado = fim_jogo ? FIM_JOGO : VERIFICA_FIM_RODADA;
+            VERIFICA_FIM_RODADA:       proximo_estado = fim_rodada ? AVANCA_RODADA : AVANCA_JOGADA;
+            AVANCA_JOGADA:             proximo_estado = ESPERA_ACAO;
+            AVANCA_RODADA:             proximo_estado = ESPERA_ACAO;
+            REGISTRA_DISPLAY:          proximo_estado = ESPERA_ACAO;
+            REGISTRA_DISPLAY_FINAL:    proximo_estado = FIM_JOGO;
+            REGISTRA_DISPLAY_FALENCIA: proximo_estado = FIM_FALENCIA;
+            FIM_JOGO:                  proximo_estado = iniciar ? INICIALIZA_JOGO :
+                                                        display_pulso ? REGISTRA_DISPLAY_FINAL : FIM_JOGO;
+            FIM_FALENCIA:              proximo_estado = iniciar ? INICIALIZA_JOGO :
+                                                        display_pulso ? REGISTRA_DISPLAY_FALENCIA : FIM_FALENCIA;
+            default:                   proximo_estado = INICIO;
         endcase
     end
 
-    // Logica de saida (maquina Moore)
+    // Saidas Moore: dependem somente do estado atual.
     always @* begin
-        desligaDisplay   = (Eatual == registraModo) ? 1'b1 : 1'b0;
-        rstED            = (Eatual == start) ? 1'b1 : 1'b0;
-        init             = (Eatual == inicializar) ? 1'b1 : 1'b0;
-        processaE        = (Eatual == processarAcao) ? 1'b1 : 1'b0;
-        zeraCJ           = (Eatual == start || Eatual == preparacao || Eatual == novaRodada) ? 1'b1 : 1'b0;
-        rende            = (Eatual == novaRodada) ? 1'b1 : 1'b0;
-        despesa          = (Eatual == aplicarDespesa) ? 1'b1 : 1'b0;
-        contaCJ          = (Eatual == proximaJogada) ? 1'b1 : 1'b0;
-        zeraCR           = (Eatual == start || Eatual == preparacao) ? 1'b1 : 1'b0;
-        contaCR          = (Eatual == novaRodada) ? 1'b1 : 1'b0;
-        zeraD            = (Eatual == start) ? 1'b1 : 1'b0;
-        registraD        = (Eatual == registraDisplay || Eatual == registraDisplayF || Eatual == registraDisplayFP) ? 1'b1 : 1'b0;
-        zeraA            = (Eatual == start) ? 1'b1 : 1'b0;
-        registraA        = (Eatual == registraAcao) ? 1'b1 : 1'b0;
-        zeraV            = (Eatual == start) ? 1'b1 : 1'b0;
-        registraV        = (Eatual == inicializar || Eatual == processarAcao || Eatual == aplicarDespesa || Eatual == novaRodada) ? 1'b1 : 1'b0;
-        zeraM            = (Eatual == start) ? 1'b1 : 1'b0;
-        registraM        = (Eatual == registraModo || Eatual == fim || Eatual == fimPerdeu) ? 1'b1 : 1'b0;
-        terminou         = (Eatual == fim) ? 1'b1 : 1'b0;
-        perdeu           = (Eatual == fimPerdeu) ? 1'b1 : 1'b0;
+        desligaDisplay   = estado_atual == ESPERA_INICIO;
+        rstED            = estado_atual == INICIO;
+        init             = estado_atual == INICIALIZA_JOGO;
+        processaE        = estado_atual == PROCESSA_ACAO;
+        zeraCJ           = estado_atual == INICIO || estado_atual == PREPARA_JOGO ||
+                           estado_atual == AVANCA_RODADA;
+        rende            = estado_atual == AVANCA_RODADA;
+        despesa          = estado_atual == APLICA_DESPESA;
+        contaCJ          = estado_atual == AVANCA_JOGADA;
+        zeraCR           = estado_atual == INICIO || estado_atual == PREPARA_JOGO;
+        contaCR          = estado_atual == AVANCA_RODADA;
+        zeraD            = estado_atual == INICIO;
+        registraD        = estado_atual == REGISTRA_DISPLAY ||
+                           estado_atual == REGISTRA_DISPLAY_FINAL ||
+                           estado_atual == REGISTRA_DISPLAY_FALENCIA;
+        zeraA            = estado_atual == INICIO;
+        registraA        = estado_atual == REGISTRA_ACAO;
+        zeraV            = estado_atual == INICIO;
+        registraV        = estado_atual == INICIALIZA_JOGO ||
+                           estado_atual == PROCESSA_ACAO ||
+                           estado_atual == APLICA_DESPESA ||
+                           estado_atual == AVANCA_RODADA;
+        zeraM            = estado_atual == INICIO;
+        registraM        = estado_atual == ESPERA_INICIO ||
+                           estado_atual == FIM_JOGO ||
+                           estado_atual == FIM_FALENCIA;
+        terminou         = estado_atual == FIM_JOGO;
+        perdeu           = estado_atual == FIM_FALENCIA;
         
         // Saida de depuracao (estado)
-        estado           = Eatual;
+        estado           = estado_atual;
     end
 
 endmodule

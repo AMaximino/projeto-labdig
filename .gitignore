@@ -69,3 +69,8 @@ quartus/*.elf
 *.out
 *.vvp
 .history/
+
+# Configuracoes locais da integracao
+esp8266/aef_bridge/config.h
+backend/data/
+backend/node_modules/

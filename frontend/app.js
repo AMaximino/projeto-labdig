@@ -179,7 +179,7 @@
     ui.connectionPill.className = `connection-pill${connected ? " connected" : error ? " error" : " demo"}`;
     ui.sidebarDot.className = `device-dot${connected ? " connected" : error ? " error" : ""}`;
     ui.connectionLabel.textContent = connected
-      ? state.transport === "backend" ? "Backend conectado" : "ESP32 conectada"
+      ? state.transport === "backend" ? "Backend conectado" : "ESP8266 conectada"
       : error ? "Falha na conexão" : "Modo demonstração";
     ui.sidebarTitle.textContent = connected ? "Recebendo dados" : error ? "Conexão indisponível" : "Modo demonstração";
     ui.sidebarSubtitle.textContent = connected
@@ -308,8 +308,10 @@
     $("#game-move-value").textContent = String(Math.min(Math.max(state.move, 1), 3));
     setMoneyDisplay("#game-balance-value", state.metricAvailable.balance ? state.balance : Number.NaN);
     $("#game-balance-hint").textContent = state.metricAvailable.balance
-      ? state.mode === "connected" ? "Saldo atualizado pela ESP32." : "Esse é o valor que você tem para usar."
-      : "Aguardando o primeiro dado da ESP32.";
+      ? state.mode === "connected"
+        ? state.transport === "backend" ? "Saldo recebido pelo backend do jogo." : "Saldo recebido pelo ESP8266."
+        : "Esse é o valor que você tem para usar."
+      : "Aguardando o primeiro dado do jogo.";
     setMoneyDisplay("#game-income-value", state.metricAvailable.salary ? state.salary : Number.NaN);
     setMoneyDisplay("#game-investment-value", state.metricAvailable.investments ? state.investments : Number.NaN);
     setMoneyDisplay("#game-expenses-value", state.metricAvailable.fixedExpenses ? state.fixedExpenses : Number.NaN);
@@ -495,7 +497,7 @@
     setMoneyDisplay("#balance-value", state.metricAvailable.balance ? state.balance : Number.NaN);
     $("#balance-caption").textContent = state.metricAvailable.balance
       ? "Esse é o valor que você tem para usar."
-      : "Aguardando o primeiro dado da ESP32.";
+      : "Aguardando o primeiro dado do jogo.";
     setMoneyDisplay("#income-value", state.metricAvailable.salary ? state.salary : Number.NaN);
     setMoneyDisplay("#investment-value", state.metricAvailable.investments ? state.investments : Number.NaN);
     ui.yield.textContent = state.metricAvailable.yield ? `${displayCompactMoney(state.yield)} de rendimento` : "Aguardando dados";
@@ -808,7 +810,7 @@
           ui.connectButton.disabled = false;
           if (!state.hasLiveConnection) resetLiveSession();
           setConnection("connected", `Conectado e ouvindo ${topic}.`);
-          showToast("Conexão ativa. Aguardando dados da ESP32.");
+          showToast("Conexão ativa. Aguardando dados do jogo.");
         });
       });
       client.on("message", (receivedTopic, message) => {

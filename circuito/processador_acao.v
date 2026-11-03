@@ -14,7 +14,8 @@ module processador_acao (
     output reg signed [20:0] valorInvestido_out,
     output reg signed [20:0] gastosFixos_out,
     output reg signed [20:0] gastosUnicos_out,
-    output reg [9:0] itens_out //atualizar os itens q o jogador ja tem
+    output reg [9:0] itens_out, //atualizar os itens q o jogador ja tem
+    output reg acao_aceita
 );
 wire signed [20:0] custo_estudo = 20'd120;      // 12.000
 wire signed [20:0] investimento = 20'd10;       // 1.000
@@ -104,6 +105,7 @@ localparam ESTUDAR    = 6'b100000;
         gastosFixos_out = gastosFixos_in;
         gastosUnicos_out = gastosUnicos_in;
         itens_out = itens_in;
+        acao_aceita = 1'b0;
 
         if (processaE) begin
             case(acao)
@@ -113,14 +115,16 @@ localparam ESTUDAR    = 6'b100000;
                         gastosFixos_out = gastosFixos_in - despesa;
                         gastosUnicos_out = gastosUnicos_in - preco;
                         itens_out = itens_in & (~seletor_item); //atualiza os itens q o jogador tem, removendo o item selecionado
+                        acao_aceita = 1'b1;
                     end
                 end
                 COMPRAR: begin
-                    if (seletor_valido && ((itens_in & seletor_item) == 10'b0)) begin //ve se ele nao tem o item ainda
+                    if (seletor_valido && ((itens_in & seletor_item) == 10'b0) && saldo_in >= preco) begin // valida item, duplicidade e saldo disponível
                         saldo_out = saldo_in - preco; //quando compra um item, tem que descontar o custo do item do saldo
                         gastosFixos_out = gastosFixos_in + despesa;
                         gastosUnicos_out = gastosUnicos_in + preco;
                         itens_out = itens_in | seletor_item; //atualiza os itens q o jogador tem, adicionando o item selecionado
+                        acao_aceita = 1'b1;
                     end
                 end
                 RESGATAR: begin
@@ -132,17 +136,21 @@ localparam ESTUDAR    = 6'b100000;
                         saldo_out = saldo_in + valorInvestido_in;
                         valorInvestido_out = 21'b0;
                     end
+                    acao_aceita = 1'b1;
                 end
                 INVESTIR: begin
                     saldo_out = saldo_in - investimento;
                     valorInvestido_out = valorInvestido_in + investimento;
+                    acao_aceita = 1'b1;
                 end
                 TRABALHAR: begin
                     saldo_out = saldo_in + salario_in;
+                    acao_aceita = 1'b1;
                 end
                 ESTUDAR: begin
                     saldo_out = saldo_in - custo_estudo;
                     salario_out = salario_in + incremento_salario;
+                    acao_aceita = 1'b1;
                 end
             endcase
         end

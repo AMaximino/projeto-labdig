@@ -1,8 +1,8 @@
 vlib work
 vmap work work
 
-vlog ../circuito/*.v
-vlog ../tb/*.v
+vlog -sv ../circuito/*.v
+vlog -sv ../fpga/testbench/*.v
 
 vsim circuito_jogo_financeiro_tb1
 
