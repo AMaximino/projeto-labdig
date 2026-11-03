@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1040" role="img" aria-labelledby="title description">
+  <title id="title">Diagrama de transição de estados da unidade de controle</title>
+  <desc id="description">Máquina de Moore que inicia e prepara o jogo, aguarda ações ou seleção de display, processa ações, verifica falência e encerramento, avança jogadas e rodadas e mantém os estados terminais até reiniciar.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 5 L0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .state { stroke-width: 2; rx: 12; }
+      .state-label { font-size: 15px; font-weight: 700; text-anchor: middle; }
+      .state-kind { font-size: 12px; text-anchor: middle; fill: #475569; }
+      .edge { fill: none; stroke: #334155; stroke-width: 2.4; marker-end: url(#arrow); }
+      .join { fill: none; stroke: #334155; stroke-width: 2.4; }
+      .restart { fill: none; stroke: #7c3aed; stroke-width: 2.4; stroke-dasharray: 8 6; marker-end: url(#arrow); }
+      .label { font-size: 13px; font-weight: 700; text-anchor: middle; fill: #334155; }
+      .note { font-size: 14px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1040" rx="18" fill="#f8fafc"/>
+  <text x="54" y="52" class="title">Unidade de controle — transições de estado</text>
+  <text x="54" y="80" class="subtitle">FSM de Moore: as saídas de controle dependem do estado atual. As setas indicam as condições avaliadas para o próximo estado.</text>
+
+  <g>
+    <path class="edge" d="M230 190 H265"/>
+    <path class="edge" d="M445 190 H480"/>
+    <path class="edge" d="M660 190 H695"/>
+    <path class="edge" d="M875 190 H910"/>
+    <path class="edge" d="M1090 190 H1125"/>
+    <path class="edge" d="M1305 190 H1340"/>
+    <path class="edge" d="M1430 224 V315"/>
+    <path class="edge" d="M1365 384 H1325"/>
+    <path class="edge" d="M1145 384 H1105"/>
+    <path class="edge" d="M925 384 H885"/>
+    <path class="edge" d="M705 384 H665"/>
+    <path class="edge" d="M485 384 H445"/>
+    <path class="edge" d="M1455 385 V560"/>
+    <path class="edge" d="M795 418 V520 H1450 V560"/>
+    <path class="edge" d="M575 420 V490 H1160 V560"/>
+    <path class="edge" d="M355 420 V490 H270 V560"/>
+    <path class="edge" d="M355 420 V510 H510 V560"/>
+    <path class="edge" d="M1000 224 V500 H840 V560"/>
+    <path class="edge" d="M1235 350 V260 H1090 V190"/>
+    <path class="edge" d="M80 710 V250 H1000 V224"/>
+    <path class="join" d="M270 628 V710 H80"/>
+    <path class="join" d="M510 628 V710 H80"/>
+    <path class="join" d="M840 628 V710 H80"/>
+    <path class="edge" d="M1160 628 V700"/>
+    <path class="edge" d="M1450 628 V700"/>
+    <path class="edge" d="M1160 700 V760"/>
+    <path class="edge" d="M1450 700 V760"/>
+    <path class="edge" d="M1250 794 H1280 V650 H1160 V628"/>
+    <path class="edge" d="M1540 794 H1600 V650 H1450 V628"/>
+    <path class="restart" d="M1160 628 V870 H570 V225"/>
+    <path class="restart" d="M1450 628 H1740 V910 H570 V225"/>
+    <path class="edge" d="M320 155 C290 125 420 125 390 155"/>
+    <path class="edge" d="M1090 175 C1125 140 1075 120 1030 155"/>
+    <path class="edge" d="M960 155 C930 125 1070 125 1040 155"/>
+    <path class="edge" d="M1250 575 C1290 550 1290 615 1250 600"/>
+    <path class="edge" d="M1540 575 C1580 550 1580 615 1540 600"/>
+  </g>
+
+  <g class="label">
+    <text x="247" y="143">sempre</text>
+    <text x="462" y="143">sempre</text>
+    <text x="677" y="143">sempre</text>
+    <text x="892" y="143">sempre</text>
+    <text x="1110" y="143">acao_pulso</text>
+    <text x="1322" y="143">sempre</text>
+    <text x="1375" y="283">sempre</text>
+    <text x="1345" y="338">fim_perdeu = 0</text>
+    <text x="1125" y="338">eh_jogada = 1</text>
+    <text x="915" y="338">sempre</text>
+    <text x="695" y="338">fim_perdeu = 0</text>
+    <text x="475" y="338">fim_jogo = 0</text>
+    <text x="1580" y="478">fim_perdeu = 1</text>
+    <text x="1090" y="489">fim_jogo = 1</text>
+    <text x="310" y="505">fim_rodada = 0</text>
+    <text x="455" y="532">fim_rodada = 1</text>
+    <text x="1075" y="500">display_pulso</text>
+    <text x="1170" y="251">eh_jogada = 0</text>
+    <text x="80" y="735">retorno à espera</text>
+    <text x="1160" y="686">display_pulso</text>
+    <text x="1450" y="686">display_pulso</text>
+    <text x="820" y="862" fill="#6d28d9">iniciar = 1</text>
+    <text x="1120" y="902" fill="#6d28d9">iniciar = 1</text>
+    <text x="1275" y="548">sem sinal: permanece</text>
+    <text x="1580" y="548">sem sinal: permanece</text>
+    <text x="337" y="110">iniciar = 0</text>
+    <text x="977" y="111">sem pulso</text>
+  </g>
+
+  <g>
+    <rect class="state" x="50" y="155" width="180" height="70" fill="#e2e8f0" stroke="#64748b"/>
+    <text class="state-label" x="140" y="185">INICIO</text>
+    <text class="state-kind" x="140" y="207">reset e limpeza</text>
+
+    <rect class="state" x="265" y="155" width="180" height="70" fill="#e2e8f0" stroke="#64748b"/>
+    <text class="state-label" x="355" y="185">ESPERA_INICIO</text>
+    <text class="state-kind" x="355" y="207">aguarda iniciar</text>
+
+    <rect class="state" x="480" y="155" width="180" height="70" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="570" y="185">INICIALIZA_JOGO</text>
+    <text class="state-kind" x="570" y="207">carrega valores iniciais</text>
+
+    <rect class="state" x="695" y="155" width="180" height="70" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="785" y="185">PREPARA_JOGO</text>
+    <text class="state-kind" x="785" y="207">prepara contadores</text>
+
+    <rect class="state" x="910" y="155" width="180" height="70" fill="#fef3c7" stroke="#d97706"/>
+    <text class="state-label" x="1000" y="185">ESPERA_ACAO</text>
+    <text class="state-kind" x="1000" y="207">ação tem prioridade</text>
+
+    <rect class="state" x="1125" y="155" width="180" height="70" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1215" y="185">REGISTRA_ACAO</text>
+    <text class="state-kind" x="1215" y="207">captura a entrada</text>
+
+    <rect class="state" x="1340" y="155" width="180" height="70" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1430" y="185">PROCESSA_ACAO</text>
+    <text class="state-kind" x="1430" y="207">aplica a ação</text>
+
+    <rect class="state" x="1365" y="315" width="180" height="70" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="1455" y="345">VERIFICA_FALENCIA</text>
+    <text class="state-kind" x="1455" y="367">após ação</text>
+
+    <rect class="state" x="1145" y="350" width="180" height="70" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="1235" y="380">VERIFICA_JOGADA</text>
+    <text class="state-kind" x="1235" y="402">a ação conta como jogada?</text>
+
+    <rect class="state" x="925" y="350" width="180" height="70" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1015" y="380">APLICA_DESPESA</text>
+    <text class="state-kind" x="1015" y="402">despesa do turno</text>
+
+    <rect class="state" x="705" y="350" width="180" height="70" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="795" y="380">VERIFICA_FALENCIA_DESPESA</text>
+    <text class="state-kind" x="795" y="402">após despesa</text>
+
+    <rect class="state" x="485" y="350" width="180" height="70" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="575" y="380">VERIFICA_FIM_JOGO</text>
+    <text class="state-kind" x="575" y="402">condição de encerramento</text>
+
+    <rect class="state" x="265" y="350" width="180" height="70" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="355" y="380">VERIFICA_FIM_RODADA</text>
+    <text class="state-kind" x="355" y="402">última jogada da rodada?</text>
+
+    <rect class="state" x="180" y="560" width="180" height="68" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="270" y="590">AVANCA_JOGADA</text>
+    <text class="state-kind" x="270" y="612">incrementa jogada</text>
+
+    <rect class="state" x="420" y="560" width="180" height="68" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="510" y="590">AVANCA_RODADA</text>
+    <text class="state-kind" x="510" y="612">rendimento e rodada</text>
+
+    <rect class="state" x="750" y="560" width="180" height="68" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="840" y="590">REGISTRA_DISPLAY</text>
+    <text class="state-kind" x="840" y="612">seleção durante o jogo</text>
+
+    <rect class="state" x="1070" y="560" width="180" height="68" fill="#fee2e2" stroke="#dc2626"/>
+    <text class="state-label" x="1160" y="590">FIM_JOGO</text>
+    <text class="state-kind" x="1160" y="612">terminou = 1</text>
+
+    <rect class="state" x="1360" y="560" width="180" height="68" fill="#fee2e2" stroke="#dc2626"/>
+    <text class="state-label" x="1450" y="590">FIM_FALENCIA</text>
+    <text class="state-kind" x="1450" y="612">perdeu = 1</text>
+
+    <rect class="state" x="1070" y="760" width="180" height="68" fill="#fce7f3" stroke="#db2777"/>
+    <text class="state-label" x="1160" y="790">REGISTRA_DISPLAY_FINAL</text>
+    <text class="state-kind" x="1160" y="812">retorna a FIM_JOGO</text>
+
+    <rect class="state" x="1360" y="760" width="180" height="68" fill="#fce7f3" stroke="#db2777"/>
+    <text class="state-label" x="1450" y="790">REGISTRA_DISPLAY_FALENCIA</text>
+    <text class="state-kind" x="1450" y="812">retorna a FIM_FALENCIA</text>
+  </g>
+
+  <rect x="54" y="945" width="1688" height="56" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="78" y="979" class="note">Em ESPERA_ACAO: acao_pulso → REGISTRA_ACAO; caso contrário, display_pulso → REGISTRA_DISPLAY; sem pulso, permanece aguardando. Setas tracejadas indicam reinício por iniciar.</text>
+</svg>

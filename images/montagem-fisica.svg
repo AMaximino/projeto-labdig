@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Montagem física do projeto Aventura Financeira Evolution</title>
+  <desc id="desc">Diagrama de bancada com placa FPGA, controles, displays, programação USB-Blaster, ESP8266, alimentação e instrumentos de depuração.</desc>
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#edf2f8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10213a" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#52657d"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#3157a4"/></marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#09836f"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#16243a}
+      .title{font-size:34px;font-weight:750}.sub{font-size:16px;fill:#5b6b80}
+      .cardtitle{font-size:19px;font-weight:700}.body{font-size:14px;fill:#42536a}
+      .small{font-size:12px;fill:#5b6b80}.tag{font-size:11px;font-weight:700;letter-spacing:.5px}
+      .note{font-size:13px;font-weight:650}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1470" cy="115" r="180" fill="#dbeafe" opacity=".34"/>
+  <text x="64" y="72" class="title">Montagem física da bancada</text>
+  <text x="66" y="103" class="sub">Controles e indicadores do jogo, programação da FPGA e telemetria para ESP8266</text>
+
+  <g filter="url(#shadow)">
+    <rect x="60" y="155" width="300" height="220" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="60" y="155" width="7" height="220" rx="3" fill="#da8e25"/>
+    <text x="86" y="193" class="cardtitle">Controles do jogo</text>
+    <text x="86" y="226" class="body">iniciar · reset</text>
+    <text x="86" y="252" class="body">estudar · trabalhar</text>
+    <text x="86" y="278" class="body">investir · resgatar</text>
+    <text x="86" y="304" class="body">comprar · vender</text>
+    <text x="86" y="330" class="body">seletor de item · config. display</text>
+    <text x="86" y="355" class="small">Conectar conforme pinos definidos no QSF</text>
+
+    <rect x="60" y="440" width="300" height="164" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="60" y="440" width="7" height="164" rx="3" fill="#64748b"/>
+    <text x="86" y="479" class="cardtitle">Computador de desenvolvimento</text>
+    <text x="86" y="515" class="body">Quartus Prime → compilar .sof</text>
+    <text x="86" y="543" class="body">USB-Blaster → porta JTAG da placa</text>
+    <text x="86" y="576" class="small">Programação; não é ligação de sinal do jogo</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="440" y="150" width="545" height="462" rx="24" fill="#13243b"/>
+    <rect x="470" y="174" width="142" height="25" rx="12" fill="#263e61"/>
+    <text x="541" y="191" text-anchor="middle" class="tag" fill="#b9d1ff">PLACA FPGA</text>
+    <text x="470" y="236" font-size="23" font-weight="700" fill="#fff">Cyclone V · projeto Quartus</text>
+    <text x="470" y="263" font-size="13" fill="#c6d3e2">Regras, estado da partida, entradas e saídas do jogo</text>
+    <rect x="470" y="294" width="485" height="112" rx="14" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="492" y="326" font-size="16" font-weight="700" fill="#dce8fa">Entradas físicas</text>
+    <text x="492" y="353" font-size="13" fill="#c6d3e2">clock · reset · iniciar · ações · seletor_item · config_display</text>
+    <text x="492" y="380" font-size="12" fill="#9db3cc">Atribuições atuais no quartus/circuito_jogo_financeiro.qsf</text>
+    <rect x="470" y="423" width="485" height="112" rx="14" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="492" y="455" font-size="16" font-weight="700" fill="#dce8fa">Saídas de jogo</text>
+    <text x="492" y="482" font-size="13" fill="#c6d3e2">display_dinheiro · display_jogadas · display_rodadas</text>
+    <text x="492" y="509" font-size="13" fill="#c6d3e2">indicador_itens · terminou · perdeu · fim de jogada/rodada</text>
+    <text x="470" y="572" font-size="12" fill="#fbd38d">uart_tx: saída lógica presente; pino físico ainda precisa ser atribuído no QSF.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1090" y="150" width="445" height="210" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1090" y="150" width="7" height="210" rx="3" fill="#0f9f88"/>
+    <text x="1118" y="190" class="cardtitle">ESP8266 · ponte de telemetria</text>
+    <text x="1118" y="226" class="body">RX recebe uart_tx (115200, 8-N-1)</text>
+    <text x="1118" y="254" class="body">Wi-Fi → publica eventos MQTT</text>
+    <text x="1118" y="291" class="small">RX e pino FPGA só devem ser ligados após</text>
+    <text x="1118" y="312" class="small">atribuição no QSF e validação de nível lógico.</text>
+    <text x="1118" y="339" class="small">Usar conversor de nível se exigido pela placa.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1090" y="410" width="445" height="194" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1090" y="410" width="7" height="194" rx="3" fill="#2184b4"/>
+    <text x="1118" y="450" class="cardtitle">Instrumento de bancada</text>
+    <text x="1118" y="486" class="body">Analog Discovery / analisador lógico</text>
+    <text x="1118" y="514" class="body">DIO: observar uart_tx; GND: referência comum</text>
+    <text x="1118" y="550" class="small">Opcional: osciloscópio para nível e temporização;</text>
+    <text x="1118" y="572" class="small">multímetro para continuidade e alimentação.</text>
+  </g>
+
+  <path d="M360 258H428" fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="374" y="244" class="small">entradas</text>
+  <path d="M985 344H1078" fill="none" stroke="#3157a4" stroke-width="3" marker-end="url(#arrowBlue)"/>
+  <text x="1001" y="329" class="small">uart_tx*</text>
+  <path d="M360 519H423V570H430" fill="none" stroke="#52657d" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+  <text x="368" y="502" class="small">USB-Blaster / JTAG</text>
+  <path d="M985 485H1078" fill="none" stroke="#09836f" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arrowTeal)"/>
+  <text x="991" y="471" class="small">ponta de prova (alta impedância)</text>
+
+  <g filter="url(#shadow)">
+    <rect x="60" y="660" width="1475" height="245" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <text x="90" y="702" class="cardtitle">Alimentação e referência elétrica</text>
+    <rect x="90" y="731" width="350" height="107" rx="14" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="112" y="765" class="note">VCC_FPGA: alimentação da própria placa</text>
+    <text x="112" y="793" class="small">Usar entrada/fonte especificada pelo fabricante;</text>
+    <text x="112" y="815" class="small">não alimentar pelos pinos de I/O.</text>
+    <rect x="500" y="731" width="390" height="107" rx="14" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="522" y="765" class="note">VCC_ESP: fonte apropriada ao modelo</text>
+    <text x="522" y="793" class="small">Alimentar por USB/entrada especificada. Não unir</text>
+    <text x="522" y="815" class="small">VCC_FPGA e VCC_ESP sem validar tensão e corrente.</text>
+    <rect x="950" y="731" width="545" height="107" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="972" y="765" class="note">GND comum entre FPGA, ESP8266 e instrumento</text>
+    <text x="972" y="793" class="small">Unir GNDs para UART e medição terem a mesma referência.</text>
+    <text x="972" y="815" class="small">Confirmar tensão de I/O antes de conectar os sinais.</text>
+    <path d="M265 848V865H1225V848" fill="none" stroke="#111827" stroke-width="3"/>
+    <path d="M695 848V865" fill="none" stroke="#111827" stroke-width="3"/>
+    <text x="745" y="890" text-anchor="middle" class="small">GND compartilhado (linha de referência; não representa ligação de VCC)</text>
+  </g>
+
+  <rect x="60" y="925" width="1475" height="48" rx="12" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="82" y="955" class="note" fill="#9a3412">* Não conectar uart_tx à ESP8266 até escolher pino livre, incluí-lo no QSF e confirmar compatibilidade com 3,3 V.</text>
+</svg>

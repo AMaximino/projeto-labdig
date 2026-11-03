@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+  <title id="title">Detalhe da ligação UART entre FPGA, ESP8266 e Analog Discovery</title>
+  <desc id="desc">Esquema unidirecional de UART com pino FPGA ainda pendente, recepção da ESP8266, sonda de analisador lógico, alimentação separada e GND comum.</desc>
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#edf2f8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10213a" flood-opacity=".10"/></filter>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#3157a4"/></marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#09836f"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#16243a}
+      .title{font-size:32px;font-weight:750}.sub{font-size:15px;fill:#5b6b80}
+      .head{font-size:19px;font-weight:700}.body{font-size:14px;fill:#42536a}
+      .small{font-size:12px;fill:#5b6b80}.mono{font-size:13px;font-family:Consolas,monospace;fill:#1e3a5f}
+      .note{font-size:13px;font-weight:650}
+    </style>
+  </defs>
+  <rect width="1500" height="900" fill="url(#bg)"/>
+  <circle cx="1385" cy="115" r="170" fill="#dbeafe" opacity=".32"/>
+  <text x="58" y="70" class="title">Detalhe de ligação: UART e depuração</text>
+  <text x="60" y="101" class="sub">Telemetria unidirecional FPGA → ESP8266; instrumento conectado em paralelo e em alta impedância</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="190" width="360" height="275" rx="20" fill="#13243b"/>
+    <text x="110" y="233" font-size="21" font-weight="700" fill="#fff">Placa FPGA</text>
+    <text x="110" y="270" font-size="14" fill="#d4dfed">Módulo superior: circuito_jogo_financeiro</text>
+    <rect x="110" y="303" width="300" height="68" rx="12" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="130" y="333" font-size="15" font-weight="700" fill="#dce8fa">uart_tx (saída lógica)</text>
+    <text x="130" y="356" font-size="12" fill="#fbd38d">pino FPGA / QSF: PENDENTE</text>
+    <text x="110" y="410" font-size="13" fill="#c6d3e2">Formato: 115200 baud · 8-N-1 · ASCII AEF1</text>
+    <text x="110" y="438" font-size="12" fill="#9db3cc">Não usar pino já atribuído a outro periférico.</text>
+
+    <rect x="630" y="190" width="360" height="275" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="630" y="190" width="7" height="275" rx="3" fill="#0f9f88"/>
+    <text x="660" y="233" class="head">ESP8266</text>
+    <text x="660" y="270" class="body">RX configurado como AEF_FPGA_RX_PIN</text>
+    <rect x="660" y="303" width="300" height="68" rx="12" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="682" y="333" class="body" font-weight="700">Entrada UART por software</text>
+    <text x="682" y="356" class="small">115200 baud · 8-N-1</text>
+    <text x="660" y="410" class="body">Recebe; não transmite comandos à FPGA.</text>
+    <text x="660" y="438" class="small">Wi-Fi / MQTT seguem após a recepção UART.</text>
+
+    <rect x="1110" y="190" width="310" height="275" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1110" y="190" width="7" height="275" rx="3" fill="#2184b4"/>
+    <text x="1140" y="233" class="head">Analog Discovery</text>
+    <text x="1140" y="270" class="body">DIO 0 → observar uart_tx</text>
+    <text x="1140" y="298" class="body">GND → referência comum</text>
+    <text x="1140" y="340" class="small">Usar analisador lógico para decodificar</text>
+    <text x="1140" y="362" class="small">115200 baud, 8-N-1, idle alto.</text>
+    <text x="1140" y="404" class="small">Osciloscópio: ponta 1+ no TX e 1−/GND</text>
+    <text x="1140" y="426" class="small">somente após validar níveis e limites.</text>
+  </g>
+
+  <path d="M440 337H618" fill="none" stroke="#3157a4" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <text x="529" y="316" text-anchor="middle" class="mono">uart_tx → RX</text>
+  <text x="529" y="360" text-anchor="middle" class="small">fio de sinal; sentido único</text>
+  <path d="M440 329V155H1260V180" fill="none" stroke="#09836f" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrowTeal)"/>
+  <text x="838" y="143" text-anchor="middle" class="small">ramificação de sonda de alta impedância (DIO 0), não é saída do instrumento</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="535" width="1340" height="245" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <text x="112" y="578" class="head">Alimentação e aterramento — conexões separadas</text>
+    <rect x="112" y="608" width="350" height="98" rx="13" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="134" y="642" class="note">VCC_FPGA: fonte da própria placa</text>
+    <text x="134" y="671" class="small">Conforme manual / especificação do fabricante.</text>
+    <rect x="520" y="608" width="390" height="98" rx="13" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="542" y="642" class="note">VCC_ESP: fonte apropriada ao modelo</text>
+    <text x="542" y="671" class="small">Não alimentar pela linha de sinal UART.</text>
+    <rect x="968" y="608" width="410" height="98" rx="13" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="990" y="642" class="note">GND FPGA ↔ GND ESP ↔ GND instrumento</text>
+    <text x="990" y="671" class="small">Unir referências; não unir VCC sem projeto específico.</text>
+    <path d="M287 716V740H1173V716" fill="none" stroke="#111827" stroke-width="3"/>
+    <path d="M715 716V740" fill="none" stroke="#111827" stroke-width="3"/>
+    <path d="M1260 465V740" fill="none" stroke="#111827" stroke-width="2" stroke-dasharray="6 6"/>
+    <text x="730" y="764" text-anchor="middle" class="small">GND comum</text>
+  </g>
+
+  <rect x="80" y="810" width="1340" height="60" rx="12" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="104" y="837" class="note" fill="#9a3412">Antes de ligar:</text>
+  <text x="220" y="837" class="small">atribuir pino livre para uart_tx no QSF · confirmar padrão elétrico e tensão de I/O da FPGA</text>
+  <text x="104" y="858" class="small">· verificar se o sinal é compatível com 3,3 V; instalar conversor de nível se necessário · manter fontes independentes e GND comum.</text>
+</svg>

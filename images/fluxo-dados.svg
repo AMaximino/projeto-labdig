@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 590" role="img" aria-labelledby="title description">
+  <title id="title">Fluxo de dados da Aventura Financeira Evolution</title>
+  <desc id="description">Controles físicos enviam ações à FPGA, que transmite eventos pela UART à ESP8266. A ESP8266 publica JSON via MQTT; o backend valida e persiste os dados e os envia por WebSocket ao painel web. O fluxo não envia comandos de volta à FPGA.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 5 L0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .card-title { font-size: 19px; font-weight: 700; }
+      .card-copy { font-size: 14px; }
+      .edge-label { font-size: 13px; font-weight: 700; fill: #334155; }
+      .note { font-size: 14px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="590" rx="18" fill="#f8fafc"/>
+  <text x="54" y="58" class="title">Fluxo de dados da partida</text>
+  <text x="54" y="86" class="subtitle">Telemetria unidirecional: o hardware controla o jogo; o software acompanha e apresenta os eventos.</text>
+
+  <g fill="none" stroke="#334155" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M222 258 H255"/>
+    <path d="M452 258 H485"/>
+    <path d="M682 258 H715"/>
+    <path d="M912 258 H945"/>
+    <path d="M1142 258 H1175"/>
+  </g>
+
+  <g>
+    <rect x="34" y="170" width="188" height="176" rx="14" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+    <text x="128" y="211" text-anchor="middle" class="card-title">Controles</text>
+    <text x="128" y="236" text-anchor="middle" class="card-copy">botões e seletores</text>
+    <text x="128" y="265" text-anchor="middle" class="card-copy">ações físicas</text>
+    <text x="128" y="310" text-anchor="middle" class="card-copy">entrada da partida</text>
+  </g>
+
+  <g>
+    <rect x="255" y="170" width="197" height="176" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="353.5" y="207" text-anchor="middle" class="card-title">FPGA</text>
+    <text x="353.5" y="233" text-anchor="middle" class="card-copy">FSM + fluxo de dados</text>
+    <text x="353.5" y="259" text-anchor="middle" class="card-copy">regras e estado oficial</text>
+    <text x="353.5" y="285" text-anchor="middle" class="card-copy">saldo · inventário</text>
+    <text x="353.5" y="311" text-anchor="middle" class="card-copy">eventos + snapshots</text>
+  </g>
+
+  <g>
+    <rect x="485" y="170" width="197" height="176" rx="14" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+    <text x="583.5" y="207" text-anchor="middle" class="card-title">ESP8266</text>
+    <text x="583.5" y="233" text-anchor="middle" class="card-copy">ponte de telemetria</text>
+    <text x="583.5" y="259" text-anchor="middle" class="card-copy">valida quadro UART</text>
+    <text x="583.5" y="285" text-anchor="middle" class="card-copy">converte para JSON</text>
+    <text x="583.5" y="311" text-anchor="middle" class="card-copy">Wi-Fi</text>
+  </g>
+
+  <g>
+    <rect x="715" y="170" width="197" height="176" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="813.5" y="207" text-anchor="middle" class="card-title">Broker MQTT</text>
+    <text x="813.5" y="238" text-anchor="middle" class="card-copy">publicação e assinatura</text>
+    <text x="813.5" y="271" text-anchor="middle" class="card-copy">tópico</text>
+    <text x="813.5" y="297" text-anchor="middle" class="card-copy">aventura_financeira/</text>
+    <text x="813.5" y="319" text-anchor="middle" class="card-copy">telemetria</text>
+  </g>
+
+  <g>
+    <rect x="945" y="170" width="197" height="176" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="1043.5" y="207" text-anchor="middle" class="card-title">Backend</text>
+    <text x="1043.5" y="233" text-anchor="middle" class="card-copy">valida e deduplica</text>
+    <text x="1043.5" y="259" text-anchor="middle" class="card-copy">registra histórico</text>
+    <text x="1043.5" y="285" text-anchor="middle" class="card-copy">JSON Lines</text>
+    <text x="1043.5" y="311" text-anchor="middle" class="card-copy">WebSocket</text>
+  </g>
+
+  <g>
+    <rect x="1175" y="170" width="191" height="176" rx="14" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+    <text x="1270.5" y="207" text-anchor="middle" class="card-title">Painel web</text>
+    <text x="1270.5" y="238" text-anchor="middle" class="card-copy">saldo e indicadores</text>
+    <text x="1270.5" y="264" text-anchor="middle" class="card-copy">inventário e eventos</text>
+    <text x="1270.5" y="307" text-anchor="middle" class="card-copy">somente leitura</text>
+  </g>
+
+  <text x="238" y="376" text-anchor="middle" class="edge-label">ações</text>
+  <text x="468" y="376" text-anchor="middle" class="edge-label">UART · 115200 · 8-N-1</text>
+  <text x="698" y="376" text-anchor="middle" class="edge-label">JSON</text>
+  <text x="928" y="376" text-anchor="middle" class="edge-label">MQTT</text>
+  <text x="1158" y="376" text-anchor="middle" class="edge-label">WebSocket</text>
+
+  <rect x="255" y="390" width="887" height="103" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="280" y="423" class="card-title" font-size="16">Conteúdo transportado</text>
+  <text x="280" y="451" class="note">Evento e status · item · valores financeiros · máscara do inventário</text>
+  <text x="280" y="476" class="note">Número de sequência · rodada e jogada · timestamp e identificação da sessão</text>
+
+  <path d="M1270 362 V536 H353 V362" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="8 7"/>
+  <rect x="565" y="516" width="496" height="38" rx="10" fill="#f8fafc"/>
+  <text x="813" y="541" text-anchor="middle" class="note">Sem comandos de retorno: as ações continuam nos controles físicos.</text>
+</svg>
