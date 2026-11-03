@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitetura de hardware — Aventura Financeira Evolution</title>
+  <desc id="desc">Diagrama físico e lógico da FPGA, controles, displays e ponte ESP8266 até a conectividade Wi-Fi e MQTT.</desc>
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#edf2f8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#10213a" flood-opacity=".11"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#52657d"/></marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#09836f"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#16243a}
+      .title{font-size:34px;font-weight:750;letter-spacing:-.4px}.sub{font-size:16px;fill:#5b6b80}
+      .lane{font-size:14px;font-weight:700;letter-spacing:1.5px;fill:#64748b}
+      .cardtitle{font-size:20px;font-weight:700}.body{font-size:15px;fill:#42536a}.small{font-size:13px;fill:#5b6b80}
+      .tag{font-size:12px;font-weight:700;letter-spacing:.5px}.foot{font-size:13px;fill:#52657d}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1490" cy="120" r="190" fill="#dbeafe" opacity=".4"/><circle cx="90" cy="850" r="190" fill="#ccfbf1" opacity=".32"/>
+  <text x="74" y="78" class="title">Arquitetura de hardware</text>
+  <text x="76" y="110" class="sub">Da interação física ao processamento na FPGA e à saída de telemetria</text>
+  <rect x="1290" y="54" width="235" height="36" rx="18" fill="#e0f2fe"/><text x="1407" y="77" text-anchor="middle" class="tag" fill="#075985">VISÃO FÍSICA · HARDWARE</text>
+
+  <text x="80" y="170" class="lane">ENTRADAS DO JOGADOR</text>
+  <text x="498" y="170" class="lane">PLACA FPGA · CYCLONE V</text>
+  <text x="1185" y="170" class="lane">SAÍDA / COMUNICAÇÃO</text>
+
+  <g filter="url(#shadow)">
+    <rect x="74" y="201" width="340" height="248" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="74" y="201" width="8" height="248" rx="4" fill="#da8e25"/>
+    <text x="104" y="244" class="cardtitle">Controles físicos</text>
+    <text x="104" y="278" class="body">Iniciar · reset</text>
+    <text x="104" y="306" class="body">Estudar · trabalhar</text>
+    <text x="104" y="334" class="body">Investir · resgatar</text>
+    <text x="104" y="362" class="body">Comprar · vender</text>
+    <text x="104" y="390" class="body">Seletor de 10 itens · configuração</text>
+    <text x="104" y="424" class="small">Botões / chaves ligados aos pinos de entrada</text>
+
+    <rect x="74" y="498" width="340" height="190" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="74" y="498" width="8" height="190" rx="4" fill="#64748b"/>
+    <text x="104" y="541" class="cardtitle">Clock e inicialização</text>
+    <text x="104" y="575" class="body">Clock de placa: 50 MHz</text>
+    <text x="104" y="603" class="body">Divisor deriva clock de lógica / displays</text>
+    <text x="104" y="631" class="body">Reset e sinal de início da partida</text>
+    <text x="104" y="662" class="small">Clock de UART continua no clock principal</text>
+  </g>
+
+  <path d="M414 304H475" fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M414 590H455V405H475" fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="432" y="285" class="small">GPIO</text>
+
+  <g filter="url(#shadow)">
+    <rect x="490" y="201" width="630" height="487" rx="24" fill="#13243b"/>
+    <rect x="522" y="224" width="148" height="28" rx="14" fill="#263e61"/><text x="596" y="243" text-anchor="middle" class="tag" fill="#b9d1ff">MÓDULO TOP · RTL</text>
+    <text x="522" y="291" font-size="23" font-weight="700" fill="#fff">FPGA Intel Cyclone V</text>
+    <text x="522" y="319" font-size="14" fill="#c6d3e2">Quartus Prime · família Cyclone V · dispositivo 5CEBA4F23C7</text>
+
+    <rect x="522" y="350" width="270" height="120" rx="15" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="544" y="381" font-size="17" font-weight="700" fill="#dce8fa">Controle</text>
+    <text x="544" y="408" font-size="14" fill="#c6d3e2">unidade_controle</text>
+    <text x="544" y="435" font-size="14" fill="#c6d3e2">FSM Moore · etapas explícitas</text>
+    <text x="544" y="458" font-size="12" fill="#9db3cc">registrar → processar → verificar</text>
+
+    <rect x="810" y="350" width="278" height="120" rx="15" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="832" y="381" font-size="17" font-weight="700" fill="#dce8fa">Fluxo e estado do jogo</text>
+    <text x="832" y="408" font-size="14" fill="#c6d3e2">fluxo_dados · registradores</text>
+    <text x="832" y="435" font-size="14" fill="#c6d3e2">processador_acao / _evento</text>
+    <text x="832" y="458" font-size="12" fill="#9db3cc">saldo · salário · despesas · inventário</text>
+
+    <rect x="522" y="489" width="270" height="112" rx="15" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="544" y="520" font-size="17" font-weight="700" fill="#dce8fa">Inicialização e temporização</text>
+    <text x="544" y="548" font-size="14" fill="#c6d3e2">inicializador · divisor de clock</text>
+    <text x="544" y="576" font-size="14" fill="#c6d3e2">contadores de rodada / jogada</text>
+
+    <rect x="810" y="489" width="278" height="112" rx="15" fill="#1e3657" stroke="#3b5a81"/>
+    <text x="832" y="520" font-size="17" font-weight="700" fill="#dce8fa">Captura e serialização</text>
+    <text x="832" y="548" font-size="14" fill="#c6d3e2">telemetria_uart · snapshots</text>
+    <text x="832" y="576" font-size="14" fill="#c6d3e2">115200 baud · 8-N-1 · ASCII AEF1</text>
+
+    <text x="522" y="645" font-size="13" fill="#9db3cc">Lógica oficial da partida reside na FPGA; a telemetria observa estados registrados.</text>
+    <text x="522" y="669" font-size="12" fill="#9db3cc">Fonte RTL: circuito/ · pinagem de placa: quartus/*.qsf</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1180" y="201" width="345" height="190" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1180" y="201" width="8" height="190" rx="4" fill="#3157a4"/>
+    <text x="1210" y="244" class="cardtitle">Displays e indicadores</text>
+    <text x="1210" y="278" class="body">Display de saldo (6 dígitos)</text>
+    <text x="1210" y="306" class="body">Displays de rodada e jogada</text>
+    <text x="1210" y="334" class="body">Máscara / indicadores de itens (10 bits)</text>
+    <text x="1210" y="370" class="small">Saídas diretas da lógica FPGA</text>
+
+    <rect x="1180" y="434" width="345" height="254" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1180" y="434" width="8" height="254" rx="4" fill="#0f9f88"/>
+    <text x="1210" y="477" class="cardtitle">ESP8266 · ponte sem fio</text>
+    <text x="1210" y="511" class="body">RX por SoftwareSerial (GPIO configurável)</text>
+    <text x="1210" y="539" class="body">Validação de linhas e formatação JSON</text>
+    <text x="1210" y="567" class="body">Wi-Fi → MQTT · publicação QoS 0</text>
+    <rect x="1210" y="591" width="277" height="1" fill="#e2e8f0"/>
+    <text x="1210" y="620" class="small">Exemplo: GPIO14 / D5; confirme o mapeamento</text>
+    <text x="1210" y="647" class="small">na placa utilizada e a recepção com Wi-Fi ativo.</text>
+    <text x="1210" y="675" class="small">Serial USB fica disponível para diagnóstico.</text>
+  </g>
+
+  <path d="M1120 546H1168" fill="none" stroke="#09836f" stroke-width="4" marker-end="url(#arrowTeal)"/>
+  <rect x="1108" y="508" width="74" height="25" rx="12" fill="#e5f7f3"/><text x="1145" y="525" text-anchor="middle" class="tag" fill="#087565">UART TX</text>
+  <text x="1128" y="575" class="small">TX → RX</text>
+  <path d="M1120 604H1160V711H1203" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+  <text x="1130" y="735" class="small">GND comum</text>
+
+  <g filter="url(#shadow)">
+    <rect x="490" y="744" width="1035" height="146" rx="20" fill="#fff7e6" stroke="#f1d59d"/>
+    <rect x="520" y="769" width="170" height="27" rx="13" fill="#fde9b8"/><text x="605" y="787" text-anchor="middle" class="tag" fill="#875707">ATENÇÃO · INTERFACE</text>
+    <text x="520" y="826" font-size="17" font-weight="700" fill="#6c4a0b">UART TX ainda precisa de pino de expansão atribuído no QSF.</text>
+    <text x="520" y="854" class="body">Antes de conectar: selecionar pino livre, verificar banco / padrão de I/O e validar nível compatível com 3,3 V na entrada ESP8266.</text>
+    <text x="520" y="878" class="body">Usar conversão de nível se necessário; não conectar sinal de 5 V nem reutilizar pinos de display, botões ou outros circuitos.</text>
+  </g>
+  <text x="74" y="961" class="foot">Projeto LabDig · diagrama conceitual; conferir pinagem e condições elétricas da placa real antes da montagem</text>
+</svg>

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Integração entre software e hardware — Aventura Financeira Evolution</title>
+  <desc id="desc">Fluxo unidirecional dos controles físicos à FPGA, telemetria UART, ESP8266, MQTT, backend e painel web, com formatos e responsabilidades.</desc>
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#edf2f8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#10213a" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#52657d"/></marker>
+    <marker id="arrowCyan" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#0b7895"/></marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#09836f"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#16243a}
+      .title{font-size:34px;font-weight:750;letter-spacing:-.4px}.sub{font-size:16px;fill:#5b6b80}
+      .lane{font-size:13px;font-weight:700;letter-spacing:1.1px;fill:#64748b}
+      .cardtitle{font-size:18px;font-weight:700}.body{font-size:14px;fill:#42536a}.small{font-size:12px;fill:#5b6b80}
+      .tag{font-size:11px;font-weight:700;letter-spacing:.4px}.step{font-size:12px;font-weight:800;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1450" cy="105" r="180" fill="#dbeafe" opacity=".36"/><circle cx="92" cy="898" r="176" fill="#ccfbf1" opacity=".34"/>
+  <text x="74" y="78" class="title">Integração entre software e hardware</text>
+  <text x="76" y="110" class="sub">Caminho ponta a ponta da ação física à visualização, com autoridade e conversões preservadas</text>
+  <rect x="1310" y="54" width="215" height="36" rx="18" fill="#e0f2fe"/><text x="1417" y="77" text-anchor="middle" class="tag" fill="#075985">FLUXO PONTA A PONTA</text>
+
+  <text x="78" y="166" class="lane">INTERAÇÃO</text>
+  <text x="332" y="166" class="lane">LÓGICA AUTORITATIVA</text>
+  <text x="900" y="166" class="lane">TRANSPORTE DE TELEMETRIA</text>
+  <text x="1314" y="166" class="lane">CONSUMO</text>
+
+  <g filter="url(#shadow)">
+    <rect x="74" y="199" width="200" height="206" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="74" y="199" width="7" height="206" rx="3" fill="#da8e25"/>
+    <circle cx="103" cy="230" r="14" fill="#da8e25"/><text x="103" y="234" text-anchor="middle" class="step">1</text>
+    <text x="127" y="236" class="cardtitle">Pessoa jogadora</text>
+    <text x="98" y="278" class="body">Botões / chaves</text>
+    <text x="98" y="305" class="body">Ação + seletor de item</text>
+    <text x="98" y="345" class="small">Comandos apenas físicos</text>
+    <text x="98" y="369" class="small">O painel não controla o jogo.</text>
+
+    <rect x="312" y="199" width="350" height="206" rx="18" fill="#13243b" stroke="#263e61"/>
+    <rect x="336" y="216" width="98" height="23" rx="11" fill="#263e61"/><text x="385" y="232" text-anchor="middle" class="tag" fill="#b9d1ff">HARDWARE</text>
+    <circle cx="629" cy="230" r="14" fill="#3157a4"/><text x="629" y="234" text-anchor="middle" class="step">2</text>
+    <text x="336" y="274" font-size="19" font-weight="700" fill="#fff">FPGA · estado oficial</text>
+    <text x="336" y="304" font-size="14" fill="#d4dfed">FSM Moore + regras de ação / rodada</text>
+    <text x="336" y="331" font-size="14" fill="#d4dfed">saldo · salário · investimentos · inventário</text>
+    <text x="336" y="358" font-size="14" fill="#d4dfed">decide ação aceita / recusada e falência</text>
+    <text x="336" y="386" font-size="12" fill="#9db3cc">Sem dependência do painel web</text>
+
+    <rect x="697" y="199" width="220" height="206" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="697" y="199" width="7" height="206" rx="3" fill="#0b7895"/>
+    <circle cx="890" cy="230" r="14" fill="#0b7895"/><text x="890" y="234" text-anchor="middle" class="step">3</text>
+    <text x="722" y="236" class="cardtitle">UART TX</text>
+    <text x="722" y="278" class="body">115200 baud · 8-N-1</text>
+    <text x="722" y="305" class="body">ASCII AEF1 por linha</text>
+    <text x="722" y="345" class="small">Evento + sequência</text>
+    <text x="722" y="369" class="small">Snapshot de valores registrados</text>
+
+    <rect x="952" y="199" width="250" height="206" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="952" y="199" width="7" height="206" rx="3" fill="#0f9f88"/>
+    <circle cx="1174" cy="230" r="14" fill="#0f9f88"/><text x="1174" y="234" text-anchor="middle" class="step">4</text>
+    <text x="977" y="236" class="cardtitle">ESP8266 · ponte</text>
+    <text x="977" y="278" class="body">RX UART → valida framing</text>
+    <text x="977" y="305" class="body">Converte campos e cria JSON</text>
+    <text x="977" y="332" class="body">Wi-Fi → MQTT publish QoS 0</text>
+    <text x="977" y="369" class="small">Sem regra de negócio / sem comandos</text>
+
+    <rect x="1237" y="199" width="287" height="206" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1237" y="199" width="7" height="206" rx="3" fill="#7c4dcc"/>
+    <circle cx="1495" cy="230" r="14" fill="#7c4dcc"/><text x="1495" y="234" text-anchor="middle" class="step">5</text>
+    <text x="1262" y="236" class="cardtitle">MQTT broker</text>
+    <text x="1262" y="278" class="body">Tópico compartilhado</text>
+    <text x="1262" y="305" class="small" font-weight="700">aventura_financeira/telemetria</text>
+    <text x="1262" y="345" class="body">Recebe eventos publicados</text>
+    <text x="1262" y="369" class="small">O backend assina o tópico</text>
+  </g>
+
+  <g fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M274 303H302"/><path d="M662 303H687"/><path d="M917 303H942"/><path d="M1202 303H1227"/>
+  </g>
+  <rect x="662" y="267" width="45" height="22" rx="11" fill="#e4f4fb"/><text x="684" y="282" text-anchor="middle" class="tag" fill="#17688e">UART</text>
+  <rect x="1195" y="267" width="50" height="22" rx="11" fill="#f1eafe"/><text x="1220" y="282" text-anchor="middle" class="tag" fill="#6539aa">MQTT</text>
+
+  <g filter="url(#shadow)">
+    <rect x="250" y="486" width="318" height="173" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="250" y="486" width="7" height="173" rx="3" fill="#2184b4"/>
+    <circle cx="285" cy="518" r="14" fill="#2184b4"/><text x="285" y="522" text-anchor="middle" class="step">6</text>
+    <text x="310" y="524" class="cardtitle">Backend Node.js</text>
+    <text x="279" y="565" class="body">Subscriber → valida contrato</text>
+    <text x="279" y="592" class="body">Deduplica / ordena eventos</text>
+    <text x="279" y="619" class="body">Histórico em JSONL</text>
+    <text x="279" y="644" class="small">HTTP API + WebSocket de leitura</text>
+
+    <rect x="628" y="486" width="320" height="173" rx="18" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="628" y="486" width="7" height="173" rx="3" fill="#e39a28"/>
+    <circle cx="663" cy="518" r="14" fill="#e39a28"/><text x="663" y="522" text-anchor="middle" class="step">7</text>
+    <text x="688" y="524" class="cardtitle">Painel no navegador</text>
+    <text x="657" y="565" class="body">Snapshot inicial + atualizações</text>
+    <text x="657" y="592" class="body">Métricas, rodada, jogada e itens</text>
+    <text x="657" y="619" class="body">Histórico e visualização financeira</text>
+    <text x="657" y="644" class="small">Somente leitura; calculadora é local</text>
+  </g>
+  <path d="M1380 405V450H409V476" fill="none" stroke="#09836f" stroke-width="3" marker-end="url(#arrowTeal)"/>
+  <text x="1000" y="443" text-anchor="middle" class="small" fill="#087565">subscribe · tópico MQTT</text>
+  <path d="M568 572H618" fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="566" y="536" width="66" height="22" rx="11" fill="#e4f4fb"/><text x="599" y="551" text-anchor="middle" class="tag" fill="#17688e">WebSocket</text>
+
+  <g filter="url(#shadow)">
+    <rect x="1005" y="486" width="519" height="173" rx="18" fill="#f0fdfa" stroke="#a9e3d9"/>
+    <rect x="1031" y="510" width="148" height="24" rx="12" fill="#c9f2ea"/><text x="1105" y="526" text-anchor="middle" class="tag" fill="#087565">FRONTEIRA ELÉTRICA</text>
+    <text x="1031" y="565" font-size="16" font-weight="700" fill="#155e55">FPGA TX → ESP8266 RX · GND comum</text>
+    <text x="1031" y="594" class="body">Atribuir pino de expansão livre no QSF: ainda pendente.</text>
+    <text x="1031" y="621" class="body">Confirmar tensão compatível com entrada de 3,3 V;</text>
+    <text x="1031" y="646" class="body">usar conversor de nível se necessário.</text>
+  </g>
+
+  <rect x="74" y="720" width="1450" height="178" rx="20" fill="#13243b"/>
+  <text x="108" y="758" font-size="14" font-weight="700" fill="#8de0d1" letter-spacing="1.4">CONVERSÕES E GARANTIAS DA INTEGRAÇÃO</text>
+  <line x1="800" y1="778" x2="800" y2="872" stroke="#344963"/>
+  <text x="108" y="799" font-size="16" font-weight="700" fill="#fff">Dinheiro: unidade RTL × 10.000 = centavos de BRL</text>
+  <text x="108" y="827" font-size="14" fill="#c6d3e2">Exemplo: saldo 150 na FPGA → 1.500.000 centavos → R$ 15.000,00.</text>
+  <text x="108" y="856" font-size="14" fill="#c6d3e2">O JSON envia snapshots financeiros, inventário de 10 bits e contadores +1.</text>
+  <text x="840" y="799" font-size="16" font-weight="700" fill="#fff">Sentido dos dados: FPGA → painel (sem retorno de controle)</text>
+  <text x="840" y="827" font-size="14" fill="#c6d3e2">O backend rejeita payload inválido e ignora duplicatas / eventos fora de ordem.</text>
+  <text x="840" y="856" font-size="14" fill="#c6d3e2">MQTT direto via WebSocket no browser existe como modo alternativo de demonstração.</text>
+  <text x="74" y="950" class="small">Projeto LabDig · fluxo recomendado conforme código RTL, firmware ESP8266, backend, frontend e documentação técnica.</text>
+</svg>

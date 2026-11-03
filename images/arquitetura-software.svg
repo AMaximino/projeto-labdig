@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitetura de software — Aventura Financeira Evolution</title>
+  <desc id="desc">Componentes de software do jogo, da telemetria embarcada ao painel web, incluindo testes e ferramentas do projeto.</desc>
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#edf2f8"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#10213a" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#52657d"/></marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1L11 6 1 11Z" fill="#09836f"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#16243a}
+      .title{font-size:34px;font-weight:750;letter-spacing:-.4px}.sub{font-size:16px;fill:#5b6b80}
+      .lane{font-size:14px;font-weight:700;letter-spacing:1.6px;fill:#64748b}
+      .cardtitle{font-size:20px;font-weight:700}.body{font-size:15px;fill:#42536a}.small{font-size:13px;fill:#5b6b80}
+      .tag{font-size:12px;font-weight:700;letter-spacing:.5px}.foot{font-size:13px;fill:#52657d}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1480" cy="85" r="180" fill="#dbeafe" opacity=".38"/><circle cx="112" cy="910" r="190" fill="#ccfbf1" opacity=".34"/>
+  <text x="74" y="78" class="title">Arquitetura de software</text>
+  <text x="76" y="110" class="sub">Aventura Financeira Evolution · fluxo recomendado de telemetria e superfícies de suporte</text>
+  <rect x="1290" y="54" width="235" height="36" rx="18" fill="#e0f2fe"/><text x="1407" y="77" text-anchor="middle" class="tag" fill="#075985">VISÃO LÓGICA · SOFTWARE</text>
+
+  <text x="76" y="168" class="lane">ORIGEM E AQUISIÇÃO</text>
+  <text x="510" y="168" class="lane">TRANSPORTE E SERVIÇOS</text>
+  <text x="1083" y="168" class="lane">APRESENTAÇÃO</text>
+
+  <g filter="url(#shadow)">
+    <rect x="74" y="196" width="350" height="265" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="74" y="196" width="8" height="265" rx="4" fill="#3157a4"/>
+    <rect x="102" y="219" width="108" height="25" rx="12" fill="#e8eefb"/><text x="156" y="236" text-anchor="middle" class="tag" fill="#294a8d">RTL / FPGA</text>
+    <text x="102" y="278" class="cardtitle">Jogo em hardware</text>
+    <text x="102" y="309" class="body">• FSM Moore: controle da partida</text>
+    <text x="102" y="336" class="body">• Ações, eventos e fluxo de dados</text>
+    <text x="102" y="363" class="body">• Saldo, inventário, rodada e jogada</text>
+    <text x="102" y="390" class="body">• Snapshot UART ASCII por evento</text>
+    <text x="102" y="426" class="small">circuito/ · projeto Cyclone V no Quartus</text>
+
+    <rect x="74" y="505" width="350" height="218" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="74" y="505" width="8" height="218" rx="4" fill="#64748b"/>
+    <rect x="102" y="528" width="118" height="25" rx="12" fill="#f1f5f9"/><text x="161" y="545" text-anchor="middle" class="tag" fill="#475569">VERIFICAÇÃO</text>
+    <text x="102" y="587" class="cardtitle">Testes e desenvolvimento</text>
+    <text x="102" y="618" class="body">• Testbenches Verilog / ModelSim</text>
+    <text x="102" y="645" class="body">• Testes de protocolo ESP8266 em C++</text>
+    <text x="102" y="672" class="body">• Testes do contrato do backend</text>
+    <text x="102" y="701" class="small">fpga/testbench · esp8266/testbench · backend/test</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="485" y="196" width="300" height="265" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="485" y="196" width="8" height="265" rx="4" fill="#0f9f88"/>
+    <rect x="513" y="219" width="120" height="25" rx="12" fill="#ccfbf1"/><text x="573" y="236" text-anchor="middle" class="tag" fill="#087565">FIRMWARE</text>
+    <text x="513" y="278" class="cardtitle">Ponte ESP8266</text>
+    <text x="513" y="309" class="body">• Valida linhas UART AEF1</text>
+    <text x="513" y="336" class="body">• Converte escala RTL para centavos</text>
+    <text x="513" y="363" class="body">• Formata JSON e publica QoS 0</text>
+    <text x="513" y="390" class="body">• Fila RAM limitada a 4 mensagens</text>
+    <text x="513" y="426" class="small">ESP8266 · Wi-Fi · firmware/aef_bridge</text>
+
+    <rect x="835" y="196" width="260" height="265" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="835" y="196" width="8" height="265" rx="4" fill="#7c4dcc"/>
+    <rect x="863" y="219" width="110" height="25" rx="12" fill="#f1eafe"/><text x="918" y="236" text-anchor="middle" class="tag" fill="#6539aa">MENSAGERIA</text>
+    <text x="863" y="278" class="cardtitle">Broker MQTT</text>
+    <text x="863" y="309" class="body">Tópico de telemetria:</text>
+    <text x="863" y="338" class="small" font-weight="700">aventura_financeira/</text>
+    <text x="863" y="358" class="small" font-weight="700">telemetria</text>
+    <text x="863" y="397" class="body">Publicação unidirecional</text>
+    <text x="863" y="426" class="small">broker externo / local de desenvolvimento</text>
+
+    <rect x="1145" y="196" width="380" height="265" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="1145" y="196" width="8" height="265" rx="4" fill="#e39a28"/>
+    <rect x="1173" y="219" width="125" height="25" rx="12" fill="#fff3d8"/><text x="1235" y="236" text-anchor="middle" class="tag" fill="#9a5c06">NAVEGADOR</text>
+    <text x="1173" y="278" class="cardtitle">Painel web (somente leitura)</text>
+    <text x="1173" y="309" class="body">• Saldo, métricas e histórico da sessão</text>
+    <text x="1173" y="336" class="body">• Inventário, estatísticas e exportação CSV</text>
+    <text x="1173" y="363" class="body">• Estado local de demonstração / preferências</text>
+    <text x="1173" y="390" class="body">• Calculadora local, sem alterar a partida</text>
+    <text x="1173" y="426" class="small">frontend/ · desktop · conexão de dados configurável</text>
+  </g>
+
+  <g fill="none" stroke="#52657d" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M424 322H475"/><path d="M785 322H825"/><path d="M1095 322H1135"/>
+  </g>
+  <g>
+    <rect x="427" y="279" width="56" height="24" rx="12" fill="#f8fafc"/><text x="455" y="296" text-anchor="middle" class="tag" fill="#53657c">UART</text>
+    <rect x="786" y="279" width="48" height="24" rx="12" fill="#f8fafc"/><text x="810" y="296" text-anchor="middle" class="tag" fill="#53657c">Wi-Fi</text>
+    <rect x="1092" y="279" width="59" height="24" rx="12" fill="#f8fafc"/><text x="1121" y="296" text-anchor="middle" class="tag" fill="#53657c">WS</text>
+  </g>
+  <text x="807" y="490" text-anchor="middle" class="small">O browser recebe snapshots e eventos; não envia comandos ao jogo.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="485" y="535" width="610" height="188" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <rect x="485" y="535" width="8" height="188" rx="4" fill="#2184b4"/>
+    <rect x="513" y="558" width="120" height="25" rx="12" fill="#e4f4fb"/><text x="573" y="575" text-anchor="middle" class="tag" fill="#17688e">NODE.JS</text>
+    <text x="513" y="617" class="cardtitle">Backend de telemetria</text>
+    <text x="513" y="648" class="body">Subscriber MQTT → valida contrato → deduplica por dispositivo/sessão/sequência</text>
+    <text x="513" y="675" class="body">Persiste JSONL · snapshot e histórico por HTTP · difusão WebSocket</text>
+    <text x="513" y="704" class="small">backend/src · GET /health · /api/sessions · WS /ws/telemetria</text>
+  </g>
+  <path d="M965 461V510H792V525" fill="none" stroke="#09836f" stroke-width="3" marker-end="url(#arrowGreen)"/>
+  <path d="M1095 625H1120V455" fill="none" stroke="#09836f" stroke-width="3" marker-end="url(#arrowGreen)"/>
+  <text x="1016" y="510" class="small" fill="#087565">subscribe</text>
+  <text x="1119" y="584" transform="rotate(-90 1119 584)" class="small" fill="#087565">snapshot + eventos</text>
+  <path d="M485 633H449V461" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <g filter="url(#shadow)">
+    <rect x="1145" y="535" width="380" height="188" rx="20" fill="#fff" stroke="#cbd5e1"/>
+    <text x="1173" y="576" class="cardtitle">Modo alternativo de conexão</text>
+    <text x="1173" y="608" class="body">MQTT sobre WebSocket direto no navegador</text>
+    <text x="1173" y="636" class="body">para demonstração / compatibilidade.</text>
+    <text x="1173" y="673" class="small">Não substitui o backend de aplicação recomendado.</text>
+    <text x="1173" y="699" class="small">O navegador precisa de ws:// ou wss://, não MQTT TCP.</text>
+  </g>
+  <path d="M1285 461V525" fill="none" stroke="#d39a43" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow)"/>
+
+  <rect x="74" y="790" width="1451" height="138" rx="20" fill="#13243b"/>
+  <text x="108" y="829" font-size="15" font-weight="700" fill="#8de0d1" letter-spacing="1.5">CONTRATO DE DADOS COMPARTILHADO</text>
+  <text x="108" y="864" font-size="18" font-weight="600" fill="#ffffff">JSON UTF-8 · valores monetários em centavos de BRL · rodada/jogada 1-based · inventário como máscara de 10 bits</text>
+  <text x="108" y="895" font-size="15" fill="#c6d3e2">A RTL usa unidades de R$ 100: converter unidade RTL × 10.000 para centavos antes de publicar.</text>
+  <text x="74" y="970" class="foot">Projeto LabDig · diagrama baseado no código, READMEs e contexto técnico do repositório</text>
+</svg>
