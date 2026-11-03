@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f7f4" />
+    <meta
+      name="description"
+      content="Faça suas escolhas, acompanhe suas conquistas e explore sua jornada financeira."
+    />
+    <title>Aventura Financeira Evolution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <a class="brand" href="#inicio" aria-label="Aventura Financeira, início">
+          <img class="brand-logo" src="./images/logo.jpe" alt="Logo Aventura Financeira Evolution" />
+        </a>
+
+        <div class="menu-label">JOGO</div>
+        <nav class="side-nav">
+          <a class="nav-link active" href="#painel-jogo" data-app-tab="game" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2" /><rect x="13.5" y="3.5" width="7" height="7" rx="2" /><rect x="3.5" y="13.5" width="7" height="7" rx="2" /><rect x="13.5" y="13.5" width="7" height="7" rx="2" /></svg>
+            Partida
+          </a>
+          <a class="nav-link" href="#estatisticas" data-app-tab="stats">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6.5 16v-4m5 4V6m5 10v-7" /></svg>
+            Estatísticas
+          </a>
+          <a class="nav-link" href="#calculadora" data-app-tab="calculator">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2m4 0h2m-8 4h2m4 0h2" /></svg>
+            Calculadora
+          </a>
+          <a class="nav-link" href="#historico" data-app-tab="stats" data-app-scroll="historico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16M4 12h16M4 18.5h10" /><circle cx="19" cy="18.5" r="1.5" /></svg>
+            Histórico
+            <span class="nav-count" id="history-count">0</span>
+          </a>
+          <a class="nav-link" href="#inventory-panel" data-app-tab="game" data-app-scroll="inventory-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 19.5h17M5.5 16V9.5h4V16m2.5 0V5.5h4V16m2.5 0v-4h3V16" /></svg>
+            Inventário
+          </a>
+        </nav>
+
+        <section class="sidebar-tip" aria-labelledby="tip-title">
+          <span class="tip-icon" aria-hidden="true">✦</span>
+          <h2 id="tip-title">Pequenos passos,<br />grandes conquistas.</h2>
+          <p>Uma escolha de cada vez. Você está no controle da sua jornada.</p>
+          <div class="tip-path" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </section>
+
+        <div class="sidebar-bottom">
+          <div class="device-mini">
+            <span class="device-dot" id="sidebar-device-dot"></span>
+            <span><strong id="sidebar-device-title">Modo demonstração</strong><small id="sidebar-device-subtitle">Dados de exemplo</small></span>
+            <button class="icon-button sidebar-settings" id="open-settings-side" type="button" aria-label="Configurar conexão de dados" title="Configurar conexão de dados">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="m19.4 15 .1.1 1.4 1.1-1.5 2.6-1.7-.7a7.7 7.7 0 0 1-1.6.9l-.3 1.8h-3l-.3-1.8a7.7 7.7 0 0 1-1.6-.9l-1.7.7-1.5-2.6 1.4-1.1a7.5 7.5 0 0 1 0-1.9l-1.4-1.1 1.5-2.6 1.7.7a7.7 7.7 0 0 1 1.6-.9l.3-1.8h3l.3 1.8a7.7 7.7 0 0 1 1.6.9l1.7-.7 1.5 2.6-1.4 1.1a7.5 7.5 0 0 1 0 1.8Z" /></svg>
+            </button>
+          </div>
+          <div class="privacy-note"><span aria-hidden="true">⌁</span> Seus dados ficam neste dispositivo.</div>
+        </div>
+      </aside>
+
+      <main id="conteudo" class="main-content">
+        <header class="topbar">
+          <a class="topbar-brand" href="#inicio" aria-label="Aventura Financeira Evolution, início">
+            <img class="topbar-logo" src="./images/logo.jpe" alt="" />
+            <span><strong>Aventura Financeira</strong><small>EVOLUTION · SUA PRÓXIMA CONQUISTA</small></span>
+          </a>
+          <div class="topbar-actions">
+            <span class="connection-pill demo" id="connection-pill">
+              <span class="status-dot"></span>
+              <span id="connection-label">Modo demonstração</span>
+            </span>
+            <button class="button button-outline settings-trigger" id="open-settings" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10m4 0h2M4 17h2m4 0h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></svg>
+              Conexão de dados
+            </button>
+            <button class="avatar" id="player-avatar" type="button" aria-label="Editar nome do jogador" title="Editar nome do jogador">J</button>
+          </div>
+        </header>
+
+        <nav class="primary-tabs" aria-label="Navegação principal">
+          <a class="primary-tab active" href="#painel-jogo" data-app-tab="game" aria-current="page">Partida</a>
+          <a class="primary-tab" href="#estatisticas" data-app-tab="stats">Estatísticas</a>
+          <a class="primary-tab" href="#calculadora" data-app-tab="calculator">Calculadora</a>
+        </nav>
+
+        <div class="page-content" id="inicio">
+          <section class="game-screen tab-panel" id="painel-jogo" data-tab-panel="game" aria-label="Tabuleiro da aventura financeira">
+            <header class="turn-banner">
+              <div class="turn-round">
+                <span class="turn-label">SUA JORNADA</span>
+                <div class="turn-round-row"><span class="round-token" aria-hidden="true">✦</span><span>Rodada <strong id="game-round-value">1</strong></span></div>
+                <span class="turn-round-hint">Uma etapa de cada vez</span>
+              </div>
+              <div class="turn-divider" aria-hidden="true"></div>
+              <div class="turn-move">
+                <span class="turn-label">SUA JOGADA</span>
+                <div class="turn-move-row"><strong id="game-move-value">1</strong><span>de 3</span></div>
+                <div class="move-progress" aria-label="Progresso da jogada"><span class="move-progress-step current" id="move-step-1"></span><span class="move-progress-step" id="move-step-2"></span><span class="move-progress-step" id="move-step-3"></span></div>
+              </div>
+              <div class="turn-money">
+                <span class="turn-label">DINHEIRO DISPONÍVEL</span>
+                <strong id="game-balance-value">R$ 15 mil</strong>
+                <small class="money-exact" id="game-balance-value-exact">Valor exato: R$ 15.000,00</small>
+                <span id="game-balance-hint">Comece com calma. Você decide.</span>
+              </div>
+              <span class="turn-plant" aria-hidden="true">✦</span>
+            </header>
+
+            <div class="game-columns">
+              <section class="play-column" aria-labelledby="last-move-title">
+                <div class="game-section-heading">
+                  <span class="section-step">1</span>
+                  <div><h1 id="last-move-title">Como está sua partida?</h1><p>O tabuleiro físico envia cada atualização para esta tela.</p></div>
+                </div>
+                <div class="last-move-card" id="last-move-card" aria-live="polite">
+                  <span class="last-move-icon waiting" id="last-move-icon" aria-hidden="true">…</span>
+                  <div class="last-move-copy">
+                    <span class="last-move-label" id="last-move-label">AGUARDANDO O TABULEIRO</span>
+                    <strong id="last-move-title-value">Sua próxima jogada aparecerá aqui</strong>
+                    <span id="last-move-description">Quando a FPGA atualizar o jogo, você verá o resultado nesta tela.</span>
+                  </div>
+                  <span class="last-move-time" id="last-move-time">—</span>
+                </div>
+                <div class="display-note"><span class="display-note-icon" aria-hidden="true">▣</span><span><strong>Esta tela é só para acompanhar.</strong><small>As ações são feitas nos botões físicos do jogo.</small></span></div>
+              </section>
+
+              <aside class="inventory-column" aria-label="Inventário e resumo">
+                <section class="inventory-panel" id="inventory-panel">
+                  <div class="panel-heading">
+                    <span class="section-step">2</span><div><h2>O que você já tem</h2><p id="inventory-count">0 itens no inventário</p></div>
+                  </div>
+                  <div class="inventory-content" id="inventory-list"><span class="inventory-empty-icon" aria-hidden="true">✦</span><strong>Seu inventário está vazio</strong><span>Suas conquistas vão aparecer aqui.</span></div>
+                </section>
+                <section class="money-summary" aria-label="Resumo do dinheiro">
+                  <div><span class="summary-label">SALÁRIO POR JOGADA</span><strong id="game-income-value">R$ 6,4 mil</strong><small class="money-exact" id="game-income-value-exact">Valor exato: R$ 6.400,00</small></div>
+                  <div><span class="summary-label">INVESTIDO</span><strong id="game-investment-value">R$ 0</strong><small class="money-exact" id="game-investment-value-exact">Valor exato: R$ 0,00</small></div>
+                  <div><span class="summary-label">DESPESAS POR RODADA</span><strong id="game-expenses-value">R$ 4 mil</strong><small class="money-exact" id="game-expenses-value-exact">Valor exato: R$ 4.000,00</small></div>
+                </section>
+              </aside>
+            </div>
+
+            <section class="shop-section" aria-labelledby="shop-title">
+              <div class="game-section-heading shop-heading">
+                <span class="section-step">3</span>
+                <div><h2 id="shop-title">Itens do jogo</h2><p>Consulte os preços e veja o que já faz parte do seu inventário.</p></div>
+                <span class="shop-count" id="shop-count">10 itens</span>
+              </div>
+              <div class="shop-grid" id="shop-grid" aria-live="polite"></div>
+            </section>
+          </section>
+
+          <section class="calculator-view tab-panel" id="calculadora" data-tab-panel="calculator" aria-labelledby="calculator-title" hidden>
+            <div class="view-intro">
+              <span class="view-art calculator-art" aria-hidden="true">🧮</span>
+              <div><p class="eyebrow"><span class="eyebrow-line"></span> FERRAMENTA DE APOIO</p><h1 id="calculator-title">Calculadora do jogo</h1><p>Faça uma estimativa antes de uma jogada. Esta conta não muda sua partida.</p></div>
+            </div>
+            <div class="calculator-layout">
+              <form class="calculator-form panel" id="calculator-form">
+                <label for="calc-balance">Dinheiro que você tem (R$)</label>
+                <input id="calc-balance" name="balance" type="number" min="0" step="0.01" value="15000" inputmode="decimal" />
+                <label for="calc-income">Dinheiro que vai receber (R$)</label>
+                <input id="calc-income" name="income" type="number" min="0" step="0.01" value="6400" inputmode="decimal" />
+                <label for="calc-item">Item para consultar</label>
+                <select id="calc-item" name="item">
+                  <option value="">Não escolher um item</option>
+                </select>
+                <label for="calc-purchase">Valor da compra ou gasto (R$)</label>
+                <input id="calc-purchase" name="purchase" type="number" min="0" step="0.01" value="0" inputmode="decimal" />
+                <label for="calc-expenses">Despesas desta rodada (R$)</label>
+                <input id="calc-expenses" name="expenses" type="number" min="0" step="0.01" value="4000" inputmode="decimal" />
+                <button class="button button-outline" id="calc-use-game-data" type="button">Usar dados da partida</button>
+                <button class="button button-primary calculator-submit" type="submit">Calcular estimativa</button>
+              </form>
+              <section class="calculator-result panel" aria-labelledby="calculator-result-title" aria-live="polite">
+                <span class="calculator-result-art" aria-hidden="true">💰</span>
+                <p class="eyebrow"><span class="eyebrow-line"></span> RESULTADO DA ESTIMATIVA</p>
+                <h2 id="calculator-result-title">Quanto dinheiro vai sobrar?</h2>
+                <strong class="calculator-total" id="calc-result-value">Preencha os valores</strong>
+                <p id="calc-result-exact" class="money-exact">O resultado aparecerá aqui.</p>
+                <p class="calculator-message" id="calc-result-message">A conta considera dinheiro atual + entrada − compra − despesas.</p>
+                <p class="calculator-disclaimer">A calculadora é independente. Para jogar, use os botões físicos do tabuleiro.</p>
+              </section>
+            </div>
+          </section>
+
+          <section class="stats-view tab-panel" id="estatisticas" data-tab-panel="stats" aria-labelledby="stats-title" hidden>
+          <section class="stats-summary">
+            <div class="view-intro">
+              <span class="view-art stats-art" aria-hidden="true">📊</span>
+              <div><p class="eyebrow"><span class="eyebrow-line"></span> RESUMO DA PARTIDA</p><h1 id="stats-title">Estatísticas do jogo</h1><p>Veja o que aconteceu, uma informação de cada vez.</p></div>
+            </div>
+            <div class="stats-cards">
+              <article class="stats-card"><span class="stats-card-art" aria-hidden="true">🎲</span><span>Atualizações recebidas</span><strong id="stats-events">0</strong></article>
+              <article class="stats-card"><span class="stats-card-art" aria-hidden="true">🛍️</span><span>Compras aprovadas</span><strong id="stats-purchases">0</strong></article>
+              <article class="stats-card"><span class="stats-card-art" aria-hidden="true">🟠</span><span>Compras recusadas</span><strong id="stats-refusals">0</strong></article>
+              <article class="stats-card"><span class="stats-card-art" aria-hidden="true">💰</span><span>Saldo atual</span><strong id="stats-balance">R$ 15 mil</strong><small class="money-exact" id="stats-balance-exact">R$ 15.000,00</small></article>
+            </div>
+            <div class="stats-visual panel">
+              <span class="stats-visual-icon" aria-hidden="true">📈</span>
+              <div class="stats-visual-copy"><span class="eyebrow"><span class="eyebrow-line"></span> SUA EVOLUÇÃO</span><h2>Saldo ao longo da partida</h2><p id="stats-session-note">As informações serão atualizadas quando o jogo enviar dados.</p></div>
+              <div class="stats-chart" aria-label="Gráfico de evolução do saldo">
+                <svg viewBox="0 0 240 72" role="img" aria-labelledby="stats-chart-title">
+                  <title id="stats-chart-title">Evolução do saldo da partida</title>
+                  <path class="chart-area" id="stats-chart-area" d="" />
+                  <path class="chart-line" id="stats-chart-line" d="" />
+                  <circle class="chart-point" id="stats-chart-point" cx="230" cy="34" r="4" />
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <section class="welcome-row">
+            <div>
+              <p class="eyebrow"><span class="eyebrow-line"></span> SUA JORNADA FINANCEIRA</p>
+              <h1>Olá, <span id="player-name-heading">Jogador</span>! <span class="wave" aria-hidden="true">✦</span></h1>
+              <p class="welcome-copy">Veja como suas escolhas estão construindo seu futuro.</p>
+            </div>
+            <div class="session-date">
+              <span class="calendar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M7.5 3.5v3M16.5 3.5v3M4 9.5h16" /></svg>
+              </span>
+              <span><strong id="today-label"></strong><small>Sessão atual</small></span>
+            </div>
+          </section>
+
+          <section class="dashboard-grid" aria-label="Resumo financeiro">
+            <article class="balance-card panel">
+              <div class="balance-topline">
+                <span class="card-kicker"><span class="wallet-icon" aria-hidden="true">R$</span> SALDO DISPONÍVEL</span>
+                <span class="live-label"><span></span> <span id="balance-live-label">AGORA</span></span>
+              </div>
+              <p class="balance-amount" id="balance-value" aria-live="polite">R$ 15.000,00</p>
+              <div class="balance-bottom">
+                <span id="balance-caption">Esse é o valor que você tem para usar.</span>
+                <div class="balance-chart" aria-label="Evolução do saldo na sessão">
+                  <svg viewBox="0 0 240 48" role="img" aria-labelledby="chart-title">
+                    <title id="chart-title">Evolução do saldo</title>
+                    <path class="chart-area" id="chart-area" d="" />
+                    <path class="chart-line" id="chart-line" d="" />
+                    <circle class="chart-point" id="chart-point" cx="230" cy="20" r="3" />
+                  </svg>
+                </div>
+              </div>
+              <div class="balance-decoration" aria-hidden="true"></div>
+            </article>
+
+            <article class="metric-card panel income-card">
+              <div class="metric-heading"><span class="metric-icon income-icon" aria-hidden="true">↗</span><span>Renda por rodada</span></div>
+              <p class="metric-value" id="income-value">R$ 6.400,00</p>
+              <p class="metric-note">Seu salário atual</p>
+              <div class="metric-footer"><span class="mini-bars income-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>renda recorrente</span></div>
+            </article>
+
+            <article class="metric-card panel investment-card">
+              <div class="metric-heading"><span class="metric-icon investment-icon" aria-hidden="true">✳</span><span>Investimentos</span></div>
+              <p class="metric-value" id="investment-value">R$ 0,00</p>
+              <p class="metric-note">Seu dinheiro trabalhando</p>
+              <div class="metric-footer"><span class="investment-tag"><span></span><span id="yield-value">R$ 0,00 de rendimento</span></span></div>
+            </article>
+
+            <article class="round-card panel">
+              <div class="round-top"><span class="metric-heading"><span class="metric-icon round-icon" aria-hidden="true">◎</span> Sua jornada</span><span class="round-number">RODADA <b id="round-current">1</b></span></div>
+              <div class="round-progress" aria-label="Progresso da rodada">
+                <span class="round-step done"><i>✓</i><small>Começo</small></span><span class="step-line done"></span>
+                <span class="round-step current"><i>2</i><small>Escolhas</small></span><span class="step-line"></span>
+                <span class="round-step"><i>3</i><small>Conquista</small></span>
+              </div>
+              <div class="round-footer"><span id="moves-value">0 jogadas registradas</span><span class="round-status"><span></span> Em andamento</span></div>
+            </article>
+          </section>
+
+          <div class="section-heading" id="patrimonio">
+            <div><h2>Seu dinheiro em equilíbrio</h2><p>Entenda o que entra e o que sai em cada rodada.</p></div>
+            <span class="period-badge"><span aria-hidden="true">◷</span> Por rodada</span>
+          </div>
+
+          <section class="desktop-only-notice" id="desktop-only-notice" aria-labelledby="desktop-notice-title">
+            <img src="./images/logo.jpe" alt="Logo Aventura Financeira Evolution" />
+            <span class="desktop-notice-icon" aria-hidden="true">🖥️</span>
+            <h1 id="desktop-notice-title">Esta interface é para computador</h1>
+            <p>Abra o jogo em um computador com uma janela de pelo menos 1100 pixels de largura.</p>
+          </section>
+
+          <section class="balance-breakdown" aria-label="Detalhes das finanças por rodada">
+            <article class="breakdown-card panel">
+              <div class="breakdown-label"><span class="breakdown-icon expense-fixed" aria-hidden="true">↘</span><span>Despesas fixas</span></div>
+              <strong id="fixed-expenses-value">R$ 4.000,00</strong>
+              <small>Compromissos recorrentes</small>
+              <div class="breakdown-track"><span class="track-fixed" id="fixed-expenses-bar"></span></div>
+            </article>
+            <article class="breakdown-card panel">
+              <div class="breakdown-label"><span class="breakdown-icon expense-variable" aria-hidden="true">↘</span><span>Compras e escolhas</span></div>
+              <strong id="variable-expenses-value">R$ 0,00</strong>
+              <small>Gastos únicos acumulados</small>
+              <div class="breakdown-track"><span class="track-variable" id="variable-expenses-bar"></span></div>
+            </article>
+            <article class="lesson-card">
+              <span class="lesson-spark" aria-hidden="true">✦</span>
+              <div><strong>Uma dica pra você</strong><p id="financial-tip">Guardar um pouco hoje ajuda a realizar planos amanhã.</p></div>
+              <span class="lesson-art" aria-hidden="true"><i></i><i></i><i></i></span>
+            </article>
+          </section>
+
+          <section class="history-section" id="historico" aria-labelledby="history-title">
+            <div class="section-heading history-heading">
+              <div><h2 id="history-title">Últimas movimentações</h2><p>Suas decisões aparecem aqui, uma por uma.</p></div>
+              <div class="history-actions">
+                <button class="button button-quiet" id="export-button" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11m0 0 4-4m-4 4-4-4M4.5 16v3.5h15V16" /></svg>
+                  Exportar sessão
+                </button>
+                <button class="button button-text" id="clear-session-button" type="button">Nova sessão</button>
+              </div>
+            </div>
+            <div class="history-panel panel">
+              <div class="history-table-head"><span>ATIVIDADE</span><span>RODADA</span><span>VALOR</span><span>SALDO APÓS</span><span>HORÁRIO</span></div>
+              <div id="history-list" class="history-list" aria-live="polite"></div>
+              <div class="history-empty" id="history-empty">
+                <span class="empty-icon" aria-hidden="true">⌁</span>
+                <strong>Nenhuma movimentação por enquanto</strong>
+                <span>Quando o jogo começar, suas escolhas vão aparecer aqui.</span>
+              </div>
+              <div class="history-footer"><span id="history-summary">Aguardando movimentações</span><button class="button button-text" id="view-all-button" type="button" hidden>Ver todas <span aria-hidden="true">→</span></button></div>
+            </div>
+          </section>
+
+          <footer class="page-footer"><span>AVENTURA FINANCEIRA <b>EVOLUTION</b></span><span>Aprender também é uma conquista.</span></footer>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="settings-dialog" id="settings-dialog" aria-labelledby="settings-title">
+      <form class="settings-form" id="settings-form">
+        <div class="dialog-heading">
+          <div><span class="eyebrow"><span class="eyebrow-line"></span> INTEGRAÇÃO</span><h2 id="settings-title">Conexão com o backend</h2></div>
+          <button class="icon-button dialog-close" id="close-settings" type="button" aria-label="Fechar configurações">×</button>
+        </div>
+        <p class="dialog-copy">O modo recomendado recebe os dados do backend. O modo MQTT direto fica disponível para testes e compatibilidade.</p>
+        <label class="field-label" for="connection-mode">Origem dos dados</label>
+        <select id="connection-mode" name="connectionMode">
+          <option value="backend">Backend do jogo (recomendado)</option>
+          <option value="mqtt">Broker MQTT direto (compatibilidade)</option>
+        </select>
+        <div id="backend-fields">
+          <label class="field-label" for="backend-url">Endereço WebSocket do backend</label>
+          <input id="backend-url" name="backendUrl" type="url" placeholder="ws://localhost:3000/ws/telemetria" autocomplete="url" />
+        </div>
+        <div id="mqtt-fields" hidden>
+        <label class="field-label" for="broker-url">Endereço do broker (WebSocket)</label>
+        <input id="broker-url" name="broker" type="url" placeholder="wss://seu-broker:porta/mqtt" autocomplete="url" />
+        <label class="field-label" for="mqtt-topic">Tópico</label>
+        <input id="mqtt-topic" name="topic" type="text" value="aventura_financeira/telemetria" />
+        <div class="form-row">
+          <div><label class="field-label" for="mqtt-username">Usuário <span>(opcional)</span></label><input id="mqtt-username" name="username" type="text" autocomplete="username" /></div>
+          <div><label class="field-label" for="mqtt-password">Senha <span>(opcional)</span></label><input id="mqtt-password" name="password" type="password" autocomplete="current-password" /></div>
+        </div>
+        </div>
+        <label class="field-label" for="player-name-input">Nome para esta sessão <span>(opcional)</span></label>
+        <input id="player-name-input" name="playerName" type="text" maxlength="24" placeholder="Como quer ser chamado?" />
+        <p class="connection-feedback" id="connection-feedback" role="status">Suas credenciais são usadas apenas para esta conexão.</p>
+        <div class="dialog-actions">
+          <button class="button button-quiet" id="disconnect-button" type="button" hidden>Desconectar</button>
+          <button class="button button-outline" id="cancel-settings" type="button">Cancelar</button>
+          <button class="button button-primary" id="connect-button" type="submit">Conectar</button>
+        </div>
+        <p class="privacy-dialog"><span aria-hidden="true">⌁</span> Endereço e tópico ficam salvos neste navegador. Usuário e senha não são armazenados.</p>
+      </form>
+    </dialog>
+
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
