@@ -16,7 +16,7 @@ struct QueuedMessage {
   char payload[JSON_CAPACITY];
 };
 
-SoftwareSerial fpgaSerial(AEF_FPGA_RX_PIN, -1, false, 256);
+SoftwareSerial fpgaSerial(AEF_FPGA_RX_PIN, -1, false);
 WiFiClient networkClient;
 PubSubClient mqttClient(networkClient);
 char inputLine[LINE_CAPACITY];
@@ -177,7 +177,9 @@ void setup() {
     Serial.println("AEF_DEVICE_ID invalido; use letras, numeros, ponto, _ ou -.");
     while (true) delay(1000);
   }
-  fpgaSerial.begin(115200, SWSERIAL_8N1);
+
+  fpgaSerial.begin(115200, SWSERIAL_8N1, AEF_FPGA_RX_PIN, -1, false, 256);
+
   WiFi.mode(WIFI_STA);
   mqttClient.setServer(AEF_MQTT_HOST, AEF_MQTT_PORT);
   if (!mqttClient.setBufferSize(JSON_CAPACITY)) {
