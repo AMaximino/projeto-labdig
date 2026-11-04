@@ -36,6 +36,7 @@ sim/*
 # =========================
 
 build/
+.build/
 
 # =========================
 # Quartus (arquivos gerados)
@@ -74,3 +75,8 @@ quartus/*.elf
 esp8266/aef_bridge/config.h
 backend/data/
 backend/node_modules/
+
+# Artefatos locais de compilacao Arduino/ESP8266
+.arduino15/
+.arduino/
+.vscode/
