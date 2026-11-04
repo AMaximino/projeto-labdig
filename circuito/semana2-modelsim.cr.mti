@@ -1,0 +1,155 @@
+C:/Users/Sophia/Documents/projeto-labdig/circuito/multiplexador.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/multiplexador.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module multiplexador
+
+Top level modules:
+	multiplexador
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/dec7seg.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/dec7seg.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module dec7seg
+
+Top level modules:
+	dec7seg
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/inicializador.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/inicializador.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module inicializador
+
+Top level modules:
+	inicializador
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/registrador_n.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/registrador_n.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module registrador_n
+
+Top level modules:
+	registrador_n
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/circuito_jogo_financeiro_tb1.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/circuito_jogo_financeiro_tb1.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module circuito_jogo_financeiro_tb1
+
+Top level modules:
+	circuito_jogo_financeiro_tb1
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/telemetria_uart_tb.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/telemetria_uart_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module telemetria_uart_tb
+
+Top level modules:
+	telemetria_uart_tb
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_evento.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_evento.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module processador_evento
+
+Top level modules:
+	processador_evento
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/unidade_controle_moore_tb.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/unidade_controle_moore_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module unidade_controle_moore_tb
+
+Top level modules:
+	unidade_controle_moore_tb
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/circuito_jogo_financeiro.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/circuito_jogo_financeiro.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module circuito_jogo_financeiro
+
+Top level modules:
+	circuito_jogo_financeiro
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/contador_modulo_n.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/contador_modulo_n.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module contador_modulo_n
+
+Top level modules:
+	contador_modulo_n
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/telemetria_uart.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/telemetria_uart.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module telemetria_uart
+
+Top level modules:
+	telemetria_uart
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_acao.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_acao.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module processador_acao
+
+Top level modules:
+	processador_acao
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/fluxo_dados.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/fluxo_dados.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module fluxo_dados
+
+Top level modules:
+	fluxo_dados
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/display_bcd_4dig_cc.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/display_bcd_4dig_cc.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module display_bcd_4dig_cc
+
+Top level modules:
+	display_bcd_4dig_cc
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/bin2bcd.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/bin2bcd.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module bin2bcd
+
+Top level modules:
+	bin2bcd
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/sel_dinheiro.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/sel_dinheiro.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module sel_dinheiro
+
+Top level modules:
+	sel_dinheiro
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_acao_tb.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/processador_acao_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module processador_acao_tb
+
+Top level modules:
+	processador_acao_tb
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/i2s_master_clock_gen.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/i2s_master_clock_gen.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module i2s_master_clock_gen
+
+Top level modules:
+	i2s_master_clock_gen
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/edge_detector.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/edge_detector.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module edge_detector
+
+Top level modules:
+	edge_detector
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/unidade_controle.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/unidade_controle.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module unidade_controle
+
+Top level modules:
+	unidade_controle
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/sel_valor.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/sel_valor.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module sel_valor
+
+Top level modules:
+	sel_valor
+
+} {} {}} C:/Users/Sophia/Documents/projeto-labdig/circuito/display6digitos.v {1 {vlog -work work -stats=none C:/Users/Sophia/Documents/projeto-labdig/circuito/display6digitos.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module display6digitos
+
+Top level modules:
+	display6digitos
+
+} {} {}}

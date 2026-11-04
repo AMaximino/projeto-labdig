@@ -19,6 +19,8 @@ dados por WebSocket ao front-end.
   `esp8266/` guarda somente firmware e testes ESP8266.
 - Firmware ESP8266 e ligacao UART: [`esp8266/README.md`](esp8266/README.md).
 - Backend MQTT/WebSocket: [`backend/README.md`](backend/README.md).
+- Passo a passo de montagem física e conexão com o painel:
+  [`GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md`](GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md).
 - Contrato de dados e escala monetaria:
   [`CONTEXTO_TECNICO_AEF_FPGA_ESP32_FRONTEND.md`](CONTEXTO_TECNICO_AEF_FPGA_ESP32_FRONTEND.md).
 - Painel e conexao WebSocket: [`frontend/README.md`](frontend/README.md).
