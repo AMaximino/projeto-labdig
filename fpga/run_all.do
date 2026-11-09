@@ -2,7 +2,7 @@ onerror {quit -code 1}
 
 vlib work
 vmap work work
-vlog -sv circuito/*.v
+vlog -sv fpga/rtl/*.v
 vlog -sv fpga/testbench/processador_acao_tb.v
 vlog -sv fpga/testbench/telemetria_uart_tb.v
 vlog -sv fpga/testbench/unidade_controle_moore_tb.v

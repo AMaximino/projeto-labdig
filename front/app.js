@@ -1,7 +1,6 @@
 (() => {
   "use strict";
 
-  const TOPIC_DEFAULT = "aventura_financeira/telemetria";
   const SESSION_KEY = "aef-session-v1";
   const PREFS_KEY = "aef-preferences-v1";
   const MAX_EVENTS = 300;
@@ -90,13 +89,19 @@
     hasLiveConnection: false,
     mode: "demo",
     playerName: typeof prefs.playerName === "string" ? prefs.playerName : "",
-    mqttClient: null,
     reconnectTimer: null,
+    reconnectEnabled: false,
+    reconnectAttempts: 0,
     visibleLimit: 5,
   };
 
+  function defaultBackendUrl() {
+    const scheme = window.location.protocol === "https:" ? "wss:" : "ws:";
+    return `${scheme}//${window.location.host || "localhost:3000"}/ws/telemetria`;
+  }
+
   function persistSession() {
-    const { mqttClient, reconnectTimer, ...persisted } = state;
+    const { reconnectTimer, ...persisted } = state;
     try {
       localStorage.setItem(SESSION_KEY, JSON.stringify({
         metrics: {
@@ -123,10 +128,6 @@
   function persistPreferences() {
     try {
       localStorage.setItem(PREFS_KEY, JSON.stringify({
-        broker: $("#broker-url").value.trim(),
-        topic: $("#mqtt-topic").value.trim() || TOPIC_DEFAULT,
-        backendUrl: $("#backend-url").value.trim(),
-        transport: $("#connection-mode").value,
         playerName: state.playerName,
       }));
     } catch (error) {
@@ -179,14 +180,14 @@
     ui.connectionPill.className = `connection-pill${connected ? " connected" : error ? " error" : " demo"}`;
     ui.sidebarDot.className = `device-dot${connected ? " connected" : error ? " error" : ""}`;
     ui.connectionLabel.textContent = connected
-      ? state.transport === "backend" ? "Backend conectado" : "ESP8266 conectada"
+      ? "Backend conectado"
       : error ? "Falha na conexão" : "Modo demonstração";
     ui.sidebarTitle.textContent = connected ? "Recebendo dados" : error ? "Conexão indisponível" : "Modo demonstração";
     ui.sidebarSubtitle.textContent = connected
-      ? state.transport === "backend" ? "WebSocket • ao vivo" : "MQTT • ao vivo"
+      ? "WebSocket • ao vivo"
       : error ? "Verifique a conexão" : "Dados de exemplo";
     $("#balance-live-label").textContent = connected ? "AO VIVO" : "DEMO";
-    ui.disconnectButton.hidden = !connected && !state.mqttClient && !state.backendSocket;
+    ui.disconnectButton.hidden = !connected && !state.backendSocket && !state.reconnectEnabled;
     const demoButton = $("#demo-event-button");
     if (demoButton) demoButton.hidden = connected;
     if ($("#game-round-value")) renderGame();
@@ -309,7 +310,7 @@
     setMoneyDisplay("#game-balance-value", state.metricAvailable.balance ? state.balance : Number.NaN);
     $("#game-balance-hint").textContent = state.metricAvailable.balance
       ? state.mode === "connected"
-        ? state.transport === "backend" ? "Saldo recebido pelo backend do jogo." : "Saldo recebido pelo ESP8266."
+        ? "Saldo recebido pelo backend do jogo."
         : "Esse é o valor que você tem para usar."
       : "Aguardando o primeiro dado do jogo.";
     setMoneyDisplay("#game-income-value", state.metricAvailable.salary ? state.salary : Number.NaN);
@@ -658,29 +659,16 @@
   }
 
   function openSettings() {
-    $("#broker-url").value = prefs.broker || "";
-    $("#mqtt-topic").value = prefs.topic || TOPIC_DEFAULT;
-    $("#backend-url").value = prefs.backendUrl || "ws://localhost:3000/ws/telemetria";
-    $("#connection-mode").value = prefs.transport || "backend";
-    updateConnectionFields();
+    $("#backend-url").value = defaultBackendUrl();
     $("#player-name-input").value = state.playerName || "";
-    $("#mqtt-username").value = "";
-    $("#mqtt-password").value = "";
     setFeedback(state.backendSocket
       ? "Conexão ativa com o backend."
-      : state.mqttClient
-        ? "Conexão ativa. Usuário e senha não ficam armazenados."
-        : "Suas credenciais são usadas apenas para esta conexão.");
-    ui.connectButton.textContent = state.mqttClient || state.backendSocket ? "Reconectar" : "Conectar";
-    ui.disconnectButton.hidden = !state.mqttClient && !state.backendSocket;
+      : state.reconnectEnabled
+        ? "Conexão interrompida. Tentando novamente…"
+        : "Endereço calculado para o servidor desta página.");
+    ui.connectButton.textContent = state.backendSocket || state.reconnectEnabled ? "Reconectar" : "Conectar";
+    ui.disconnectButton.hidden = !state.backendSocket && !state.reconnectEnabled;
     ui.settingsDialog.showModal();
-  }
-
-  function updateConnectionFields() {
-    const backendMode = $("#connection-mode").value === "backend";
-    $("#backend-fields").hidden = !backendMode;
-    $("#mqtt-fields").hidden = backendMode;
-    $("#settings-title").textContent = backendMode ? "Conexão com o backend" : "Conexão MQTT";
   }
 
   function handleConnectionError(error) {
@@ -712,17 +700,12 @@
       handleConnectionError(new Error("WebSocket não está disponível neste navegador."));
       return;
     }
-    if (state.mqttClient) {
-      state.mqttClient.removeAllListeners();
-      state.mqttClient.end(true);
-      state.mqttClient = null;
-    }
     if (state.backendSocket) {
       state.backendSocket.close();
       state.backendSocket = null;
     }
     clearTimeout(state.reconnectTimer);
-    state.transport = "backend";
+    state.reconnectEnabled = true;
     let socket;
     try {
       socket = new WebSocket(endpoint);
@@ -737,7 +720,8 @@
     socket.addEventListener("open", () => {
       if (state.backendSocket !== socket) return;
       ui.connectButton.disabled = false;
-      resetLiveSession();
+      state.reconnectAttempts = 0;
+      if (!state.hasLiveConnection) resetLiveSession();
       setConnection("connected", "Conexão ativa com o backend.");
       showToast("Conexão ativa. Aguardando dados do jogo.");
     });
@@ -758,7 +742,12 @@
         setFeedback("Mensagem ignorada: esperado um objeto JSON do backend.", "error");
         return;
       }
-      recordPayload(payload, "backend");
+      if (["snapshot", "event"].includes(payload.type) && payload.data &&
+          typeof payload.data === "object" && !Array.isArray(payload.data)) {
+        recordPayload(payload.data, "backend");
+      } else {
+        recordPayload(payload, "backend");
+      }
     });
     socket.addEventListener("error", () => {
       handleConnectionError(new Error("Não foi possível conectar ao WebSocket do backend."));
@@ -767,84 +756,22 @@
       if (state.backendSocket !== socket) return;
       state.backendSocket = null;
       ui.connectButton.disabled = false;
-      setConnection("demo", "Conexão com o backend encerrada.");
+      if (!state.reconnectEnabled) {
+        setConnection("demo", "Conexão com o backend encerrada.");
+        return;
+      }
+      const delay = Math.min(1000 * (2 ** state.reconnectAttempts), 20000);
+      state.reconnectAttempts += 1;
+      setConnection("error", "Conexão interrompida. Tentando novamente…");
+      state.reconnectTimer = setTimeout(() => {
+        if (state.reconnectEnabled) connectBackend(endpoint);
+      }, delay);
     });
-  }
-
-  function connectMqtt({ broker, topic, username, password }) {
-    if (!window.mqtt || typeof window.mqtt.connect !== "function") {
-      setConnection("error", "A biblioteca MQTT não carregou. Verifique sua conexão e atualize a página.");
-      return;
-    }
-    try {
-      if (state.mqttClient) {
-        state.mqttClient.removeAllListeners();
-        state.mqttClient.end(true);
-      }
-      clearTimeout(state.reconnectTimer);
-      const options = {
-        clean: true,
-        connectTimeout: 8000,
-        reconnectPeriod: 3000,
-        clientId: `aef_${Math.random().toString(16).slice(2, 10)}`,
-      };
-      if (username) options.username = username;
-      if (password) options.password = password;
-
-      if (state.backendSocket) {
-        state.backendSocket.close();
-        state.backendSocket = null;
-      }
-      state.transport = "mqtt";
-      const client = window.mqtt.connect(broker, options);
-      state.mqttClient = client;
-      ui.connectButton.disabled = true;
-      setFeedback("Conectando ao broker…");
-      setConnection("demo");
-      client.on("connect", () => {
-        client.subscribe(topic, { qos: 0 }, (error) => {
-          if (error) {
-            handleConnectionError(error);
-            return;
-          }
-          ui.connectButton.disabled = false;
-          if (!state.hasLiveConnection) resetLiveSession();
-          setConnection("connected", `Conectado e ouvindo ${topic}.`);
-          showToast("Conexão ativa. Aguardando dados do jogo.");
-        });
-      });
-      client.on("message", (receivedTopic, message) => {
-        let payload;
-        try {
-          payload = JSON.parse(message.toString());
-        } catch (error) {
-          console.error("Mensagem MQTT recebida não contém JSON válido:", error);
-          setFeedback(`Mensagem ignorada: JSON inválido em ${receivedTopic}.`, "error");
-          return;
-        }
-        if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
-          setFeedback(`Mensagem ignorada: esperado um objeto JSON em ${receivedTopic}.`, "error");
-          return;
-        }
-        recordPayload(payload, receivedTopic);
-      });
-      client.on("error", handleConnectionError);
-      client.on("close", () => {
-        if (state.mqttClient === client) setConnection("demo", "Conexão encerrada. Confira o broker e tente novamente.");
-      });
-      client.on("reconnect", () => setFeedback("Conexão interrompida. Tentando novamente…"));
-    } catch (error) {
-      handleConnectionError(error);
-    }
   }
 
   function disconnectTelemetry() {
     clearTimeout(state.reconnectTimer);
-    if (state.mqttClient) {
-      state.mqttClient.removeAllListeners();
-      state.mqttClient.end(true);
-      state.mqttClient = null;
-    }
+    state.reconnectEnabled = false;
     if (state.backendSocket) {
       state.backendSocket.close();
       state.backendSocket = null;
@@ -881,11 +808,7 @@
 
   function initialize() {
     $("#today-label").textContent = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date());
-    $("#broker-url").value = prefs.broker || "";
-    $("#mqtt-topic").value = prefs.topic || TOPIC_DEFAULT;
-    $("#backend-url").value = prefs.backendUrl || "ws://localhost:3000/ws/telemetria";
-    $("#connection-mode").value = prefs.transport || "backend";
-    updateConnectionFields();
+    $("#backend-url").value = defaultBackendUrl();
     $("#player-name-input").value = state.playerName || "";
     fillCalculatorItemOptions();
     render();
@@ -920,13 +843,8 @@
     });
     $("#open-settings").addEventListener("click", openSettings);
     $("#open-settings-side").addEventListener("click", openSettings);
-    $("#connection-mode").addEventListener("change", updateConnectionFields);
     $("#close-settings").addEventListener("click", () => ui.settingsDialog.close());
     $("#cancel-settings").addEventListener("click", () => ui.settingsDialog.close());
-    ui.settingsDialog.addEventListener("close", () => {
-      $("#mqtt-username").value = "";
-      $("#mqtt-password").value = "";
-    });
     $("#player-avatar").addEventListener("click", openSettings);
     $("#player-name-input").addEventListener("input", (event) => {
       state.playerName = event.target.value.trim();
@@ -939,62 +857,21 @@
     });
     $("#disconnect-button").addEventListener("click", () => {
       disconnectTelemetry();
-      setFeedback("Desconectado. Credenciais removidas da memória.", "");
+      setFeedback("Desconectado. O painel está em modo demonstração.", "");
     });
     ui.form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const transport = $("#connection-mode").value;
       const backendUrl = $("#backend-url").value.trim();
-      const broker = $("#broker-url").value.trim();
-      const topic = $("#mqtt-topic").value.trim() || TOPIC_DEFAULT;
-      const username = $("#mqtt-username").value.trim();
-      const password = $("#mqtt-password").value;
       state.playerName = $("#player-name-input").value.trim();
-      if (transport === "backend") {
-        if (!backendUrl) {
-          setFeedback("Informe o endereço WebSocket do backend.", "error");
-          $("#backend-url").focus();
-          return;
-        }
-        if (!/^wss?:\/\//i.test(backendUrl)) {
-          setFeedback("O endereço precisa começar com ws:// ou wss://.", "error");
-          $("#backend-url").focus();
-          return;
-        }
-        prefs.transport = transport;
-        prefs.backendUrl = backendUrl;
-        prefs.playerName = state.playerName;
-        persistPreferences();
-        ui.settingsDialog.close();
-        connectBackend(backendUrl);
-        render();
-        return;
-      }
-      if (!broker) {
-        setFeedback("Informe o endereço WebSocket do broker MQTT.", "error");
-        $("#broker-url").focus();
-        return;
-      }
-      if (!/^wss?:\/\//i.test(broker)) {
+      if (!/^wss?:\/\//i.test(backendUrl)) {
         setFeedback("O endereço precisa começar com ws:// ou wss://.", "error");
-        $("#broker-url").focus();
+        $("#backend-url").focus();
         return;
       }
-      if (!topic) {
-        setFeedback("Informe o tópico MQTT para receber a telemetria.", "error");
-        $("#mqtt-topic").focus();
-        return;
-      }
-      prefs.broker = broker;
-      prefs.topic = topic;
-      prefs.transport = transport;
-      prefs.backendUrl = backendUrl;
       prefs.playerName = state.playerName;
       persistPreferences();
       ui.settingsDialog.close();
-      connectMqtt({ broker, topic, username, password });
-      $("#mqtt-password").value = "";
-      $("#mqtt-username").value = "";
+      connectBackend(backendUrl);
       render();
     });
     $("#export-button").addEventListener("click", exportSession);
@@ -1023,6 +900,7 @@
     });
     if (prefs.playerName) state.playerName = prefs.playerName;
     if (!savedSession) persistSession();
+    connectBackend(defaultBackendUrl());
   }
 
   initialize();

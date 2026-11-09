@@ -1,7 +1,8 @@
-import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { appendFileSync, mkdirSync, readFileSync, statSync, createReadStream } from "node:fs";
+import { dirname, extname, resolve, sep } from "node:path";
 import { createServer } from "node:http";
 import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import mqtt from "mqtt";
 import { WebSocketServer, WebSocket } from "ws";
 
@@ -10,7 +11,15 @@ import { validateTelemetry } from "./contract.js";
 const port = Number(process.env.PORT || 3000);
 const topic = process.env.MQTT_TOPIC || "aventura_financeira/telemetria";
 const mqttUrl = process.env.MQTT_URL || "mqtt://localhost:1883";
-const journalPath = resolve(process.env.DATA_FILE || "./data/events.jsonl");
+const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const journalPath = resolve(process.env.DATA_FILE || resolve(backendRoot, "data/events.jsonl"));
+const frontendRoot = resolve(backendRoot, "../front");
+const MIME_TYPES = {
+  ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml",
+  ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+  ".jpe": "image/jpeg", ".ico": "image/x-icon", ".pdf": "application/pdf",
+};
 const maxEventsPerSession = 5000;
 const sessions = new Map();
 const sockets = new Set();
@@ -78,6 +87,34 @@ function jsonResponse(response, status, value) {
 
 function handleHttpRequest(request, response) {
   const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
+  if ((request.method === "GET" || request.method === "HEAD") &&
+      !url.pathname.startsWith("/api/") && url.pathname !== "/health" &&
+      url.pathname !== "/ws/telemetria") {
+    let requestedPath;
+    try {
+      requestedPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
+    } catch {
+      jsonResponse(response, 400, { error: "Caminho inválido." });
+      return;
+    }
+    const filePath = resolve(frontendRoot, `.${requestedPath}`);
+    if (!filePath.startsWith(`${frontendRoot}${sep}`)) {
+      jsonResponse(response, 403, { error: "Acesso negado." });
+      return;
+    }
+    try {
+      if (!statSync(filePath).isFile()) throw new Error("not a file");
+      response.writeHead(200, {
+        "content-type": MIME_TYPES[extname(filePath).toLowerCase()] || "application/octet-stream",
+        "cache-control": "no-cache",
+      });
+      if (request.method === "HEAD") response.end();
+      else createReadStream(filePath).pipe(response);
+    } catch {
+      jsonResponse(response, 404, { error: "Arquivo não encontrado." });
+    }
+    return;
+  }
   if (request.method === "GET" && url.pathname === "/health") {
     jsonResponse(response, 200, {
       status: "ok",
@@ -167,7 +204,7 @@ mqttClient.on("message", (receivedTopic, buffer) => {
   broadcast({ type: "event", data: event });
 });
 
-server.listen(port, () => {
+server.listen(port, "0.0.0.0", () => {
   console.info(`Backend pronto em http://localhost:${port} e ws://localhost:${port}/ws/telemetria.`);
 });
 

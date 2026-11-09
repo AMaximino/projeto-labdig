@@ -10,6 +10,7 @@ module circuito_jogo_financeiro (
     input vender,
     input [9:0] seletor_item,
     input [5:0] config_display,
+    input rfid_rx,
 
     //output [4:0] estado, //
 
@@ -61,6 +62,11 @@ module circuito_jogo_financeiro (
     wire [4:0] w_estado;
     wire telemetry_send;
     wire [7:0] telemetry_event;
+    wire [3:0] rfid_item;
+    wire rfid_item_valid;
+    wire rfid_command_ready = rfid_item_valid &&
+        ((w_estado == 5'b00100) || (w_estado == 5'b00101));
+    wire rfid_ack;
     wire [1:0] telemetry_status;
     wire [3:0] telemetry_item;
     wire signed [20:0] telemetry_balance;
@@ -70,6 +76,11 @@ module circuito_jogo_financeiro (
     wire signed [20:0] telemetry_unique_expenses;
 
 	wire clock_ajustado;
+
+    rfid_uart_rx reader_command (
+        .clock(clock), .reset(~reset), .rx(rfid_rx),
+        .acknowledge(rfid_ack), .item_id(rfid_item), .item_valid(rfid_item_valid)
+    );
 
     //assign estado = w_estado;
 	 
@@ -90,6 +101,9 @@ module circuito_jogo_financeiro (
         .vender         ( ~vender ),
         .config_display ( ~config_display ),
         .seletor_item   ( ~seletor_item ),
+        .rfid_item_id   ( rfid_item ),
+        .rfid_item_valid(rfid_command_ready),
+        .rfid_ack       ( rfid_ack ),
 
         .rstED          ( w_rstED ),
         .init           ( w_init ),

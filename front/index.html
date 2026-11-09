@@ -16,7 +16,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script src="./app.js" defer></script>
   </head>
   <body>
@@ -349,35 +348,20 @@
           <div><span class="eyebrow"><span class="eyebrow-line"></span> INTEGRAÇÃO</span><h2 id="settings-title">Conexão com o backend</h2></div>
           <button class="icon-button dialog-close" id="close-settings" type="button" aria-label="Fechar configurações">×</button>
         </div>
-        <p class="dialog-copy">O modo recomendado recebe os dados do backend. O modo MQTT direto fica disponível para testes e compatibilidade.</p>
-        <label class="field-label" for="connection-mode">Origem dos dados</label>
-        <select id="connection-mode" name="connectionMode">
-          <option value="backend">Backend do jogo (recomendado)</option>
-          <option value="mqtt">Broker MQTT direto (compatibilidade)</option>
-        </select>
+        <p class="dialog-copy">O painel conecta ao backend neste computador e tenta novamente se a rede cair.</p>
         <div id="backend-fields">
           <label class="field-label" for="backend-url">Endereço WebSocket do backend</label>
           <input id="backend-url" name="backendUrl" type="url" placeholder="ws://localhost:3000/ws/telemetria" autocomplete="url" />
         </div>
-        <div id="mqtt-fields" hidden>
-        <label class="field-label" for="broker-url">Endereço do broker (WebSocket)</label>
-        <input id="broker-url" name="broker" type="url" placeholder="wss://seu-broker:porta/mqtt" autocomplete="url" />
-        <label class="field-label" for="mqtt-topic">Tópico</label>
-        <input id="mqtt-topic" name="topic" type="text" value="aventura_financeira/telemetria" />
-        <div class="form-row">
-          <div><label class="field-label" for="mqtt-username">Usuário <span>(opcional)</span></label><input id="mqtt-username" name="username" type="text" autocomplete="username" /></div>
-          <div><label class="field-label" for="mqtt-password">Senha <span>(opcional)</span></label><input id="mqtt-password" name="password" type="password" autocomplete="current-password" /></div>
-        </div>
-        </div>
         <label class="field-label" for="player-name-input">Nome para esta sessão <span>(opcional)</span></label>
         <input id="player-name-input" name="playerName" type="text" maxlength="24" placeholder="Como quer ser chamado?" />
-        <p class="connection-feedback" id="connection-feedback" role="status">Suas credenciais são usadas apenas para esta conexão.</p>
+        <p class="connection-feedback" id="connection-feedback" role="status">O endereço é calculado a partir do servidor desta página.</p>
         <div class="dialog-actions">
           <button class="button button-quiet" id="disconnect-button" type="button" hidden>Desconectar</button>
           <button class="button button-outline" id="cancel-settings" type="button">Cancelar</button>
           <button class="button button-primary" id="connect-button" type="submit">Conectar</button>
         </div>
-        <p class="privacy-dialog"><span aria-hidden="true">⌁</span> Endereço e tópico ficam salvos neste navegador. Usuário e senha não são armazenados.</p>
+        <p class="privacy-dialog"><span aria-hidden="true">⌁</span> O nome do jogador fica salvo apenas neste navegador. A interface não envia ações à partida.</p>
       </form>
     </dialog>
 

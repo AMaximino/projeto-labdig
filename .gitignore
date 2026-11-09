@@ -1,82 +1,36 @@
-# =========================
-# ModelSim / QuestaSim
-# =========================
-
-# Biblioteca compilada
+# Quartus / ModelSim / QuestaSim
 work/
-sim/work/
-
-# Arquivos de execução
-transcript
-vsim.wlf
+fpga/quartus/db/
+fpga/quartus/incremental_db/
+fpga/quartus/output_files/
+fpga/quartus/*.qws
+fpga/quartus/*.jdi
+fpga/quartus/*.pin
+fpga/quartus/*.sof
+fpga/quartus/*.pof
+fpga/quartus/*.hex
+fpga/quartus/*.elf
+fpga/sim/transcript
 *.wlf
 *.log
 *.jou
-
-# Configurações locais (opcional ignorar)
 modelsim.ini
 
-# =========================
-# Waveforms
-# =========================
-
-*.vcd
-*.fst
-
-# =========================
-# Pastas de simulação (mantém scripts .do)
-# =========================
-
-sim/*
-!sim/*.do
-!sim/**/*.do
-
-# =========================
-# Build genérico
-# =========================
-
+# Build output
 build/
 .build/
-
-# =========================
-# Quartus (arquivos gerados)
-# =========================
-
-quartus/db/
-quartus/incremental_db/
-quartus/output_files/
-
-# Arquivos temporários e logs
-quartus/*.log
-quartus/*.rpt
-quartus/*.summary
-quartus/*.smsg
-
-# Arquivos de sessão
-quartus/*.qws
-quartus/*.jdi
-
-# Outros gerados
-quartus/*.pin
-quartus/*.sof
-quartus/*.pof
-quartus/*.hex
-quartus/*.elf
-
-# =========================
-# Outros
-# =========================
-
 *.out
 *.vvp
+*.vcd
+*.fst
 .history/
 
-# Configuracoes locais da integracao
-esp8266/aef_bridge/config.h
-backend/data/
-backend/node_modules/
+# Local integration settings and data
+esp/aef_bridge/config.h
+back/data/
+back/node_modules/
 
-# Artefatos locais de compilacao Arduino/ESP8266
+# Arduino tooling
 .arduino15/
 .arduino/
 .vscode/

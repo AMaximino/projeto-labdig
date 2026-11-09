@@ -1,43 +1,14 @@
-# Testbenches da FPGA
+# Testbenches FPGA
 
-Os testbenches Verilog ficam separados do firmware ESP8266 e podem ser
-simulados no ModelSim/QuestaSim. Os fontes RTL existentes continuam em
-`circuito/` para manter os caminhos usados pelo projeto Quartus.
-
-## ModelSim
-
-Na raiz do repositorio:
+Os testbenches ficam separados do RTL em `fpga/testbench/`. Com ModelSim ou
+QuestaSim, a partir da raiz do repositório:
 
 ```tcl
 vsim -do fpga/testbench/run_all.do
 ```
 
-O script compila os modulos RTL e executa tres testbenches independentes:
-
-- `processador_acao_tb.v`: compra aceita e compra sem saldo suficiente.
-- `telemetria_uart_tb.v`: framing serial, snapshot, sinal, sequencia e fila.
-- `unidade_controle_moore_tb.v`: transicoes com nomes claros e saídas que
-  mudam somente depois da transicao Moore.
-
-O testbench original completo, `circuito_jogo_financeiro_tb1.v`, também está
-nesta pasta. Para executá-lo interativamente:
-
-```tcl
-vlog -sv circuito/*.v fpga/testbench/circuito_jogo_financeiro_tb1.v
-vsim work.circuito_jogo_financeiro_tb1
-do sim/wave.do
-run -all
-```
-
-Se o ModelSim for iniciado dentro da pasta `sim/`, use os caminhos relativos
-`../circuito/*.v`, `../fpga/testbench/*.v` e `wave.do`.
-
-## Icarus Verilog
-
-Como alternativa para verificações rápidas no terminal:
-
-```sh
-iverilog -g2012 -s telemetria_uart_tb -o /tmp/aef_uart.vvp \
-  circuito/telemetria_uart.v fpga/testbench/telemetria_uart_tb.v
-vvp /tmp/aef_uart.vvp
-```
+O script executa os testes de compra, framing de telemetria, comando RFID e FSM
+de Moore. `rfid_uart_rx_tb.v` verifica `R07`/`R10`, mantém o comando pendente e
+confirma que o acknowledge o consome uma vez. O testbench completo da partida é
+`circuito_jogo_financeiro_tb1.v`. Os fontes de síntese ficam em `fpga/rtl/` e o
+projeto Quartus em `fpga/quartus/`.

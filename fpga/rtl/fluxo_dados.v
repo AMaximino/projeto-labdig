@@ -8,6 +8,8 @@ module fluxo_dados (
     input vender,
     input [5:0] config_display,
     input [9:0] seletor_item,
+    input [3:0] rfid_item_id,
+    input rfid_item_valid,
 
     input rstED,
     input init,
@@ -43,6 +45,7 @@ module fluxo_dados (
     output reg [7:0] telemetry_event,
     output reg [1:0] telemetry_status,
     output reg [3:0] telemetry_item,
+    output reg rfid_ack,
     output signed [20:0] telemetry_balance,
     output signed [20:0] telemetry_salary,
     output signed [20:0] telemetry_investment,
@@ -67,6 +70,13 @@ module fluxo_dados (
     wire [9:0] itens_next;
 
     wire [5:0] acoes_out;
+    reg rfid_action_latched;
+    reg [3:0] rfid_latched_item;
+    wire rfid_action_active = rfid_item_valid || rfid_action_latched;
+    wire [3:0] rfid_selected_item = rfid_action_latched
+        ? rfid_latched_item : rfid_item_id;
+    wire [9:0] seletor_acao = rfid_action_active
+        ? (10'b1 << (rfid_selected_item - 1'b1)) : seletor_item;
 
     assign itens_out = itens;
     assign telemetry_balance = saldo;
@@ -189,7 +199,7 @@ module fluxo_dados (
         .gastosUnicos_in     ( gastosUnicos ),
         .acao                ( acoes_out ),
         .processaE           ( processaE ),
-        .seletor_item        ( seletor_item ),
+        .seletor_item        ( seletor_acao ),
         .itens_in            ( itens ),
         .saldo_out           ( saldo_proc ),
         .salario_out         ( salario_proc ),
@@ -221,22 +231,35 @@ module fluxo_dados (
 
     always @(posedge clock) begin
         if (rstED) begin
+            rfid_ack <= 1'b0;
+            rfid_action_latched <= 1'b0;
+            rfid_latched_item <= 4'd0;
             telemetry_send <= 1'b0;
             telemetry_event <= 8'd0;
             telemetry_status <= 2'd0;
             telemetry_item <= 4'd0;
             terminal_sent <= 1'b0;
         end else if (init) begin
+            rfid_ack <= 1'b0;
+            rfid_action_latched <= 1'b0;
+            rfid_latched_item <= 4'd0;
             telemetry_send <= 1'b1;
             telemetry_event <= 8'd1;
             telemetry_status <= 2'd0;
             telemetry_item <= 4'd0;
             terminal_sent <= 1'b0;
         end else begin
+            rfid_ack <= registraA && rfid_item_valid;
+            if (registraA && rfid_item_valid) begin
+                rfid_action_latched <= 1'b1;
+                rfid_latched_item <= rfid_item_id;
+            end else if (processaE) begin
+                rfid_action_latched <= 1'b0;
+            end
             telemetry_send <= 1'b0;
             if (processaE && (acoes_out != 6'b010000) && (acoes_out != 6'b100000)) begin
                 telemetry_send <= 1'b1;
-                telemetry_item <= item_id(seletor_item);
+                telemetry_item <= item_id(seletor_acao);
                 telemetry_status <= acao_aceita ? 2'd1 : 2'd2;
                 case (acoes_out)
                     6'b010000: telemetry_event <= 8'd2;
@@ -349,7 +372,8 @@ module fluxo_dados (
         .sinal ( tem_acao ),
         .pulso ( acao_pulso )
     );
-    assign acoes = {estudar, trabalhar, investir, resgatar, comprar, vender};
+    assign acoes = rfid_action_active ? 6'b000010
+        : {estudar, trabalhar, investir, resgatar, comprar, vender};
     assign tem_acao = |acoes;
     
 
