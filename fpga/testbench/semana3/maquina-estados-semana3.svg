@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1900 1550" role="img" aria-labelledby="title description">
+  <title id="title">Semana 3 — máquina de estados do jogo</title>
+  <desc id="description">Diagrama da FSM unidade_controle com inicialização, registro e processamento de ações, verificações de falência e fim de jogo, avanço de rodada e jogada e estados terminais. Ações RFID válidas seguem o mesmo caminho das ações de botão.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 5 L0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="restart-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .edge { fill: none; stroke: #334155; stroke-width: 3; marker-end: url(#arrow); }
+      .restart { fill: none; stroke: #7c3aed; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#restart-arrow); }
+      .label { font-size: 16px; font-weight: 700; text-anchor: middle; fill: #334155; }
+      .restart-label { font-size: 16px; font-weight: 700; text-anchor: middle; fill: #6d28d9; }
+      .state { stroke-width: 2.5; rx: 14; }
+      .state-label { font-size: 16px; font-weight: 700; text-anchor: middle; }
+      .state-label.compact { font-size: 13px; }
+      .state-note { font-size: 14px; text-anchor: middle; fill: #475569; }
+      .section { font-size: 16px; font-weight: 700; fill: #475569; }
+      .note { font-size: 15px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1900" height="1550" rx="20" fill="#f8fafc"/>
+  <text x="60" y="58" class="title">Semana 3 — máquina de estados do jogo</text>
+  <text x="60" y="91" class="subtitle">FSM de Moore da unidade_controle.v — as condições nas setas selecionam o próximo estado.</text>
+
+  <text x="60" y="130" class="section">INÍCIO E ESPERA DE AÇÃO</text>
+  <text x="60" y="300" class="section">PROCESSAMENTO DA AÇÃO E DA JOGADA</text>
+  <text x="1410" y="300" class="section">DISPLAY E ESTADOS TERMINAIS</text>
+
+  <g aria-label="Transições">
+    <path class="edge" d="M280 187 H300"/>
+    <path class="edge" d="M520 187 H540"/>
+    <path class="edge" d="M760 187 H780"/>
+    <path class="edge" d="M1000 187 H1020"/>
+    <path class="edge" d="M1130 224 V340"/>
+    <path class="edge" d="M1240 187 H1450 V340"/>
+    <path class="edge" d="M1130 414 V450"/>
+    <path class="edge" d="M1130 524 V560"/>
+    <path class="edge" d="M1240 597 H1450"/>
+    <path class="edge" d="M1130 634 V680"/>
+    <path class="edge" d="M1020 717 H900 V907 H870"/>
+    <path class="edge" d="M1240 717 H1340 V907 H1450"/>
+    <path class="edge" d="M870 944 V980"/>
+    <path class="edge" d="M870 1054 V1090"/>
+    <path class="edge" d="M980 1127 H1450"/>
+    <path class="edge" d="M870 1164 V1200"/>
+    <path class="edge" d="M760 1237 H470 V1330"/>
+    <path class="edge" d="M870 1274 V1367 H980"/>
+    <path class="edge" d="M1560 634 V700"/>
+    <path class="edge" d="M1560 1127 V1190"/>
+  </g>
+
+  <g class="label">
+    <text x="530" y="242">iniciar</text>
+    <text x="1155" y="320">acao_pulso</text>
+    <text x="1365" y="255">!acao_pulso &amp;&amp; display_pulso</text>
+    <text x="1345" y="580">fim_perdeu</text>
+    <text x="1155" y="665">!fim_perdeu</text>
+    <text x="945" y="702">eh_jogada</text>
+    <text x="1345" y="895">!eh_jogada</text>
+    <text x="1335" y="1110">fim_jogo</text>
+    <text x="610" y="1220">!fim_rodada</text>
+    <text x="950" y="1348">fim_rodada</text>
+    <text x="1560" y="685">display_pulso</text>
+    <text x="1560" y="1178">display_pulso</text>
+  </g>
+
+  <g>
+    <rect class="state" x="60" y="150" width="220" height="74" fill="#e2e8f0" stroke="#64748b"/>
+    <text class="state-label" x="170" y="182">INICIO</text>
+    <text class="state-note" x="170" y="206">reset e limpeza</text>
+    <rect class="state" x="300" y="150" width="220" height="74" fill="#e2e8f0" stroke="#64748b"/>
+    <text class="state-label" x="410" y="182">ESPERA_INICIO</text>
+    <text class="state-note" x="410" y="206">aguarda iniciar</text>
+    <rect class="state" x="540" y="150" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="650" y="182">INICIALIZA_JOGO</text>
+    <text class="state-note" x="650" y="206">carrega valores iniciais</text>
+    <rect class="state" x="780" y="150" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="890" y="182">PREPARA_JOGO</text>
+    <text class="state-note" x="890" y="206">prepara contadores</text>
+    <rect class="state" x="1020" y="150" width="220" height="74" fill="#fef3c7" stroke="#d97706"/>
+    <text class="state-label" x="1130" y="182">ESPERA_ACAO</text>
+    <text class="state-note" x="1130" y="206">aguarda uma entrada</text>
+
+    <rect class="state" x="1020" y="340" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1130" y="372">REGISTRA_ACAO</text>
+    <text class="state-note" x="1130" y="396">captura botão ou RFID</text>
+    <rect class="state" x="1020" y="450" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1130" y="482">PROCESSA_ACAO</text>
+    <text class="state-note" x="1130" y="506">aplica a ação</text>
+    <rect class="state" x="1020" y="560" width="220" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="1130" y="592">VERIFICA_FALENCIA</text>
+    <text class="state-note" x="1130" y="616">após ação</text>
+    <rect class="state" x="1020" y="680" width="220" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="1130" y="712">VERIFICA_JOGADA</text>
+    <text class="state-note" x="1130" y="736">a ação conta como jogada?</text>
+
+    <rect class="state" x="1450" y="340" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1560" y="372">REGISTRA_DISPLAY</text>
+    <text class="state-note" x="1560" y="396">retorna a ESPERA_ACAO</text>
+    <rect class="state" x="1450" y="870" width="220" height="74" fill="#fef3c7" stroke="#d97706"/>
+    <text class="state-label" x="1560" y="902">ESPERA_ACAO</text>
+    <text class="state-note" x="1560" y="926">retorno se não é jogada</text>
+
+    <rect class="state" x="650" y="870" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="760" y="902">APLICA_DESPESA</text>
+    <text class="state-note" x="760" y="926">despesa do turno</text>
+    <rect class="state" x="650" y="980" width="220" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label compact" x="760" y="1012">VERIFICA_FALENCIA_DESPESA</text>
+    <text class="state-note" x="760" y="1036">falência → FIM_FALENCIA</text>
+    <rect class="state" x="650" y="1090" width="220" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label" x="760" y="1122">VERIFICA_FIM_JOGO</text>
+    <text class="state-note" x="760" y="1146">condição de encerramento</text>
+    <rect class="state" x="650" y="1200" width="220" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+    <text class="state-label compact" x="760" y="1232">VERIFICA_FIM_RODADA</text>
+    <text class="state-note" x="760" y="1256">última jogada da rodada?</text>
+    <rect class="state" x="360" y="1330" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="470" y="1362">AVANCA_JOGADA</text>
+    <text class="state-note" x="470" y="1386">retorna a ESPERA_ACAO</text>
+    <rect class="state" x="980" y="1330" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+    <text class="state-label" x="1090" y="1362">AVANCA_RODADA</text>
+    <text class="state-note" x="1090" y="1386">rende e retorna à espera</text>
+
+    <rect class="state" x="1450" y="560" width="220" height="74" fill="#fee2e2" stroke="#dc2626"/>
+    <text class="state-label" x="1560" y="592">FIM_FALENCIA</text>
+    <text class="state-note" x="1560" y="616">perdeu = 1; iniciar reinicia</text>
+    <rect class="state" x="1450" y="700" width="220" height="74" fill="#fce7f3" stroke="#db2777"/>
+    <text class="state-label compact" x="1560" y="732">REGISTRA_DISPLAY_FALENCIA</text>
+    <text class="state-note" x="1560" y="756">retorna a FIM_FALENCIA</text>
+    <rect class="state" x="1450" y="1090" width="220" height="74" fill="#fee2e2" stroke="#dc2626"/>
+    <text class="state-label" x="1560" y="1122">FIM_JOGO</text>
+    <text class="state-note" x="1560" y="1146">terminou = 1; iniciar reinicia</text>
+    <rect class="state" x="1450" y="1190" width="220" height="74" fill="#fce7f3" stroke="#db2777"/>
+    <text class="state-label compact" x="1560" y="1222">REGISTRA_DISPLAY_FINAL</text>
+    <text class="state-note" x="1560" y="1246">retorna a FIM_JOGO</text>
+  </g>
+
+  <rect x="60" y="1460" width="1780" height="58" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="82" y="1496" class="note">RFID: comando válido R01–R10 em ESPERA_ACAO gera acao_pulso e segue REGISTRA_ACAO → PROCESSA_ACAO, como uma ação de botão.</text>
+</svg>

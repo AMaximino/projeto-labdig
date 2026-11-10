@@ -34,3 +34,11 @@ vsim -do fpga/testbench/run_all.do
 O teste completo da partida fica em
 `fpga/testbench/circuito_jogo_financeiro_tb1.v`. As atribuições físicas devem
 ser mantidas em sincronia com a revisão da placa usada na bancada.
+
+Os testes, diagramas e o roteiro físico da semana 3 ficam em
+`fpga/testbench/semana3/` e `fpga/ESTRATEGIA_MONTAGEM_SEMANA3.md`. Execute a
+suíte isolada da semana com:
+
+```tcl
+vsim -do fpga/testbench/semana3/run_semana3.do
+```

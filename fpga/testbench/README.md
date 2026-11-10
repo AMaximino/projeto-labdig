@@ -12,3 +12,20 @@ de Moore. `rfid_uart_rx_tb.v` verifica `R07`/`R10`, mantém o comando pendente e
 confirma que o acknowledge o consome uma vez. O testbench completo da partida é
 `circuito_jogo_financeiro_tb1.v`. Os fontes de síntese ficam em `fpga/rtl/` e o
 projeto Quartus em `fpga/quartus/`.
+
+## Semana 3
+
+Os testbenches específicos da semana 3 ficam em `fpga/testbench/semana3/` e
+podem ser executados independentemente da suíte geral:
+
+```tcl
+vsim -do fpga/testbench/semana3/run_semana3.do
+```
+
+`rfid_uart_rx_semana3_tb.v` testa comandos válidos e inválidos, retenção do
+comando até o acknowledge e bloqueio de sobrescrita. `unidade_controle_semana3_tb.v`
+testa os caminhos principais de ação, avanço de jogada/rodada, falência, fim de
+jogo e seleção de display. Os diagramas de estado e a estratégia física estão,
+respectivamente, em
+[`DIAGRAMA_ESTADOS_SEMANA3.md`](semana3/DIAGRAMA_ESTADOS_SEMANA3.md) e
+[`../ESTRATEGIA_MONTAGEM_SEMANA3.md`](../ESTRATEGIA_MONTAGEM_SEMANA3.md).
