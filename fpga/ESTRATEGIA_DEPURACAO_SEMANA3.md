@@ -24,7 +24,7 @@ funcionais já disponíveis:
 | `terminou`, `perdeu` | Indicam os estados terminais de conclusão e falência. |
 
 No QSF atual, `rfid_rx` está em GPIO_1_D22/PIN_C15 e `uart_tx` em
-GPIO_1_D20/PIN_A14, ambos configurados como 3,3 V LVTTL. O estado da FSM,
+GPIO_1_D20/PIN_A14, ambos com padrão de I/O 2.5 V (padrão do Pin Planner). O estado da FSM,
 `rfid_item_valid`, `rfid_ack` e os sinais de telemetria são internos; serão
 observados no ModelSim/QuestaSim ou, se necessário, por uma captura temporária
 no SignalTap II. Não se prevê ligar sinais internos a pinos físicos.

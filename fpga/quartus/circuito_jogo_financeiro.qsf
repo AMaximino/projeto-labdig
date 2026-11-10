@@ -159,8 +159,7 @@ set_location_assignment PIN_K22 -to display_rodadas[1]
 set_location_assignment PIN_B16 -to display_rodadas[0]
 set_location_assignment PIN_A14 -to uart_tx
 set_location_assignment PIN_C15 -to rfid_rx
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to uart_tx
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to rfid_rx
+set_instance_assignment -name IO_STANDARD "2.5 V" -to uart_tx
 set_global_assignment -name VERILOG_FILE ../rtl/bin2bcd.v
 set_global_assignment -name VERILOG_FILE ../rtl/circuito_jogo_financeiro.v
 set_global_assignment -name VERILOG_FILE ../rtl/contador_modulo_n.v

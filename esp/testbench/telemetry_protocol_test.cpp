@@ -86,9 +86,9 @@ int main() {
       frame), "zero sequence is rejected");
 
   if (failures != 0) {
-    fprintf(stderr, "%d ESP8266 protocol test(s) failed\n", failures);
+    fprintf(stderr, "%d ESP32 protocol test(s) failed\n", failures);
     return 1;
   }
-  puts("All ESP8266 protocol tests passed.");
+  puts("All ESP32 protocol tests passed.");
   return 0;
 }

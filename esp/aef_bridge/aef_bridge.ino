@@ -3,11 +3,52 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <strings.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
+#include <esp_random.h>
 #include <time.h>
 
 #include "config.h"
 #include "telemetry_protocol.h"
+
+// ---------------------------------------------------------------------------
+// Pinagem ESP32 (ESP32-WROOM-32U). Pode ser sobrescrita em config.h.
+// ---------------------------------------------------------------------------
+// RC522 no barramento VSPI (SPI padrao do Arduino-ESP32).
+#ifndef AEF_PIN_RFID_SCK
+#define AEF_PIN_RFID_SCK 18
+#endif
+#ifndef AEF_PIN_RFID_MISO
+#define AEF_PIN_RFID_MISO 19
+#endif
+#ifndef AEF_PIN_RFID_MOSI
+#define AEF_PIN_RFID_MOSI 23
+#endif
+#ifndef AEF_PIN_RFID_SS
+#define AEF_PIN_RFID_SS 5
+#endif
+#ifndef AEF_PIN_RFID_RST
+#define AEF_PIN_RFID_RST 22
+#endif
+// UART2 dedicada a FPGA. A UART0 (USB) fica livre para gravacao e logs.
+#ifndef AEF_PIN_FPGA_RX
+#define AEF_PIN_FPGA_RX 16
+#endif
+#ifndef AEF_PIN_FPGA_TX
+#define AEF_PIN_FPGA_TX 17
+#endif
+#ifndef AEF_FPGA_BAUD
+#define AEF_FPGA_BAUD 115200
+#endif
+// 1 = imprime eventos no Monitor Serial (USB). 0 = silencioso.
+#ifndef AEF_DEBUG
+#define AEF_DEBUG 1
+#endif
+
+#if AEF_DEBUG
+#define LOG(...) Serial.printf(__VA_ARGS__)
+#else
+#define LOG(...) do {} while (0)
+#endif
 
 #ifndef AEF_RFID_TAG_1_UID
 #define AEF_RFID_TAG_1_ITEM 1
@@ -36,8 +77,6 @@ static constexpr size_t LINE_CAPACITY = 160;
 static constexpr size_t MQTT_QUEUE_CAPACITY = 4;
 static constexpr size_t JSON_CAPACITY = 512;
 static constexpr char MQTT_TOPIC[] = "aventura_financeira/telemetria";
-static constexpr uint8_t RFID_SS_PIN = D2;
-static constexpr uint8_t RFID_RST_PIN = D1;
 static constexpr uint32_t RFID_POLL_MS = 120;
 static constexpr uint32_t RFID_REMOVE_MS = 300;
 
@@ -45,7 +84,8 @@ struct QueuedMessage {
   char payload[JSON_CAPACITY];
 };
 
-MFRC522 rfid(RFID_SS_PIN, RFID_RST_PIN);
+HardwareSerial &fpgaSerial = Serial2;
+MFRC522 rfid(AEF_PIN_RFID_SS, AEF_PIN_RFID_RST);
 WiFiClient networkClient;
 PubSubClient mqttClient(networkClient);
 char inputLine[LINE_CAPACITY];
@@ -94,8 +134,9 @@ void sendRfidPurchase(uint8_t item) {
   if (item < 1 || item > 10) return;
   char command[5];
   snprintf(command, sizeof(command), "R%02u\n", item);
-  Serial.write(reinterpret_cast<const uint8_t *>(command), 4);
-  Serial.flush();
+  fpgaSerial.write(reinterpret_cast<const uint8_t *>(command), 4);
+  fpgaSerial.flush();
+  LOG("[RFID] comando enviado a FPGA: R%02u\n", item);
 }
 
 void serviceRfid() {
@@ -109,7 +150,12 @@ void serviceRfid() {
     cardLatched = true;
     noCardSince = 0;
     const uint8_t item = itemForUid(latchedUid);
-    if (item != 0) sendRfidPurchase(item);
+    if (item != 0) {
+      LOG("[RFID] UID %s -> item %u\n", latchedUid, item);
+      sendRfidPurchase(item);
+    } else {
+      LOG("[RFID] UID %s nao cadastrado (nenhum comando enviado)\n", latchedUid);
+    }
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
     return;
@@ -126,6 +172,7 @@ void serviceRfid() {
   if (status == MFRC522::STATUS_TIMEOUT) {
     if (noCardSince == 0) noCardSince = now;
     if (now - noCardSince >= RFID_REMOVE_MS) {
+      LOG("[RFID] cartao removido, leitor liberado\n");
       cardLatched = false;
       latchedUid[0] = '\0';
       noCardSince = 0;
@@ -133,10 +180,16 @@ void serviceRfid() {
   }
 }
 
+// Equivalente ao ESP.getChipId() do ESP8266: ultimos 3 bytes do MAC de fabrica.
+uint32_t chipId() {
+  const uint64_t mac = ESP.getEfuseMac();
+  return static_cast<uint32_t>((mac >> 24) & 0xFFFFFFULL);
+}
+
 void makeSessionId() {
-  uint32_t randomPart = ESP.random();
+  uint32_t randomPart = esp_random();
   snprintf(sessionId, sizeof(sessionId), "%06lx-%08lx",
-           static_cast<unsigned long>(ESP.getChipId()),
+           static_cast<unsigned long>(chipId()),
            static_cast<unsigned long>(randomPart));
 }
 
@@ -159,6 +212,7 @@ bool enqueueMessage(const TelemetryFrame &frame) {
     hasPreviousBalance = false;
   }
   if (queueCount == MQTT_QUEUE_CAPACITY) {
+    LOG("[MQTT] fila cheia, evento seq=%lu descartado\n", static_cast<unsigned long>(frame.sequence));
     return false;
   }
 
@@ -188,14 +242,17 @@ void processLine(char *line) {
   strlcpy(parseBuffer, line, sizeof(parseBuffer));
   TelemetryFrame frame = {};
   if (!parseFrame(parseBuffer, frame)) {
+    LOG("[FPGA] quadro invalido ignorado: %s\n", line);
     return;
   }
+  LOG("[FPGA] seq=%lu evento=%s item=%u\n", static_cast<unsigned long>(frame.sequence),
+      eventName(frame.eventCode), static_cast<unsigned>(frame.itemId));
   if (!enqueueMessage(frame)) return;
 }
 
 void readUart() {
-  while (Serial.available() > 0) {
-    char character = static_cast<char>(Serial.read());
+  while (fpgaSerial.available() > 0) {
+    char character = static_cast<char>(fpgaSerial.read());
     if (character == '\n') {
       if (!droppingLongLine) {
         inputLine[inputLength] = '\0';
@@ -204,6 +261,7 @@ void readUart() {
         }
         processLine(inputLine);
       } else {
+        LOG("[FPGA] linha longa demais descartada\n");
       }
       inputLength = 0;
       droppingLongLine = false;
@@ -218,10 +276,23 @@ void readUart() {
 }
 
 void maintainWiFi() {
-  if (WiFi.status() == WL_CONNECTED) return;
+  static bool wasConnected = false;
+  if (WiFi.status() == WL_CONNECTED) {
+    if (!wasConnected) {
+      wasConnected = true;
+      LOG("[WiFi] conectado, IP %s\n", WiFi.localIP().toString().c_str());
+    }
+    return;
+  }
+  if (wasConnected) {
+    wasConnected = false;
+    LOG("[WiFi] conexao perdida\n");
+  }
   uint32_t now = millis();
   if (now - lastWiFiAttempt < 10000) return;
   lastWiFiAttempt = now;
+  LOG("[WiFi] tentando conectar em \"%s\"...\n", AEF_WIFI_SSID);
+  WiFi.disconnect();
   WiFi.begin(AEF_WIFI_SSID, AEF_WIFI_PASSWORD);
 }
 
@@ -231,12 +302,16 @@ void maintainMqtt() {
   if (now - lastMqttAttempt < 5000) return;
   lastMqttAttempt = now;
   char clientId[40];
-  snprintf(clientId, sizeof(clientId), "aef-esp8266-%06lx-%lu",
-           static_cast<unsigned long>(ESP.getChipId()), static_cast<unsigned long>(clientNumber++));
+  snprintf(clientId, sizeof(clientId), "aef-esp32-%06lx-%lu",
+           static_cast<unsigned long>(chipId()), static_cast<unsigned long>(clientNumber++));
   bool connected = AEF_MQTT_USERNAME[0] == '\0'
       ? mqttClient.connect(clientId)
       : mqttClient.connect(clientId, AEF_MQTT_USERNAME, AEF_MQTT_PASSWORD);
   if (connected) {
+    LOG("[MQTT] conectado a %s:%d como %s\n", AEF_MQTT_HOST, AEF_MQTT_PORT, clientId);
+  } else {
+    LOG("[MQTT] falha ao conectar em %s:%d (estado %d)\n", AEF_MQTT_HOST, AEF_MQTT_PORT,
+        mqttClient.state());
   }
 }
 
@@ -246,15 +321,30 @@ void publishQueuedMessage() {
   if (mqttClient.publish(MQTT_TOPIC, message.payload, false)) {
     queueHead = (queueHead + 1) % MQTT_QUEUE_CAPACITY;
     --queueCount;
+    LOG("[MQTT] publicado em %s\n", MQTT_TOPIC);
   } else {
+    LOG("[MQTT] falha ao publicar, reconectando\n");
     mqttClient.disconnect();
   }
 }
 
 void setup() {
-  Serial.begin(115200);
-  SPI.begin();
+  Serial.begin(115200);  // USB: apenas logs
+  fpgaSerial.begin(AEF_FPGA_BAUD, SERIAL_8N1, AEF_PIN_FPGA_RX, AEF_PIN_FPGA_TX);
+  delay(200);
+  LOG("\n[AEF] ponte ESP32 iniciando\n");
+  LOG("[AEF] FPGA UART2: RX=GPIO%d TX=GPIO%d %d baud\n", AEF_PIN_FPGA_RX, AEF_PIN_FPGA_TX,
+      AEF_FPGA_BAUD);
+
+  SPI.begin(AEF_PIN_RFID_SCK, AEF_PIN_RFID_MISO, AEF_PIN_RFID_MOSI, AEF_PIN_RFID_SS);
   rfid.PCD_Init();
+  const byte rfidVersion = rfid.PCD_ReadRegister(MFRC522::VersionReg);
+  if (rfidVersion == 0x00 || rfidVersion == 0xFF) {
+    LOG("[RFID] RC522 nao respondeu (VersionReg=0x%02X): confira fios SPI e 3V3\n", rfidVersion);
+  } else {
+    LOG("[RFID] RC522 pronto (VersionReg=0x%02X)\n", rfidVersion);
+  }
+
   const char *deviceId = AEF_DEVICE_ID;
   bool validDeviceId = strlen(deviceId) > 0 && strlen(deviceId) <= 48;
   for (size_t i = 0; validDeviceId && deviceId[i] != '\0'; ++i) {
@@ -265,16 +355,22 @@ void setup() {
                     character == '.' || character == '_' || character == '-';
   }
   if (!validDeviceId) {
+    LOG("[AEF] AEF_DEVICE_ID invalido em config.h, reiniciando\n");
+    delay(2000);
     ESP.restart();
   }
 
   WiFi.mode(WIFI_STA);
   mqttClient.setServer(AEF_MQTT_HOST, AEF_MQTT_PORT);
   if (!mqttClient.setBufferSize(JSON_CAPACITY)) {
+    LOG("[MQTT] sem memoria para o buffer, reiniciando\n");
+    delay(2000);
     ESP.restart();
   }
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  LOG("[WiFi] conectando em \"%s\"...\n", AEF_WIFI_SSID);
   WiFi.begin(AEF_WIFI_SSID, AEF_WIFI_PASSWORD);
+  lastWiFiAttempt = millis();
 }
 
 void loop() {

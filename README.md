@@ -8,7 +8,7 @@ seleciona um item; não há cobrança ou processamento de pagamento.
 
 - [`fpga/`](fpga/README.md): RTL, testbenches, projeto Quartus, simulação e
   pinagens da placa.
-- [`esp/`](esp/README.md): firmware ESP8266, leitor RFID RC522 e teste do parser.
+- [`esp/`](esp/README.md): firmware ESP32, leitor RFID RC522 e teste do parser.
 - [`back/`](back/README.md): subscriber MQTT, API, histórico e WebSocket; também
   serve os arquivos do painel.
 - [`front/`](front/README.md): interface web somente de leitura.
@@ -16,20 +16,22 @@ seleciona um item; não há cobrança ou processamento de pagamento.
 ## Fluxo RFID e telemetria
 
 ```text
-Cartão RFID → RC522 → ESP8266 ── UART comando ──► FPGA (compra e saldo)
-                                      FPGA ── UART telemetria ──► ESP8266
-FPGA → ESP8266 → Wi-Fi/MQTT → back (HTTP + WebSocket) → front
+Cartão RFID → RC522 → ESP32 ── UART comando ──► FPGA (compra e saldo)
+                                      FPGA ── UART telemetria ──► ESP32
+FPGA → ESP32 → Wi-Fi/MQTT → back (HTTP + WebSocket) → front
 ```
 
-Cada UID cadastrado no firmware corresponde a um item (1–10). O ESP8266 envia
+Cada UID cadastrado no firmware corresponde a um item (1–10). O ESP32 envia
 `RNN\n` uma vez ao aproximar um cartão; só aceita nova leitura depois de
 confirmar que ele saiu do campo. A FPGA valida a compra com suas regras atuais,
 atualiza o saldo e o inventário e transmite o evento `compra_aprovada` ou
-`compra_recusada`. O painel não envia ações ao jogo.
+`compra_recusada`. Só item repetido ou inválido é recusado. Uma compra maior que
+o saldo é aprovada, deixa o saldo negativo e encerra o jogo por falência
+(evento `falencia`). O painel não envia ações ao jogo.
 
 ## Início rápido
 
-1. Inicie um broker MQTT acessível pelo computador e pela ESP8266 (tópico
+1. Inicie um broker MQTT acessível pelo computador e pela ESP32 (tópico
    `aventura_financeira/telemetria`).
 2. Copie `esp/aef_bridge/config.example.h` para `esp/aef_bridge/config.h`,
    configure Wi-Fi/broker e cadastre os UIDs reais dos cartões.

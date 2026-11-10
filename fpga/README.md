@@ -19,7 +19,9 @@ financeiro. A entrada só é habilitada na espera de ação do jogo.
 O comando e a telemetria usam dois fios separados: `rfid_rx` recebe dados da
 ESP32 e `uart_tx` envia telemetria à ESP32. O QSF principal atribui ambos
 ao conector JP2/GPIO1 da DE0-CV: `rfid_rx` em GPIO_1_D22 (PIN_C15) e `uart_tx`
-em GPIO_1_D20 (PIN_A14). Ambos estão configurados como 3,3 V LVTTL. Os demais
+em GPIO_1_D20 (PIN_A14). Ambos usam o padrão de I/O 2.5 V (padrão do Cyclone V,
+igual ao Pin Planner); não altere para 3.3-V LVTTL, pois o banco 7A conflita
+com os demais pinos. Os demais
 pinos do jogo permanecem nas atribuições existentes.
 
 ## Compilar e simular

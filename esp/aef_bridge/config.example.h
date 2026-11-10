@@ -6,13 +6,26 @@
 #define AEF_WIFI_PASSWORD "SENHA_DA_REDE_WIFI"
 
 // IPv4 do computador que executa/encaminha o broker MQTT, na rede Wi-Fi.
-// Nao use localhost: esse nome apontaria para a propria ESP8266.
+// Nao use localhost: esse nome apontaria para a propria ESP32.
 #define AEF_MQTT_HOST "192.168.1.100"
 #define AEF_MQTT_PORT 1883
 #define AEF_MQTT_USERNAME ""
 #define AEF_MQTT_PASSWORD ""
 
 #define AEF_DEVICE_ID "aef-fpga-01"
+
+// Logs no Monitor Serial (USB, 115200 baud). A FPGA usa a UART2, entao os logs
+// nao interferem nos quadros. Use 0 para silenciar.
+#define AEF_DEBUG 1
+
+// Pinagem opcional. Descomente apenas se precisar mudar o padrao do firmware.
+// #define AEF_PIN_RFID_SCK 18
+// #define AEF_PIN_RFID_MISO 19
+// #define AEF_PIN_RFID_MOSI 23
+// #define AEF_PIN_RFID_SS 5
+// #define AEF_PIN_RFID_RST 22
+// #define AEF_PIN_FPGA_RX 16   // recebe uart_tx da FPGA
+// #define AEF_PIN_FPGA_TX 17   // envia para rfid_rx da FPGA
 
 // Cadastre os UIDs reais (hexadecimal, sem espaços) para habilitar os cartões.
 // Deixe vazio os itens sem cartão. Cada UID mapeia para o produto do mesmo ID.
