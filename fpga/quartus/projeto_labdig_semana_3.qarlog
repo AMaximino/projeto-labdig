@@ -1,0 +1,33 @@
+Quartus Prime Archive log --	D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qarlog
+
+Archive:	D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qar
+Date:		Mon Nov 09 23:35:02 2026
+Quartus Prime		20.1.1 Build 720 11/11/2020 SJ Lite Edition
+
+	=========== Files Selected: ===========
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/circuito_jogo_financeiro.qsf
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/circuito_jogo_financeiro_assignment_defaults.qdf
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig.qpf
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/bin2bcd.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/contador_modulo_n.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/dec7seg.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display6digitos.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/edge_detector.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/fluxo_dados.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/inicializador.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/multiplexador.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_acao.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_evento.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/registrador_n.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/rfid_uart_rx.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_dinheiro.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_valor.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/telemetria_uart.v
+D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/unidade_controle.v
+	======= Total: 22 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
