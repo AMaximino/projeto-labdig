@@ -119,7 +119,9 @@ localparam ESTUDAR    = 6'b100000;
                     end
                 end
                 COMPRAR: begin
-                    if (seletor_valido && ((itens_in & seletor_item) == 10'b0) && saldo_in >= preco) begin // valida item, duplicidade e saldo disponível
+                    // Compra permitida mesmo sem saldo: se o saldo ficar negativo, a FSM
+                    // detecta em VERIFICA_FALENCIA (fim_perdeu = saldo[20]) e o jogador perde.
+                    if (seletor_valido && ((itens_in & seletor_item) == 10'b0)) begin // valida item e duplicidade
                         saldo_out = saldo_in - preco; //quando compra um item, tem que descontar o custo do item do saldo
                         gastosFixos_out = gastosFixos_in + despesa;
                         gastosUnicos_out = gastosUnicos_in + preco;

@@ -280,13 +280,15 @@ module fluxo_dados (
                 telemetry_event <= 8'd11;
                 telemetry_status <= 2'd0;
                 telemetry_item <= 4'd0;
-            end else if (!terminal_sent && fim_jogo) begin
+            // Eventos terminais esperam um ciclo com telemetry_send em 0: a UART detecta
+            // borda de subida, e dois pulsos colados (ex.: compra + falencia) virariam um so.
+            end else if (!terminal_sent && !telemetry_send && fim_jogo) begin
                 telemetry_send <= 1'b1;
                 telemetry_event <= 8'd12;
                 telemetry_status <= 2'd0;
                 telemetry_item <= 4'd0;
                 terminal_sent <= 1'b1;
-            end else if (!terminal_sent && fim_perdeu) begin
+            end else if (!terminal_sent && !telemetry_send && fim_perdeu) begin
                 telemetry_send <= 1'b1;
                 telemetry_event <= 8'd13;
                 telemetry_status <= 2'd0;

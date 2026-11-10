@@ -38,11 +38,13 @@ module processador_acao_tb;
     );
 
     initial begin
+        // Compra sem saldo suficiente e aceita e deixa o saldo negativo
+        // (a FSM trata a falencia a partir de saldo[20]).
         saldo = 21'sd599;
         #1;
-        if (aceita || saldo_out !== saldo || itens_out !== itens ||
-            gastos_unicos_out !== gastos_unicos || gastos_fixos_out !== gastos_fixos)
-            $fatal(1, "Compra sem saldo suficiente alterou o estado");
+        if (!aceita || saldo_out !== -21'sd1 || saldo_out[20] !== 1'b1 || itens_out !== 10'b1 ||
+            gastos_unicos_out !== 21'sd600 || gastos_fixos_out !== 21'sd76)
+            $fatal(1, "Compra sem saldo deveria ser aceita e deixar saldo negativo");
 
         saldo = 21'sd600;
         #1;
@@ -50,7 +52,13 @@ module processador_acao_tb;
             gastos_unicos_out !== 21'sd600 || gastos_fixos_out !== 21'sd76)
             $fatal(1, "Compra aprovada nao atualizou o snapshot esperado");
 
-        $display("Compra insuficiente preserva o estado; compra valida e aceita.");
+        // Item ja possuido continua recusado.
+        itens = 10'b1;
+        #1;
+        if (aceita || saldo_out !== saldo || itens_out !== itens)
+            $fatal(1, "Compra repetida deveria ser recusada");
+
+        $display("Compra sem saldo aceita com saldo negativo; compra valida aceita; repetida recusada.");
         $finish;
     end
 endmodule

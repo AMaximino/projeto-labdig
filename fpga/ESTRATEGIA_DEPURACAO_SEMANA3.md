@@ -15,8 +15,8 @@ funcionais já disponíveis:
 
 | Sinal | Uso na depuração |
 |---|---|
-| `rfid_rx` | Recebe o comando `RNN\n` da ESP8266, em 115200 baud, 8-N-1. O repouso UART é nível alto. |
-| `uart_tx` | Envia quadros de telemetria `AEF1` para a ESP8266, em 115200 baud, 8-N-1. |
+| `rfid_rx` | Recebe o comando `RNN\n` da ESP32, em 115200 baud, 8-N-1. O repouso UART é nível alto. |
+| `uart_tx` | Envia quadros de telemetria `AEF1` para a ESP32, em 115200 baud, 8-N-1. |
 | `indicador_itens[9:0]` | Indica no conjunto de LEDs os itens registrados no inventário. |
 | `display_jogadas` e `display_rodadas` | Permitem conferir visualmente o avanço de jogadas e rodadas. |
 | `display_dinheiro` | Apresenta o valor financeiro nos displays de sete segmentos. |
@@ -57,7 +57,7 @@ uma linha que já esteja conectada a uma saída ativa.
    ```
 
 4. Capturar `rfid_rx`. Se não houver quadro, verificar RC522, cadastro do cartão
-   e firmware ESP8266. Se o quadro estiver correto, mas não for aceito, conferir
+   e firmware ESP32. Se o quadro estiver correto, mas não for aceito, conferir
    baud, formato, nível lógico e parser RFID.
 5. Se o comando for aceito, acompanhar no simulador ou SignalTap
    `rfid_item_valid`, `rfid_ack`, `w_acao_pulso` e `w_estado`. Confirmar que a
@@ -65,7 +65,7 @@ uma linha que já esteja conectada a uma saída ativa.
    correspondem ao resultado esperado.
 6. Capturar `uart_tx`. Caso o jogo atualize, mas não haja telemetria, verificar
    os sinais internos de envio e evento. Se o quadro sair corretamente, seguir
-   a investigação na ESP8266, MQTT, backend e painel.
+   a investigação na ESP32, MQTT, backend e painel.
 
 No ModelSim/QuestaSim, os sinais internos serão adicionados à janela Wave. Na
 placa, uma captura SignalTap será temporária e usará o clock adequado ao domínio
