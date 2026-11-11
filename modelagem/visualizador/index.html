@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caixa AEF — visualizador 3D</title>
+<style>
+  :root { --bg: #f4f1ec; --painel: #ffffffee; --texto: #222; --borda: #d8d2c8; --destaque: #2f6fdf; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1d1f22; --painel: #2a2d31ee; --texto: #eee; --borda: #444; --destaque: #6c9cff; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--texto);
+    font: 14px/1.4 system-ui, sans-serif; overflow: hidden; }
+  #cena { position: fixed; inset: 0; }
+  #painel { position: fixed; top: 12px; left: 12px; width: 250px; max-width: calc(100vw - 24px);
+    background: var(--painel); border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px;
+    backdrop-filter: blur(6px); }
+  h1 { font-size: 15px; margin: 0 0 8px; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; opacity: .7; margin: 12px 0 6px; }
+  label { display: flex; align-items: center; gap: 8px; margin: 3px 0; cursor: pointer; }
+  .cor { width: 12px; height: 12px; border-radius: 3px; border: 1px solid #0003; }
+  .linha { display: flex; gap: 6px; flex-wrap: wrap; }
+  button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--borda);
+    background: transparent; color: inherit; cursor: pointer; }
+  button:hover { border-color: var(--destaque); }
+  input[type=range] { width: 100%; }
+  #status { margin-top: 10px; font-size: 12px; opacity: .7; }
+  #ajuda { position: fixed; bottom: 10px; right: 12px; font-size: 12px; opacity: .6; text-align: right; }
+</style>
+</head>
+<body>
+<div id="cena"></div>
+<div id="painel">
+  <h1>Caixa do jogo (415 × 315 × 205 mm)</h1>
+  <h2>Peças</h2>
+  <div id="pecas"></div>
+  <h2>Tampa</h2>
+  <label>Abrir tampa (levantar)</label>
+  <input id="abrir" type="range" min="0" max="250" value="0">
+  <label><input id="transp" type="checkbox"> Caixa e tampa transparentes</label>
+  <h2>Vistas</h2>
+  <div class="linha">
+    <button data-vista="iso">3D</button>
+    <button data-vista="cima">Cima</button>
+    <button data-vista="frente">Frente</button>
+    <button data-vista="tras">Trás</button>
+  </div>
+  <div id="status">Carregando modelo…</div>
+</div>
+<div id="ajuda">arrastar: girar · roda: zoom · botão direito: mover</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const NOMES = { corpo: "Caixa", tampa: "Tampa", botoes: "Botões (8)", rc522: "Leitor RC522",
+  de0_cv: "FPGA DE0-CV", esp32: "ESP32" };
+
+const el = document.getElementById("cena");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(devicePixelRatio);
+el.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, 1, 0.001, 100);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x887766, 1.6));
+const sol = new THREE.DirectionalLight(0xffffff, 1.6);
+sol.position.set(1, 2, 1.5);
+scene.add(sol);
+
+function redimensionar() {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", redimensionar);
+redimensionar();
+
+let centro = new THREE.Vector3(), raio = 1, escalaMm = 0.001, tampa = null, tampaY0 = 0;
+const pecas = {};
+
+new GLTFLoader().load("../saida/caixa.glb", (gltf) => {
+  const raiz = gltf.scene;
+  scene.add(raiz);
+  raiz.traverse((o) => {
+    if (NOMES[o.name] && !pecas[o.name]) pecas[o.name] = o;
+    if (o.isMesh) {
+      o.material = o.material.clone();
+      o.material.side = THREE.DoubleSide;
+    }
+  });
+  const caixa = new THREE.Box3().setFromObject(raiz);
+  caixa.getCenter(centro);
+  const tam = caixa.getSize(new THREE.Vector3());
+  raio = tam.length() / 2;
+  escalaMm = Math.max(tam.x, tam.y, tam.z) / 415;   // unidades da cena por mm
+  tampa = pecas.tampa;
+  if (tampa) tampaY0 = tampa.position.z;   // eixo Z do CAD = altura
+  montarLista();
+  vista("iso");
+  document.getElementById("status").textContent = "Modelo carregado.";
+}, undefined, (erro) => {
+  document.getElementById("status").textContent =
+    "Erro ao carregar ../saida/caixa.glb. Rode o servidor a partir de modelagem/ (veja o README).";
+  console.error(erro);
+});
+
+function montarLista() {
+  const lista = document.getElementById("pecas");
+  for (const [nome, rotulo] of Object.entries(NOMES)) {
+    const obj = pecas[nome];
+    if (!obj) continue;
+    let cor = "#999";
+    obj.traverse((o) => { if (o.isMesh) cor = "#" + o.material.color.getHexString(); });
+    const l = document.createElement("label");
+    l.innerHTML = `<input type="checkbox" checked><span class="cor" style="background:${cor}"></span>${rotulo}`;
+    l.querySelector("input").addEventListener("change", (e) => { obj.visible = e.target.checked; });
+    lista.appendChild(l);
+  }
+}
+
+document.getElementById("abrir").addEventListener("input", (e) => {
+  if (tampa) tampa.position.z = tampaY0 + Number(e.target.value) * escalaMm;
+});
+
+document.getElementById("transp").addEventListener("change", (e) => {
+  for (const nome of ["corpo", "tampa"]) {
+    pecas[nome]?.traverse((o) => {
+      if (!o.isMesh) return;
+      o.material.transparent = e.target.checked;
+      o.material.opacity = e.target.checked ? 0.25 : 1;
+      o.material.depthWrite = !e.target.checked;
+    });
+  }
+});
+
+function vista(tipo) {
+  const d = raio * 2.4;
+  const dirs = { iso: [0.9, 0.8, 1.1], cima: [0, 1, 0.0001], frente: [0, 0.25, 1], tras: [0, 0.25, -1] };
+  const v = new THREE.Vector3(...dirs[tipo]).normalize().multiplyScalar(d);
+  camera.position.copy(centro).add(v);
+  camera.near = raio / 100; camera.far = raio * 20; camera.updateProjectionMatrix();
+  controls.target.copy(centro);
+  controls.update();
+}
+document.querySelectorAll("[data-vista]").forEach((b) =>
+  b.addEventListener("click", () => vista(b.dataset.vista)));
+
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

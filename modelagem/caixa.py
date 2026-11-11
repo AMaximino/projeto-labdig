@@ -6,6 +6,7 @@ Gera, em modelagem/saida/:
   - gabarito_traseira.dxf    rasgo de passagem dos cabos na parede traseira
   - gabarito_traseira.pdf
   - caixa.step / caixa.stl   modelo 3D montado (Fusion 360: File → Open)
+  - caixa.glb                modelo 3D para o visualizador web (modelagem/visualizador/)
   - previa_tampa.png         prévia da tampa para conferência
 
 Uso, na raiz do repositório:
@@ -367,6 +368,7 @@ def main() -> None:
     montagem = modelo_3d()
     montagem.export(str(SAIDA / "caixa.step"))
     cq.exporters.export(montagem.toCompound(), str(SAIDA / "caixa.stl"))
+    montagem.export(str(SAIDA / "caixa.glb"))  # visualizador web (cores por peça)
 
     print(f"Espaçador da placa dos botões: {espacador_botoes():.1f} mm")
     print(f"PDF tampa: {n1} folhas A4; PDF traseira: {n2} folhas A4")

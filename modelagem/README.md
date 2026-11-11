@@ -20,11 +20,49 @@ modelagem/.venv/bin/python modelagem/caixa.py
 | `gabarito_tampa.dxf`, `gabarito_traseira.dxf` | Os mesmos desenhos para AutoCAD, LibreCAD, LightBurn ou CNC, em mm. |
 | `caixa.step` | Modelo 3D montado: caixa, tampa, botões, RC522, DE0-CV e ESP32. Abre no Fusion 360 (*File → Open*). |
 | `caixa.stl` | Modelo 3D para visualização rápida. |
+| `caixa.glb` | Modelo 3D com cores, usado pelo visualizador web. |
 | `previa_tampa.png` | Prévia da tampa. |
 
 Camadas dos DXF: `CORTE` (vermelho, furar/cortar), `CENTRO` (verde, cruz para a
 broca), `GRAVACAO` (azul, textos e área do cartão para gravar ou pintar) e
 `REFERENCIA` (cinza tracejado, contorno e peças por baixo; não cortar).
+
+## Visualizar o modelo 3D
+
+### No navegador (mais rápido)
+
+1. No terminal do WSL, na raiz do repositório:
+
+   ```sh
+   sh modelagem/visualizar.sh
+   ```
+
+   O script cria o ambiente Python na primeira vez, gera o modelo e sobe um
+   servidor na porta 8000. Se a porta já estiver ocupada, por exemplo por um
+   visualizador anterior, ele encerra esse processo antes. Para usar outra
+   porta: `PORTA=8080 sh modelagem/visualizar.sh`.
+2. No navegador do Windows, abra **http://localhost:8000/visualizador/**.
+3. Controles:
+   - arrastar: girar; roda do mouse: zoom; botão direito: mover;
+   - **Peças**: liga e desliga caixa, tampa, botões, RC522, DE0-CV e ESP32;
+   - **Abrir tampa**: levanta a tampa para ver o interior;
+   - **Transparentes**: deixa caixa e tampa translúcidas;
+   - **Vistas**: 3D, cima, frente (lado do jogador) e trás (rasgo dos cabos).
+4. Depois de mudar uma medida em `caixa.py`, pare com `Ctrl+C` e rode o
+   script de novo. Recarregue a página com `Ctrl+F5`.
+
+A página carrega a biblioteca three.js da internet (jsDelivr), então o
+computador precisa estar conectado.
+
+### No Fusion 360
+
+1. *File → Open → Open from my computer* e escolha
+   `modelagem/saida/caixa.step`. No Windows, o caminho é
+   `C:\Users\Sophia\documents\projeto-labdig\modelagem\saida\caixa.step`.
+2. O modelo abre como montagem, com uma peça por componente. Use o ícone de
+   olho no navegador lateral para esconder a tampa.
+3. Para ver o gabarito sobre a tampa: *Insert → Insert DXF* com
+   `saida/gabarito_tampa.dxf`, no plano do topo.
 
 ## Layout da tampa
 
