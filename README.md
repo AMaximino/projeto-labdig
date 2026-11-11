@@ -7,11 +7,12 @@ seleciona um item; não há cobrança ou processamento de pagamento.
 ## Estrutura do repositório
 
 ```text
-fpga/    RTL, testbenches, projeto Quartus, simulação e pinagens da placa
-esp/     firmware ESP32 (ponte RFID ⇄ FPGA ⇄ MQTT), ferramentas e testes
-back/    backend Node.js: MQTT, API HTTP, histórico e WebSocket
-front/   painel web somente de leitura (servido pelo back)
-docs/    documentação geral, diagramas, fotos da montagem e referências
+fpga/       RTL, testbenches, projeto Quartus, simulação e pinagens da placa
+esp/        firmware ESP32 (ponte RFID ⇄ FPGA ⇄ MQTT), ferramentas e testes
+back/       backend Node.js: MQTT, API HTTP, histórico e WebSocket
+front/      painel web somente de leitura (servido pelo back)
+docs/       documentação geral, diagramas, fotos da montagem e referências
+modelagem/  gabaritos de furação e modelo 3D da caixa de MDF
 ```
 
 - [`fpga/`](fpga/README.md): RTL, testbenches, projeto Quartus, simulação e
@@ -21,6 +22,8 @@ docs/    documentação geral, diagramas, fotos da montagem e referências
 - [`back/`](back/README.md): subscriber MQTT, API, histórico e WebSocket; também
   serve os arquivos do painel.
 - [`front/`](front/README.md): interface web somente de leitura.
+- [`modelagem/`](modelagem/README.md): gabaritos de furação (PDF/DXF) e modelo
+  3D (STEP para Fusion 360) da caixa.
 - [`docs/`](docs/): documentação que envolve mais de uma parte do sistema:
   - [`COMO_JOGAR.md`](docs/COMO_JOGAR.md): passo a passo para subir o circuito
     completo e jogar.

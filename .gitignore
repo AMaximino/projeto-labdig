@@ -34,3 +34,7 @@ back/node_modules/
 .arduino15/
 .arduino/
 .vscode/
+
+# Modelagem (ambiente Python local)
+modelagem/.venv/
+__pycache__/
