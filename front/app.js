@@ -211,6 +211,8 @@
     if (/invest/.test(value)) return { icon: "✳", className: "expense", label: "Investimento realizado" };
     if (/vender|venda/.test(value)) return { icon: "↗", className: "income", label: event.itemName ? `Venda: ${event.itemName}` : "Venda realizada" };
     if (/rodada|fim_de_rodada|fim_rodada/.test(value)) return { icon: "◎", className: "neutral", label: "Nova rodada" };
+    if (/fal[eê]ncia/.test(value)) return { icon: "!", className: "refused", label: "Saldo negativo: você perdeu" };
+    if (/fim_jogo/.test(value)) return { icon: "◎", className: "neutral", label: "Fim de jogo" };
     return { icon: "•", className: "neutral", label: event.label || event.event || "Atualização do jogo" };
   }
 
@@ -385,7 +387,7 @@
       glyph.textContent = item.icon;
       const status = document.createElement("span");
       status.className = `product-status${!owned && !canAfford ? " locked" : ""}`;
-      status.textContent = owned ? "NO INVENTÁRIO" : !state.metricAvailable.balance ? "AGUARDANDO" : canAfford ? "PODE COMPRAR" : "AINDA NÃO";
+      status.textContent = owned ? "NO INVENTÁRIO" : !state.metricAvailable.balance ? "AGUARDANDO" : canAfford ? "PODE COMPRAR" : "RISCO DE FALÊNCIA";
       top.append(glyph, status);
       const title = document.createElement("strong");
       title.textContent = item.name;
@@ -401,8 +403,9 @@
       if (!owned && state.metricAvailable.balance && !canAfford) {
         const gap = document.createElement("span");
         gap.className = "product-gap";
-        gap.textContent = `Faltam ${displayCompactMoney(item.price - state.balance)}`;
-        gap.title = `Faltam ${displayMoney(item.price - state.balance)}`;
+        // A compra é aceita mesmo sem saldo; o saldo fica negativo e o jogador perde.
+        gap.textContent = `Saldo ficaria em -${displayCompactMoney(item.price - state.balance)}`;
+        gap.title = `Saldo após a compra: -${displayMoney(item.price - state.balance)}`;
         card.append(top, title, price, gap, expense);
       } else {
         card.append(top, title, price, expense);
@@ -416,7 +419,7 @@
       } else if (canAfford) {
         stateLabel.textContent = "Cabe no seu saldo";
       } else {
-        stateLabel.textContent = `Faltam ${displayMoney(item.price - state.balance)}`;
+        stateLabel.textContent = "Pode comprar, mas o saldo fica negativo e você perde";
       }
       card.append(stateLabel);
       return card;
@@ -617,13 +620,19 @@
     const previousRound = state.round;
     if (event.round) state.round = event.round;
     const roundEnded = /fim_de_rodada|fim_rodada|rodada_encerrada/.test(lowerCode);
+    // Trabalhar/estudar consomem a jogada. A FPGA registra a telemetria antes de
+    // avançar o contador, então o campo "jogada" é a jogada que acabou de ser
+    // feita; a jogada atual (a do display da placa) é a seguinte.
+    const consumesMove = /trabalh|estud/.test(lowerCode);
+    const hasMoveValue = Number.isInteger(moveValue) && moveValue >= 1 && moveValue <= 3;
     if (roundEnded) {
       state.round = event.round > previousRound ? event.round : previousRound + 1;
       state.move = 1;
-    } else if (Number.isInteger(moveValue) && moveValue >= 1 && moveValue <= 3) {
+    } else if (consumesMove) {
+      const playedMove = hasMoveValue ? moveValue : state.move;
+      state.move = playedMove >= 3 ? 1 : playedMove + 1;
+    } else if (hasMoveValue) {
       state.move = moveValue;
-    } else if (/trabalh|estud/.test(lowerCode)) {
-      state.move = Math.min(state.move + 1, 3);
     }
     const incomingItems = firstValue(nested, ["inventario", "inventario_mask", "inventory", "itens", "items", "inventory_mask"]);
     if (Array.isArray(incomingItems)) {
@@ -655,7 +664,12 @@
     state.events = state.events.slice(0, MAX_EVENTS);
     persistSession();
     render();
-    if (event.kind === "refused") showToast("Compra não realizada. O saldo não foi alterado.");
+    if (event.kind === "refused") {
+      showToast(/venda/.test(event.event || "")
+        ? "Venda não realizada: o item não está no inventário."
+        : "Compra não realizada: o item já está no inventário.");
+    }
+    if (/fal[eê]ncia/.test(event.event || "")) showToast("Saldo negativo: você perdeu. Aperte iniciar para jogar de novo.");
   }
 
   function openSettings() {
