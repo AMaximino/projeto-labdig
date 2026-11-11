@@ -1021,3 +1021,45 @@ body { background: #f4f3e8; color: #263b27; }
 @media (prefers-reduced-motion: reduce) {
   .selector-slot.current { transform: none; }
 }
+
+/* Jogador atual na barra do topo. */
+.player-chip { display: inline-grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 9px; align-items: center; min-height: 40px; padding: 4px 12px; border: 2px solid #e5d896; border-radius: 11px; background: #fff8dc; color: #3a3926; cursor: pointer; text-align: left; }
+.player-chip:hover { border-color: #d8b84a; background: #fff2bd; }
+.player-chip-label { grid-column: 1; color: #7a6a33; font-size: 8px; font-weight: 800; letter-spacing: 1px; }
+.player-chip strong { grid-column: 1; overflow: hidden; max-width: 150px; color: #263b27; font: 800 14px/1.15 Manrope, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.player-chip-change { grid-column: 2; grid-row: 1 / 3; padding: 4px 7px; border-radius: 7px; background: #f2ac29; color: #382907; font-size: 10px; font-weight: 800; }
+.name-dialog .dialog-copy { margin-bottom: 4px; }
+.name-dialog #name-dialog-input { font-size: 16px; font-weight: 700; }
+
+/* Fim de jogo: a tela inteira muda de cor. */
+body.game-lost { background: #f9d9d2; }
+body.game-won { background: #d8f3cd; }
+body.game-lost .turn-banner { border-color: #8f2f1f; background: #c0392b; box-shadow: 0 5px 0 #8f2f1f; }
+body.game-won .turn-banner { border-color: #126527; background: #1f9e3d; box-shadow: 0 5px 0 #126527; }
+.game-end-overlay { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: 16px; }
+.game-end-overlay[hidden] { display: none; }
+.game-end-overlay.lost { background: rgb(150 28 18 / 82%); }
+.game-end-overlay.won { background: rgb(18 120 46 / 80%); }
+.confetti-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.game-end-card { position: relative; z-index: 1; display: grid; justify-items: center; gap: 10px; width: min(520px, 100%); padding: 30px 28px 26px; border-radius: 22px; background: #fffdf6; color: #263b27; box-shadow: 0 24px 80px rgb(0 0 0 / 30%); text-align: center; animation: game-end-pop .35s ease-out; }
+.game-end-overlay.lost .game-end-card { border: 4px solid #c0392b; }
+.game-end-overlay.won .game-end-card { border: 4px solid #1f9e3d; }
+.game-end-icon { display: grid; width: 74px; height: 74px; place-items: center; border-radius: 22px; color: #fff; font: 800 40px/1 Manrope, sans-serif; }
+.game-end-overlay.lost .game-end-icon { background: #c0392b; box-shadow: 0 4px 0 #8f2f1f; }
+.game-end-overlay.won .game-end-icon { background: #f2ac29; box-shadow: 0 4px 0 #c98612; }
+.game-end-eyebrow { color: #6b5a1f; font-size: 11px; font-weight: 800; letter-spacing: 1.4px; }
+.game-end-card h2 { margin: 0; font: 800 28px/1.15 Manrope, sans-serif; letter-spacing: -.5px; }
+.game-end-overlay.lost .game-end-card h2 { color: #8f2f1f; }
+.game-end-overlay.won .game-end-card h2 { color: #15552e; }
+.game-end-card > p { margin: 0; color: #4e5a48; font-size: 14px; line-height: 1.5; }
+.game-end-balance { display: grid; gap: 3px; min-width: 220px; padding: 10px 16px; border-radius: 12px; background: #f4f1e4; }
+.game-end-balance span { color: #6a6048; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+.game-end-balance strong { font: 800 24px/1.1 Manrope, sans-serif; }
+.game-end-overlay.lost .game-end-balance strong { color: #b03a26; }
+.game-end-overlay.won .game-end-balance strong { color: #1b6b33; }
+.game-end-hint { font-size: 13px !important; }
+.game-end-button { min-height: 46px; margin-top: 4px; padding: 0 22px; border-radius: 11px; color: #fff; font-size: 14px; font-weight: 800; }
+.game-end-overlay.lost .game-end-button { background: #c0392b; }
+.game-end-overlay.won .game-end-button { background: #1f9e3d; }
+@keyframes game-end-pop { from { transform: scale(.92); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .game-end-card { animation: none; } }

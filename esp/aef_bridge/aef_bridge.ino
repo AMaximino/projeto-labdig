@@ -85,6 +85,11 @@ static constexpr size_t JSON_CAPACITY = 512;
 #define AEF_RFID_AUTO_ASSIGN 0
 #endif
 static constexpr char MQTT_TOPIC[] = AEF_MQTT_TOPIC;
+// Leituras de cartao (UID) para o backend identificar o jogador da sessao.
+#ifndef AEF_MQTT_CARD_TOPIC
+#define AEF_MQTT_CARD_TOPIC "aventura_financeira/cartao"
+#endif
+static constexpr char MQTT_CARD_TOPIC[] = AEF_MQTT_CARD_TOPIC;
 static constexpr uint32_t RFID_POLL_MS = 120;
 static constexpr uint32_t RFID_REMOVE_MS = 300;
 
@@ -113,6 +118,14 @@ uint32_t lastRfidPoll = 0;
 uint32_t noCardSince = 0;
 bool cardLatched = false;
 char latchedUid[21] = {};
+
+// 1 = o cartao funciona como "pagar": compra o item que esta no seletor da placa
+// (a FPGA informa a posicao pelo evento 14, seletor_item). Qualquer cartao serve.
+// 0 = cada cartao compra o item fixo cadastrado em config.h (modo antigo).
+#ifndef AEF_RFID_USE_SELECTOR
+#define AEF_RFID_USE_SELECTOR 1
+#endif
+uint8_t selectorItem = 0;  // ultima posicao do seletor recebida da FPGA (0 = desconhecida)
 
 struct RfidTag { const char *uid; uint8_t item; };
 const RfidTag rfidTags[] = {
@@ -174,6 +187,8 @@ void sendRfidPurchase(uint8_t item) {
   LOG("[RFID] comando enviado a FPGA: R%02u\n", item);
 }
 
+void publishCardRead(const char *uid, uint8_t item);  // definida mais abaixo
+
 void serviceRfid() {
   const uint32_t now = millis();
   if (now - lastRfidPoll < RFID_POLL_MS) return;
@@ -184,6 +199,17 @@ void serviceRfid() {
     uidToHex(rfid.uid, latchedUid, sizeof(latchedUid));
     cardLatched = true;
     noCardSince = 0;
+#if AEF_RFID_USE_SELECTOR
+    if (selectorItem != 0) {
+      LOG("[RFID] UID %s -> item %u do seletor\n", latchedUid, selectorItem);
+      sendRfidPurchase(selectorItem);
+      publishCardRead(latchedUid, selectorItem);
+    } else {
+      LOG("[RFID] UID %s lido, mas a posicao do seletor ainda nao chegou da FPGA "
+          "(aperte iniciar e gire o seletor)\n", latchedUid);
+      publishCardRead(latchedUid, 0);
+    }
+#else
     const uint8_t item = itemForUid(latchedUid);
     if (item != 0) {
       LOG("[RFID] UID %s -> item %u\n", latchedUid, item);
@@ -191,6 +217,7 @@ void serviceRfid() {
     } else {
       LOG("[RFID] UID %s nao cadastrado (nenhum comando enviado)\n", latchedUid);
     }
+#endif
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
     return;
@@ -282,6 +309,9 @@ void processLine(char *line) {
   }
   LOG("[FPGA] seq=%lu evento=%s item=%u\n", static_cast<unsigned long>(frame.sequence),
       eventName(frame.eventCode), static_cast<unsigned>(frame.itemId));
+  if (frame.eventCode == 14 && frame.itemId >= 1 && frame.itemId <= 10) {
+    selectorItem = frame.itemId;  // o proximo cartao compra este item
+  }
   if (!enqueueMessage(frame)) return;
 }
 
@@ -347,6 +377,27 @@ void maintainMqtt() {
   } else {
     LOG("[MQTT] falha ao conectar em %s:%d (estado %d)\n", AEF_MQTT_HOST, AEF_MQTT_PORT,
         mqttClient.state());
+  }
+}
+
+// Avisa o backend qual cartao foi usado nesta sessao. Nao entra na fila da
+// telemetria: se o MQTT estiver fora do ar, a leitura e so registrada no log.
+void publishCardRead(const char *uid, uint8_t item) {
+  if (!mqttClient.connected()) {
+    LOG("[MQTT] sem conexao, leitura do cartao %s nao publicada\n", uid);
+    return;
+  }
+  char timestamp[32];
+  formatTimestamp(timestamp, sizeof(timestamp));
+  char payload[256];
+  const int written = snprintf(
+      payload, sizeof(payload),
+      "{\"schema_version\":1,\"device_id\":\"%s\",\"session_id\":\"%s\","
+      "\"uid\":\"%s\",\"item_id\":%u,\"timestamp\":%s}",
+      AEF_DEVICE_ID, sessionId, uid, static_cast<unsigned>(item), timestamp);
+  if (written <= 0 || static_cast<size_t>(written) >= sizeof(payload)) return;
+  if (mqttClient.publish(MQTT_CARD_TOPIC, payload, false)) {
+    LOG("[MQTT] cartao %s publicado em %s\n", uid, MQTT_CARD_TOPIC);
   }
 }
 

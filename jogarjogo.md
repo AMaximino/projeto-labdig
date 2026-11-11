@@ -135,13 +135,17 @@ do backend: `http://localhost:3000/health` deve mostrar `"mqtt_connected":true`.
 ## 6. Jogar
 
 1. Ligue a ESP32 no USB. Ela conecta sozinha no Wi-Fi e no MQTT.
+   No painel, digite o nome do jogador na primeira vez. Nas próximas, o nome
+   anterior é usado; para trocar, clique em **Trocar** no topo.
 2. Aperte **iniciar** na FPGA. O painel recebe `inicio_sessao`.
 3. Cada rodada tem **3 jogadas**. Trabalhar ou estudar consome uma jogada.
    Comprar, vender, investir e resgatar não consomem.
-4. Para comprar com cartão: aproxime o cartão do leitor e depois retire. Cada
-   aproximação vale uma compra só. Com `AEF_RFID_AUTO_ASSIGN 1`, cada cartão
-   novo vira o próximo item livre (8, 7, 9, 10, 1, ...). Essa associação vale
-   até a ESP reiniciar.
+4. Para comprar: **gire o seletor** até o item desejado (o painel mostra qual
+   é) e **aproxime qualquer cartão** do leitor, depois retire. O cartão compra
+   o item que está no seletor; cada aproximação vale uma compra só. O botão
+   COMPRAR da placa também compra o item do seletor. (Para voltar ao modo em
+   que cada cartão tem um item fixo, use `AEF_RFID_USE_SELECTOR 0` no
+   `config.h`.)
 5. A compra é aceita **mesmo sem saldo suficiente**. Se o saldo ficar
    negativo, a FPGA declara `falencia` e o jogador perde. Uma compra só é
    recusada se o item já estiver no inventário.

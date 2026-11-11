@@ -85,7 +85,12 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10m4 0h2M4 17h2m4 0h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></svg>
               Conexão de dados
             </button>
-            <button class="avatar" id="player-avatar" type="button" aria-label="Editar nome do jogador" title="Editar nome do jogador">J</button>
+            <button class="player-chip" id="player-chip" type="button" aria-label="Trocar jogador">
+              <span class="player-chip-label">JOGADOR</span>
+              <strong id="player-chip-name">—</strong>
+              <span class="player-chip-change">Trocar</span>
+            </button>
+            <button class="avatar" id="player-avatar" type="button" aria-label="Trocar jogador" title="Trocar jogador">J</button>
           </div>
         </header>
 
@@ -378,6 +383,35 @@
         <p class="privacy-dialog"><span aria-hidden="true">⌁</span> O nome do jogador fica salvo apenas neste navegador. A interface não envia ações à partida.</p>
       </form>
     </dialog>
+
+    <dialog class="settings-dialog name-dialog" id="name-dialog" aria-labelledby="name-dialog-title">
+      <form class="settings-form" id="name-form">
+        <div class="dialog-heading">
+          <div><span class="eyebrow"><span class="eyebrow-line"></span> ANTES DE JOGAR</span><h2 id="name-dialog-title">Quem vai jogar?</h2></div>
+        </div>
+        <p class="dialog-copy">Digite seu nome para começar. Ele fica salvo neste computador e é usado nas próximas partidas até você trocar.</p>
+        <label class="field-label" for="name-dialog-input">Nome do jogador</label>
+        <input id="name-dialog-input" name="playerName" type="text" maxlength="24" placeholder="Seu nome" autocomplete="off" required />
+        <p class="connection-feedback" id="name-dialog-feedback" role="status"></p>
+        <div class="dialog-actions">
+          <button class="button button-outline" id="name-dialog-cancel" type="button">Manter o nome atual</button>
+          <button class="button button-primary" type="submit">Começar a jogar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="game-end-overlay" id="game-end-overlay" hidden>
+      <canvas class="confetti-canvas" id="confetti-canvas" aria-hidden="true"></canvas>
+      <section class="game-end-card" role="alertdialog" aria-modal="true" aria-labelledby="game-end-title" aria-describedby="game-end-message">
+        <span class="game-end-icon" id="game-end-icon" aria-hidden="true">!</span>
+        <span class="game-end-eyebrow" id="game-end-eyebrow">FIM DE JOGO</span>
+        <h2 id="game-end-title">Você perdeu</h2>
+        <p id="game-end-message">Seu saldo ficou negativo.</p>
+        <div class="game-end-balance"><span>SALDO FINAL</span><strong id="game-end-balance">—</strong></div>
+        <p class="game-end-hint">Aperte <strong>iniciar</strong> na placa para jogar de novo.</p>
+        <button class="button game-end-button" id="game-end-close" type="button">Ver o painel</button>
+      </section>
+    </div>
 
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
   </body>

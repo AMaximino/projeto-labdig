@@ -75,6 +75,7 @@
     ...(savedSession?.metrics || {}),
     move: savedSession?.metrics?.move || 1,
     selectorItem: null,
+    gameResult: null,
     events: Array.isArray(savedSession?.events) ? savedSession.events : [],
     history: Array.isArray(savedSession?.history) ? savedSession.history : [demoInitial.balance],
     inventory: Array.isArray(savedSession?.inventory) ? savedSession.inventory : [],
@@ -408,7 +409,9 @@
     const icon = $("#last-move-icon");
     icon.className = `last-move-icon ${presentation.className}`;
     icon.textContent = presentation.icon;
-    $("#last-move-label").textContent = presentation.className === "refused" ? "COMPRA NÃO REALIZADA" : "ÚLTIMA ATUALIZAÇÃO";
+    $("#last-move-label").textContent = /fal[eê]ncia|fim_jogo/.test(event.event || "")
+      ? "FIM DE JOGO"
+      : presentation.className === "refused" ? "COMPRA NÃO REALIZADA" : "ÚLTIMA ATUALIZAÇÃO";
     $("#last-move-title-value").textContent = presentation.label;
     const detail = event.detail || (typeof event.amount === "number" && event.amount !== 0
       ? `${event.amount > 0 ? "+" : "−"} ${displayMoney(Math.abs(event.amount))}${typeof event.balance === "number" ? ` · saldo ${displayMoney(event.balance)}` : ""}`
@@ -595,6 +598,7 @@
     $("#variable-expenses-bar").style.width = state.metricAvailable.uniqueExpenses
       ? `${Math.min(100, (state.uniqueExpenses / maxExpense) * 100)}%` : "0%";
     $("#player-name-heading").textContent = state.playerName || "Jogador";
+    $("#player-chip-name").textContent = state.playerName || "—";
     $("#player-avatar").textContent = (state.playerName || "J").trim().charAt(0).toLocaleUpperCase("pt-BR");
     drawChart();
     renderGame();
@@ -751,7 +755,125 @@
         ? "Venda não realizada: o item não está no inventário."
         : "Compra não realizada: o item já está no inventário.");
     }
-    if (/fal[eê]ncia/.test(event.event || "")) showToast("Saldo negativo: você perdeu. Aperte iniciar para jogar de novo.");
+    const code = event.event || "";
+    if (/fal[eê]ncia/.test(code)) setGameResult("lost");
+    else if (/fim_jogo/.test(code)) setGameResult("won");
+    else if (/inicio_sessao/.test(code)) setGameResult(null);
+  }
+
+  // ---------- Fim de jogo: vermelho na derrota, verde com confete na vitória ----------
+  let confettiFrame = 0;
+
+  function setGameResult(result) {
+    state.gameResult = result;
+    document.body.classList.toggle("game-lost", result === "lost");
+    document.body.classList.toggle("game-won", result === "won");
+    const overlay = $("#game-end-overlay");
+    stopConfetti();
+    if (!result) {
+      overlay.hidden = true;
+      return;
+    }
+    const name = state.playerName || "Jogador";
+    overlay.classList.toggle("lost", result === "lost");
+    overlay.classList.toggle("won", result === "won");
+    $("#game-end-icon").textContent = result === "won" ? "★" : "!";
+    $("#game-end-eyebrow").textContent = result === "won" ? "FIM DAS 15 RODADAS" : "FIM DE JOGO";
+    $("#game-end-title").textContent = result === "won" ? `Parabéns, ${name}! Você venceu!` : `${name}, você perdeu`;
+    $("#game-end-message").textContent = result === "won"
+      ? "Você chegou ao fim das 15 rodadas sem ficar com saldo negativo."
+      : "Seu saldo ficou negativo. Na próxima partida, confira o preço antes de comprar.";
+    $("#game-end-balance").textContent = state.metricAvailable.balance ? displayMoney(state.balance) : "—";
+    overlay.hidden = false;
+    $("#game-end-close").focus();
+    if (result === "won") startConfetti();
+  }
+
+  function startConfetti() {
+    const canvas = $("#confetti-canvas");
+    const context = canvas.getContext && canvas.getContext("2d");
+    if (!context) return;
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const colors = ["#ffd447", "#55b85a", "#4bb7dc", "#ef8c45", "#9f82cf", "#e78d76", "#ffffff"];
+    const resize = () => {
+      canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+      canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+    };
+    resize();
+    const scale = window.devicePixelRatio || 1;
+    const pieces = Array.from({ length: reduceMotion ? 90 : 220 }, () => ({
+      x: Math.random() * canvas.width,
+      y: reduceMotion ? Math.random() * canvas.height : -Math.random() * canvas.height,
+      w: (6 + Math.random() * 7) * scale,
+      h: (9 + Math.random() * 9) * scale,
+      vy: (2 + Math.random() * 3.5) * scale,
+      vx: (Math.random() - 0.5) * 2.2 * scale,
+      angle: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.25,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const draw = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      for (const piece of pieces) {
+        context.save();
+        context.translate(piece.x, piece.y);
+        context.rotate(piece.angle);
+        context.fillStyle = piece.color;
+        context.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+        context.restore();
+      }
+    };
+    if (reduceMotion) {
+      draw();
+      return;
+    }
+    const startedAt = performance.now();
+    const tick = (now) => {
+      const keepFalling = now - startedAt < 6000;
+      for (const piece of pieces) {
+        piece.x += piece.vx;
+        piece.y += piece.vy;
+        piece.angle += piece.spin;
+        if (piece.y > canvas.height + 20 && keepFalling) {
+          piece.y = -20;
+          piece.x = Math.random() * canvas.width;
+        }
+      }
+      draw();
+      if (keepFalling || pieces.some((piece) => piece.y < canvas.height + 20)) {
+        confettiFrame = requestAnimationFrame(tick);
+      }
+    };
+    confettiFrame = requestAnimationFrame(tick);
+  }
+
+  function stopConfetti() {
+    cancelAnimationFrame(confettiFrame);
+    const canvas = $("#confetti-canvas");
+    const context = canvas.getContext && canvas.getContext("2d");
+    if (context) context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // ---------- Nome do jogador ----------
+  function openNameDialog(required) {
+    const dialog = $("#name-dialog");
+    dialog.dataset.required = required ? "true" : "";
+    $("#name-dialog-input").value = state.playerName || "";
+    $("#name-dialog-cancel").hidden = required || !state.playerName;
+    $("#name-dialog-feedback").textContent = state.playerName
+      ? `Jogador atual: ${state.playerName}. Digite outro nome para trocar.`
+      : "";
+    if (!dialog.open) dialog.showModal();
+    $("#name-dialog-input").focus();
+    $("#name-dialog-input").select();
+  }
+
+  function savePlayerName(name) {
+    state.playerName = name;
+    prefs.playerName = name;
+    persistPreferences();
+    $("#player-name-input").value = name;
+    render();
   }
 
   function openSettings() {
@@ -941,7 +1063,29 @@
     $("#open-settings-side").addEventListener("click", openSettings);
     $("#close-settings").addEventListener("click", () => ui.settingsDialog.close());
     $("#cancel-settings").addEventListener("click", () => ui.settingsDialog.close());
-    $("#player-avatar").addEventListener("click", openSettings);
+    $("#player-avatar").addEventListener("click", () => openNameDialog(false));
+    $("#player-chip").addEventListener("click", () => openNameDialog(false));
+    $("#name-dialog-cancel").addEventListener("click", () => $("#name-dialog").close());
+    $("#name-dialog").addEventListener("cancel", (event) => {
+      // Sem nome salvo, o jogador precisa digitar um antes de começar.
+      if ($("#name-dialog").dataset.required === "true" || !state.playerName) event.preventDefault();
+    });
+    $("#name-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = $("#name-dialog-input").value.trim();
+      if (!name) {
+        $("#name-dialog-feedback").textContent = "Digite um nome para começar.";
+        $("#name-dialog-input").focus();
+        return;
+      }
+      savePlayerName(name);
+      $("#name-dialog").close();
+      showToast(`Boa partida, ${name}!`);
+    });
+    $("#game-end-close").addEventListener("click", () => {
+      $("#game-end-overlay").hidden = true;
+      stopConfetti();
+    });
     $("#player-name-input").addEventListener("input", (event) => {
       state.playerName = event.target.value.trim();
       prefs.playerName = state.playerName;
@@ -997,6 +1141,8 @@
     if (prefs.playerName) state.playerName = prefs.playerName;
     if (!savedSession) persistSession();
     connectBackend(defaultBackendUrl());
+    // Usa o nome da sessão anterior; só pergunta se ainda não houver um.
+    if (!state.playerName) openNameDialog(true);
   }
 
   initialize();

@@ -19,6 +19,11 @@
 
 // Modo de teste: 1 = cartao sem cadastro vira automaticamente o proximo item
 // livre, do mais barato ao mais caro (8, 7, 9, 10, 1, ...). Vale ate reiniciar.
+// 1 = qualquer cartao compra o item que esta no seletor da placa (padrao).
+// 0 = cada cartao compra o item fixo cadastrado abaixo.
+#define AEF_RFID_USE_SELECTOR 1
+
+// So vale com AEF_RFID_USE_SELECTOR 0.
 #define AEF_RFID_AUTO_ASSIGN 0
 
 // Logs no Monitor Serial (USB, 115200 baud). A FPGA usa a UART2, entao os logs

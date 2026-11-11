@@ -7,12 +7,16 @@ import mqtt from "mqtt";
 import { WebSocketServer, WebSocket } from "ws";
 
 import { validateTelemetry } from "./contract.js";
+import { PlayerStore, summarizeSession, validateCardRead } from "./players.js";
 
 const port = Number(process.env.PORT || 3000);
 const topic = process.env.MQTT_TOPIC || "aventura_financeira/telemetria";
 const mqttUrl = process.env.MQTT_URL || "mqtt://localhost:1883";
 const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const journalPath = resolve(process.env.DATA_FILE || resolve(backendRoot, "data/events.jsonl"));
+const cardTopic = process.env.MQTT_CARD_TOPIC || "aventura_financeira/cartao";
+const players = new PlayerStore(resolve(process.env.PLAYERS_FILE || resolve(dirname(journalPath), "players.json")));
+const latestSessionByDevice = new Map();
 const frontendRoot = resolve(backendRoot, "../front");
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
@@ -61,6 +65,7 @@ function storeEvent(event, persist = true) {
   if (history.length > maxEventsPerSession) history.shift();
   sessions.set(key, history);
   latestEvent = event;
+  latestSessionByDevice.set(event.device_id, key);
 
   if (persist) {
     mkdirSync(dirname(journalPath), { recursive: true });
@@ -83,6 +88,73 @@ function jsonResponse(response, status, value) {
     "cache-control": "no-store",
   });
   response.end(JSON.stringify(value));
+}
+
+function sessionMeta(key) {
+  const history = sessions.get(key) || [];
+  return { ...players.session(key), ...summarizeSession(history) };
+}
+
+function readJsonBody(request, limit = 2048) {
+  return new Promise((resolvePromise, reject) => {
+    let body = "";
+    request.setEncoding("utf8");
+    request.on("data", (chunk) => {
+      body += chunk;
+      if (body.length > limit) {
+        reject(new TypeError("corpo grande demais"));
+        request.destroy();
+      }
+    });
+    request.on("end", () => {
+      try {
+        resolvePromise(JSON.parse(body || "{}"));
+      } catch {
+        reject(new TypeError("JSON invalido"));
+      }
+    });
+    request.on("error", reject);
+  });
+}
+
+async function handlePlayerUpdate(request, response, key) {
+  if (!sessions.has(key)) {
+    jsonResponse(response, 404, { error: "Sessao nao encontrada." });
+    return;
+  }
+  try {
+    const body = await readJsonBody(request);
+    players.setPlayerName(key, body.name);
+  } catch (error) {
+    jsonResponse(response, 400, { error: error.message });
+    return;
+  }
+  const meta = sessionMeta(key);
+  broadcast({ type: "session_meta", data: meta });
+  jsonResponse(response, 200, meta);
+}
+
+function handleCardRead(raw) {
+  let card;
+  try {
+    card = validateCardRead(raw);
+  } catch (error) {
+    console.error("Leitura de cartao rejeitada:", error.message);
+    return;
+  }
+  const key = card.session_id
+    ? `${card.device_id}:${card.session_id}`
+    : latestSessionByDevice.get(card.device_id);
+  if (!key || !sessions.has(key)) {
+    console.warn(`Cartao ${card.uid} lido sem sessao conhecida; ignorado.`);
+    return;
+  }
+  const { cardName, nameFromCard } = players.recordCard(key, card.uid, card.received_at);
+  broadcast({
+    type: "card",
+    data: { session_key: key, uid: card.uid, item_id: card.item_id, card_name: cardName, name_from_card: nameFromCard },
+  });
+  broadcast({ type: "session_meta", data: sessionMeta(key) });
 }
 
 function handleHttpRequest(request, response) {
@@ -130,17 +202,37 @@ function handleHttpRequest(request, response) {
       device_id: history.at(-1)?.device_id,
       session_id: history.at(-1)?.session_id,
       event_count: history.length,
+      ...sessionMeta(key),
       snapshot: history.at(-1),
     }));
     jsonResponse(response, 200, list);
     return;
   }
-  const sessionMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/(snapshot|events)$/);
+  const playerMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/player$/);
+  if (request.method === "POST" && playerMatch) {
+    let key;
+    try {
+      key = decodeURIComponent(playerMatch[1]);
+    } catch {
+      jsonResponse(response, 400, { error: "Sessao invalida." });
+      return;
+    }
+    handlePlayerUpdate(request, response, key).catch((error) => {
+      console.error("Falha ao salvar jogador:", error.message);
+      if (!response.headersSent) jsonResponse(response, 500, { error: "Falha ao salvar jogador." });
+    });
+    return;
+  }
+  const sessionMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/(snapshot|events|meta)$/);
   if (request.method === "GET" && sessionMatch) {
     const key = decodeURIComponent(sessionMatch[1]);
     const history = sessions.get(key);
     if (!history) {
       jsonResponse(response, 404, { error: "Sessao nao encontrada." });
+      return;
+    }
+    if (sessionMatch[2] === "meta") {
+      jsonResponse(response, 200, sessionMeta(key));
       return;
     }
     if (sessionMatch[2] === "snapshot") {
@@ -161,7 +253,13 @@ const webSocketServer = new WebSocketServer({ server, path: "/ws/telemetria" });
 
 webSocketServer.on("connection", (socket) => {
   sockets.add(socket);
-  if (latestEvent) sendToSocket(socket, { type: "snapshot", data: latestEvent });
+  if (latestEvent) {
+    sendToSocket(socket, { type: "snapshot", data: latestEvent });
+    sendToSocket(socket, {
+      type: "session_meta",
+      data: sessionMeta(sessionKey(latestEvent.device_id, latestEvent.session_id)),
+    });
+  }
   socket.on("close", () => sockets.delete(socket));
   socket.on("error", (error) => console.error("Erro no cliente WebSocket:", error.message));
 });
@@ -175,19 +273,23 @@ const mqttClient = mqtt.connect(mqttUrl, {
 
 mqttClient.on("connect", () => {
   console.info(`MQTT conectado em ${mqttUrl}; assinando ${topic}.`);
-  mqttClient.subscribe(topic, { qos: 0 }, (error) => {
-    if (error) console.error(`Falha ao assinar ${topic}:`, error.message);
+  mqttClient.subscribe([topic, cardTopic], { qos: 0 }, (error) => {
+    if (error) console.error(`Falha ao assinar ${topic} / ${cardTopic}:`, error.message);
   });
 });
 mqttClient.on("reconnect", () => console.info("Reconectando ao broker MQTT..."));
 mqttClient.on("error", (error) => console.error("Erro MQTT:", error.message));
 mqttClient.on("message", (receivedTopic, buffer) => {
-  if (receivedTopic !== topic) return;
+  if (receivedTopic !== topic && receivedTopic !== cardTopic) return;
   let raw;
   try {
     raw = JSON.parse(buffer.toString("utf8"));
   } catch (error) {
     console.error("Payload MQTT ignorado: JSON invalido.", error.message);
+    return;
+  }
+  if (receivedTopic === cardTopic) {
+    handleCardRead(raw);
     return;
   }
   let event;
@@ -202,6 +304,9 @@ mqttClient.on("message", (receivedTopic, buffer) => {
     return;
   }
   broadcast({ type: "event", data: event });
+  if (event.event === "inicio_sessao" || event.event === "falencia" || event.event === "fim_jogo") {
+    broadcast({ type: "session_meta", data: sessionMeta(sessionKey(event.device_id, event.session_id)) });
+  }
 });
 
 server.listen(port, "0.0.0.0", () => {
