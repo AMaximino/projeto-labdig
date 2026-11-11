@@ -1,6 +1,6 @@
 Archive Project report for circuito_jogo_financeiro
-Mon Nov 09 23:35:02 2026
-Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Wed Nov 11 14:09:40 2026
+Quartus Prime Version 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 
 
 ---------------------
@@ -16,27 +16,27 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2020  Intel Corporation. All rights reserved.
-Your use of Intel Corporation's design tools, logic functions 
+Copyright (C) 2025  Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
-to the terms and conditions of the Intel Program License 
-Subscription Agreement, the Intel Quartus Prime License Agreement,
-the Intel FPGA IP License Agreement, or other applicable license
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera IP License Agreement, or other applicable license
 agreement, including, without limitation, that your use is for
 the sole purpose of programming logic devices manufactured by
-Intel and sold by Intel or its authorized distributors.  Please
-refer to the applicable agreement for further details, at
-https://fpgasoftware.intel.com/eula.
+Altera and sold by Altera or its authorized distributors.  Please
+refer to the Altera Software License Subscription Agreements 
+on the Quartus Prime software download page.
 
 
 
 +----------------------------------------------------------------+
 ; Archive Project Summary                                        ;
 +------------------------+---------------------------------------+
-; Archive Project Status ; Successful - Mon Nov 09 23:35:02 2026 ;
+; Archive Project Status ; Successful - Wed Nov 11 14:09:40 2026 ;
 ; Revision Name          ; circuito_jogo_financeiro              ;
 ; Top-level Entity Name  ; circuito_jogo_financeiro              ;
 ; Family                 ; Cyclone V                             ;
@@ -51,67 +51,67 @@ Info: File Set 'Source control' contains:
     Info: Automatically detected source files
 Warning: Hierarchical Platform Designer systems and custom IP components(_hw.tcl and associated files) are not archived by the Quartus Archiver
 Info: Archive will store files relative to the closest common parent directory
-Info (13213): Using common directory D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/
+Info (13213): Using common directory C:/Users/Sophia/documents/projeto-labdig/fpga/
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
-Info: Generated archive 'D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qar'
+Info: Generated archive 'projeto_labdig_semana_3.qar'
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
 Info: Generated report 'circuito_jogo_financeiro.archive.rpt'
-Info (23030): Evaluation of Tcl script d:/quartus/quartus/common/tcl/apps/qpm/qar.tcl was successful
+Info (23030): Evaluation of Tcl script c:/intelfpga_lite/24.1std/quartus/common/tcl/apps/qpm/qar.tcl was successful
 Info: Quartus Prime Shell was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4838 megabytes
-    Info: Processing ended: Mon Nov 09 23:35:02 2026
-    Info: Elapsed time: 00:00:02
-    Info: Total CPU time (on all processors): 00:00:02
+    Info: Peak virtual memory: 4914 megabytes
+    Info: Processing ended: Wed Nov 11 14:09:40 2026
+    Info: Elapsed time: 00:00:04
+    Info: Total CPU time (on all processors): 00:00:01
 
 
-+------------------------------------------------------------------------------------+
-; Files Archived                                                                     ;
-+------------------------------------------------------------------------------------+
-; File Name                                                                          ;
-+------------------------------------------------------------------------------------+
-; ../rtl/bin2bcd.v                                                                   ;
-; ../rtl/circuito_jogo_financeiro.v                                                  ;
-; ../rtl/contador_modulo_n.v                                                         ;
-; ../rtl/dec7seg.v                                                                   ;
-; ../rtl/display6digitos.v                                                           ;
-; ../rtl/display_bcd_4dig_cc.v                                                       ;
-; ../rtl/edge_detector.v                                                             ;
-; ../rtl/fluxo_dados.v                                                               ;
-; ../rtl/i2s_master_clock_gen.v                                                      ;
-; ../rtl/inicializador.v                                                             ;
-; ../rtl/multiplexador.v                                                             ;
-; ../rtl/processador_acao.v                                                          ;
-; ../rtl/processador_evento.v                                                        ;
-; ../rtl/registrador_n.v                                                             ;
-; ../rtl/rfid_uart_rx.v                                                              ;
-; ../rtl/sel_dinheiro.v                                                              ;
-; ../rtl/sel_valor.v                                                                 ;
-; ../rtl/telemetria_uart.v                                                           ;
-; ../rtl/unidade_controle.v                                                          ;
-; circuito_jogo_financeiro.qsf                                                       ;
-; circuito_jogo_financeiro_assignment_defaults.qdf                                   ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/bin2bcd.v                  ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/contador_modulo_n.v        ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/dec7seg.v                  ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display6digitos.v          ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v      ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/edge_detector.v            ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/fluxo_dados.v              ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v     ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/inicializador.v            ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/multiplexador.v            ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_acao.v         ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_evento.v       ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/registrador_n.v            ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/rfid_uart_rx.v             ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_dinheiro.v             ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_valor.v                ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/telemetria_uart.v          ;
-; D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/unidade_controle.v         ;
-; projeto_labdig.qpf                                                                 ;
-+------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------+
+; Files Archived                                                               ;
++------------------------------------------------------------------------------+
+; File Name                                                                    ;
++------------------------------------------------------------------------------+
+; ../rtl/bin2bcd.v                                                             ;
+; ../rtl/circuito_jogo_financeiro.v                                            ;
+; ../rtl/contador_modulo_n.v                                                   ;
+; ../rtl/dec7seg.v                                                             ;
+; ../rtl/display6digitos.v                                                     ;
+; ../rtl/display_bcd_4dig_cc.v                                                 ;
+; ../rtl/edge_detector.v                                                       ;
+; ../rtl/fluxo_dados.v                                                         ;
+; ../rtl/i2s_master_clock_gen.v                                                ;
+; ../rtl/inicializador.v                                                       ;
+; ../rtl/multiplexador.v                                                       ;
+; ../rtl/processador_acao.v                                                    ;
+; ../rtl/processador_evento.v                                                  ;
+; ../rtl/registrador_n.v                                                       ;
+; ../rtl/rfid_uart_rx.v                                                        ;
+; ../rtl/sel_dinheiro.v                                                        ;
+; ../rtl/sel_valor.v                                                           ;
+; ../rtl/telemetria_uart.v                                                     ;
+; ../rtl/unidade_controle.v                                                    ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/bin2bcd.v                  ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/contador_modulo_n.v        ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/dec7seg.v                  ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display6digitos.v          ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v      ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/edge_detector.v            ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/fluxo_dados.v              ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v     ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/inicializador.v            ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/multiplexador.v            ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_acao.v         ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_evento.v       ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/registrador_n.v            ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/rfid_uart_rx.v             ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_dinheiro.v             ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_valor.v                ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/telemetria_uart.v          ;
+; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/unidade_controle.v         ;
+; circuito_jogo_financeiro.qsf                                                 ;
+; circuito_jogo_financeiro_assignment_defaults.qdf                             ;
+; projeto_labdig.qpf                                                           ;
++------------------------------------------------------------------------------+
 
 

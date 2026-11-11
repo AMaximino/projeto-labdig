@@ -1,33 +1,39 @@
-Quartus Prime Archive log --	D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qarlog
+Quartus Prime Archive log --	C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qarlog
 
-Archive:	D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qar
-Date:		Mon Nov 09 23:35:02 2026
-Quartus Prime		20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Archive:	C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qar
+Date:		Wed Nov 11 14:09:40 2026
+Quartus Prime		24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 
 	=========== Files Selected: ===========
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/circuito_jogo_financeiro.qsf
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/circuito_jogo_financeiro_assignment_defaults.qdf
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/quartus/projeto_labdig.qpf
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/bin2bcd.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/contador_modulo_n.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/dec7seg.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display6digitos.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/edge_detector.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/fluxo_dados.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/inicializador.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/multiplexador.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_acao.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/processador_evento.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/registrador_n.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/rfid_uart_rx.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_dinheiro.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/sel_valor.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/telemetria_uart.v
-D:/Documents/USP/labdig/projeto/projeto-labdig/fpga/rtl/unidade_controle.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/circuito_jogo_financeiro.qsf
+C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/circuito_jogo_financeiro_assignment_defaults.qdf
+C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/projeto_labdig.qpf
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/bin2bcd.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/contador_modulo_n.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/dec7seg.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display6digitos.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/edge_detector.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/fluxo_dados.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/inicializador.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/multiplexador.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_acao.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_evento.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/registrador_n.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/rfid_uart_rx.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_dinheiro.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_valor.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/telemetria_uart.v
+C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/unidade_controle.v
 	======= Total: 22 files to archive =======
 
 	================ Status: ===============
 All files archived successfully.
+
+
+******* Archived project restoration attempt on Wed Nov 11 14:09:52 2026
+Source archive file:	C:/Users/Sophia/documents/projeto-labdig/fpga/quartus/projeto_labdig_semana_3.qar
+Archive was extracted into	C:/Users/Sophia/AppData/Local/Temp/qar_check/
+		 - successfully.
