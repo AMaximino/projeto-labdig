@@ -14,6 +14,13 @@
 
 #define AEF_DEVICE_ID "aef-fpga-01"
 
+// Topico MQTT (o backend usa a variavel MQTT_TOPIC com o mesmo valor).
+// #define AEF_MQTT_TOPIC "aventura_financeira/telemetria"
+
+// Modo de teste: 1 = cartao sem cadastro vira automaticamente o proximo item
+// livre, do mais barato ao mais caro (8, 7, 9, 10, 1, ...). Vale ate reiniciar.
+#define AEF_RFID_AUTO_ASSIGN 0
+
 // Logs no Monitor Serial (USB, 115200 baud). A FPGA usa a UART2, entao os logs
 // nao interferem nos quadros. Use 0 para silenciar.
 #define AEF_DEBUG 1

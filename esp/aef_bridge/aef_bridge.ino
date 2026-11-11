@@ -76,7 +76,15 @@
 static constexpr size_t LINE_CAPACITY = 160;
 static constexpr size_t MQTT_QUEUE_CAPACITY = 4;
 static constexpr size_t JSON_CAPACITY = 512;
-static constexpr char MQTT_TOPIC[] = "aventura_financeira/telemetria";
+#ifndef AEF_MQTT_TOPIC
+#define AEF_MQTT_TOPIC "aventura_financeira/telemetria"
+#endif
+// 1 = modo de teste: cartao sem cadastro recebe automaticamente o proximo item
+// livre (do mais barato ao mais caro), valido ate a ESP32 reiniciar.
+#ifndef AEF_RFID_AUTO_ASSIGN
+#define AEF_RFID_AUTO_ASSIGN 0
+#endif
+static constexpr char MQTT_TOPIC[] = AEF_MQTT_TOPIC;
 static constexpr uint32_t RFID_POLL_MS = 120;
 static constexpr uint32_t RFID_REMOVE_MS = 300;
 
@@ -123,10 +131,37 @@ void uidToHex(const MFRC522::Uid &uid, char *output, size_t capacity) {
   output[offset] = '\0';
 }
 
+// Itens em ordem crescente de preco: 8 (8k), 7 (12k), 9 (20k), 10 (42k), 1..6.
+static const uint8_t AUTO_ITEM_ORDER[10] = {8, 7, 9, 10, 1, 2, 3, 4, 5, 6};
+char autoUids[10][21] = {};
+size_t autoCount = 0;
+
+bool itemConfigured(uint8_t item) {
+  for (const auto &tag : rfidTags) {
+    if (tag.uid[0] != '\0' && tag.item == item) return true;
+  }
+  return false;
+}
+
 uint8_t itemForUid(const char *uid) {
   for (const auto &tag : rfidTags) {
     if (tag.uid[0] != '\0' && strcasecmp(uid, tag.uid) == 0) return tag.item;
   }
+#if AEF_RFID_AUTO_ASSIGN
+  size_t slot = 0;
+  for (size_t i = 0; i < 10; ++i) {
+    const uint8_t item = AUTO_ITEM_ORDER[i];
+    if (itemConfigured(item)) continue;
+    if (slot < autoCount && strcasecmp(uid, autoUids[slot]) == 0) return item;
+    if (slot == autoCount) {
+      strlcpy(autoUids[slot], uid, sizeof(autoUids[slot]));
+      ++autoCount;
+      LOG("[RFID] modo teste: UID %s associado ao item %u\n", uid, item);
+      return item;
+    }
+    ++slot;
+  }
+#endif
   return 0;
 }
 

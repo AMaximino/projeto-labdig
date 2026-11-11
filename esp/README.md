@@ -26,6 +26,7 @@ Cartão ─► RC522 ──SPI──► ESP32 ──UART2 TX (GPIO17)──► F
 | `aef_bridge/config.example.h` | Modelo de configuração (Wi-Fi, broker, UIDs, pinos) |
 | `aef_bridge/telemetry_protocol.h` | Parser do quadro `AEF1` e geração do JSON |
 | `tools/uid_reader/uid_reader.ino` | Ferramenta para descobrir o UID de cada cartão |
+| `tools/rfid_test/` | Teste rápido do RC522 com janela guiada no Windows |
 | `testbench/` | Teste do parser no PC, sem hardware |
 | `esp32_wifi/` | Teste simples de conexão Wi-Fi na ESP32 |
 
@@ -139,6 +140,19 @@ Para mudar algum pino, descomente a linha `AEF_PIN_*` correspondente em
 
 > Se o upload travar em `Connecting...`, segure o botão **BOOT** até começar a
 > gravação.
+
+## Passo 0 (opcional): teste rápido do leitor com janela
+
+1. Grave `tools/rfid_test/rfid_test.ino` e feche o Monitor Serial do Arduino IDE.
+2. No PowerShell do Windows, rode:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File esp\tools\rfid_test\rfid_test_gui.ps1 -Port COM14
+   ```
+
+3. A janela verifica se o RC522 responde pelo SPI e depois pede: **aproxime o
+   cartão**, **retire**, **aproxime de novo**. No fim mostra *RFID FUNCIONANDO*
+   e o UID do cartão. Se algo falhar, ela indica o passo e o que conferir.
 
 ## Passo 1: descobrir o UID dos cartões
 
