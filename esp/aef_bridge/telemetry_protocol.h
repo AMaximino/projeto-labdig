@@ -35,6 +35,7 @@ inline const char *eventName(uint8_t code) {
     case 11: return "fim_rodada";
     case 12: return "fim_jogo";
     case 13: return "falencia";
+    case 14: return "seletor_item";  // posicao do seletor de item (status 0)
     default: return nullptr;
   }
 }
@@ -88,7 +89,7 @@ inline bool parseFrame(char *line, TelemetryFrame &frame) {
   uint32_t parsed = 0;
   if (!parseUnsigned(fields[1], 6, 999999, parsed) || parsed == 0) return false;
   frame.sequence = parsed;
-  if (!parseUnsigned(fields[2], 2, 13, parsed) || parsed == 0 ||
+  if (!parseUnsigned(fields[2], 2, 14, parsed) || parsed == 0 ||
       eventName(static_cast<uint8_t>(parsed)) == nullptr) return false;
   frame.eventCode = static_cast<uint8_t>(parsed);
   if (!parseUnsigned(fields[3], 2, 10, parsed)) return false;

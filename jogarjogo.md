@@ -117,7 +117,9 @@ do backend: `http://localhost:3000/health` deve mostrar `"mqtt_connected":true`.
 ## 5. FPGA
 
 1. Ligue a DE0-CV e grave o `.sof` atual pelo **Quartus → Programmer**
-   (USB-Blaster). O projeto fica em `fpga/quartus/`.
+   (USB-Blaster). O projeto fica em `fpga/quartus/`. Depois de mudar o RTL,
+   compile de novo (**Processing → Start Compilation**) para gerar
+   `fpga/quartus/output_files/circuito_jogo_financeiro.sof`.
 2. Confira os fios entre a FPGA e a ESP32:
 
    | ESP32 | FPGA (JP2) | Função |
@@ -143,7 +145,11 @@ do backend: `http://localhost:3000/health` deve mostrar `"mqtt_connected":true`.
 5. A compra é aceita **mesmo sem saldo suficiente**. Se o saldo ficar
    negativo, a FPGA declara `falencia` e o jogador perde. Uma compra só é
    recusada se o item já estiver no inventário.
-6. Se o jogador falir (`falencia`) ou o jogo acabar (`fim_jogo`), a FPGA ignora
+6. **Seletor de item:** ao girar o seletor da placa, o painel mostra logo
+   abaixo da faixa da rodada qual item está selecionado, o preço e o que
+   acontece ao apertar COMPRAR/VENDER, junto com os itens das outras posições.
+   A posição aparece depois que o jogo começa (aperte **iniciar**).
+7. Se o jogador falir (`falencia`) ou o jogo acabar (`fim_jogo`), a FPGA ignora
    as compras até apertar **iniciar** de novo.
 
 ## Ver o log da ESP32 (opcional)

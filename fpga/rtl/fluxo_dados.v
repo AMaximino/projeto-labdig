@@ -8,6 +8,7 @@ module fluxo_dados (
     input vender,
     input [5:0] config_display,
     input [9:0] seletor_item,
+    input fsm_espera_acao, // 1 quando a UC esta em ESPERA_ACAO
     input [3:0] rfid_item_id,
     input rfid_item_valid,
 
@@ -86,6 +87,7 @@ module fluxo_dados (
     assign telemetry_unique_expenses = gastosUnicos;
 
     reg terminal_sent;
+
 
 /////////////display/////////////////////////////////
     wire sel_display;
@@ -229,6 +231,18 @@ module fluxo_dados (
         end
     endfunction
 
+    // Posicao do seletor de item para a interface (evento 14 = seletor_item).
+    // Filtro de estabilidade: o seletor precisa ficar ~80 ms (40 ciclos de 500 Hz)
+    // na mesma posicao valida antes de ser informado, para nao lotar a fila da
+    // UART com o "bounce" ao girar. Posicoes sem item (0 ou mais de um bit) sao
+    // ignoradas, entao a interface mantem a ultima posicao valida.
+    localparam [5:0] SELETOR_ESTAVEL = 6'd40;
+    reg [9:0] seletor_candidato;
+    reg [5:0] seletor_estavel_cnt;
+    reg [3:0] seletor_informado;
+    reg seletor_pendente;
+    wire [3:0] seletor_candidato_id = item_id(seletor_candidato);
+
     always @(posedge clock) begin
         if (rstED) begin
             rfid_ack <= 1'b0;
@@ -239,6 +253,10 @@ module fluxo_dados (
             telemetry_status <= 2'd0;
             telemetry_item <= 4'd0;
             terminal_sent <= 1'b0;
+            seletor_candidato <= 10'd0;
+            seletor_estavel_cnt <= 6'd0;
+            seletor_informado <= 4'd0;
+            seletor_pendente <= 1'b0;
         end else if (init) begin
             rfid_ack <= 1'b0;
             rfid_action_latched <= 1'b0;
@@ -248,7 +266,20 @@ module fluxo_dados (
             telemetry_status <= 2'd0;
             telemetry_item <= 4'd0;
             terminal_sent <= 1'b0;
+            seletor_informado <= 4'd0;  // reenvia a posicao na nova sessao
+            seletor_pendente <= 1'b0;
         end else begin
+            // Filtro de estabilidade do seletor (ver declaracao acima).
+            if (seletor_item != seletor_candidato) begin
+                seletor_candidato <= seletor_item;
+                seletor_estavel_cnt <= 6'd0;
+            end else if (seletor_estavel_cnt != SELETOR_ESTAVEL) begin
+                seletor_estavel_cnt <= seletor_estavel_cnt + 1'b1;
+            end else if (!seletor_pendente && seletor_candidato_id != 4'd0 &&
+                         seletor_candidato_id != seletor_informado) begin
+                seletor_informado <= seletor_candidato_id;
+                seletor_pendente <= 1'b1;
+            end
             rfid_ack <= registraA && rfid_item_valid;
             if (registraA && rfid_item_valid) begin
                 rfid_action_latched <= 1'b1;
@@ -294,6 +325,16 @@ module fluxo_dados (
                 telemetry_status <= 2'd0;
                 telemetry_item <= 4'd0;
                 terminal_sent <= 1'b1;
+            // Posicao do seletor: menor prioridade. So sai em ESPERA_ACAO e com um
+            // ciclo em 0 antes: a UART detecta borda de subida, e o proximo evento
+            // do jogo (processaE) so acontece 2 ciclos depois de sair de ESPERA_ACAO,
+            // entao os pulsos nunca ficam colados.
+            end else if (seletor_pendente && fsm_espera_acao && !telemetry_send) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= 8'd14;
+                telemetry_status <= 2'd0;
+                telemetry_item <= seletor_informado;
+                seletor_pendente <= 1'b0;
             end
         end
     end

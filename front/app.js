@@ -7,16 +7,16 @@
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
   const catalog = [
-    { id: 1, name: "Carro compacto", icon: "🚗", price: 60000, expense: 3600 },
-    { id: 2, name: "Carro familiar", icon: "🚙", price: 100000, expense: 4800 },
-    { id: 3, name: "Carro premium", icon: "🚘", price: 200000, expense: 8000 },
-    { id: 4, name: "Casa pequena", icon: "🏠", price: 500000, expense: 2400 },
-    { id: 5, name: "Casa confortável", icon: "🏡", price: 900000, expense: 3200 },
-    { id: 6, name: "Casa dos sonhos", icon: "🏰", price: 1900000, expense: 6000 },
-    { id: 7, name: "Computador gamer", icon: "🖥️", price: 12000, expense: 0 },
-    { id: 8, name: "Jogos de tabuleiro", icon: "🎲", price: 8000, expense: 0 },
-    { id: 9, name: "Coleção de livros", icon: "📚", price: 20000, expense: 0 },
-    { id: 10, name: "Kit de LEGO", icon: "🧱", price: 42000, expense: 0 },
+    { id: 1, name: "Carro compacto", icon: "🚗", image: "images/itens/item-01.svg", price: 60000, expense: 3600 },
+    { id: 2, name: "Carro familiar", icon: "🚙", image: "images/itens/item-02.svg", price: 100000, expense: 4800 },
+    { id: 3, name: "Carro premium", icon: "🚘", image: "images/itens/item-03.svg", price: 200000, expense: 8000 },
+    { id: 4, name: "Casa pequena", icon: "🏠", image: "images/itens/item-04.svg", price: 500000, expense: 2400 },
+    { id: 5, name: "Casa confortável", icon: "🏡", image: "images/itens/item-05.svg", price: 900000, expense: 3200 },
+    { id: 6, name: "Casa dos sonhos", icon: "🏰", image: "images/itens/item-06.svg", price: 1900000, expense: 6000 },
+    { id: 7, name: "Computador gamer", icon: "🖥️", image: "images/itens/item-07.svg", price: 12000, expense: 0 },
+    { id: 8, name: "Jogos de tabuleiro", icon: "🎲", image: "images/itens/item-08.svg", price: 8000, expense: 0 },
+    { id: 9, name: "Coleção de livros", icon: "📚", image: "images/itens/item-09.svg", price: 20000, expense: 0 },
+    { id: 10, name: "Kit de LEGO", icon: "🧱", image: "images/itens/item-10.svg", price: 42000, expense: 0 },
   ];
   const demoInitial = {
     balance: 15000,
@@ -74,6 +74,7 @@
     ...demoInitial,
     ...(savedSession?.metrics || {}),
     move: savedSession?.metrics?.move || 1,
+    selectorItem: null,
     events: Array.isArray(savedSession?.events) ? savedSession.events : [],
     history: Array.isArray(savedSession?.history) ? savedSession.history : [demoInitial.balance],
     inventory: Array.isArray(savedSession?.inventory) ? savedSession.inventory : [],
@@ -325,11 +326,79 @@
       progress.setAttribute("aria-label", `Jogada ${move}${move === state.move ? ", atual" : ""}`);
     }
 
+    renderSelector();
     renderLastMove();
     renderInventory();
     renderShop();
     renderStats();
     syncCalculatorWithGame();
+  }
+
+  function selectorVerdict(item) {
+    const owned = state.inventory.includes(item.id);
+    if (owned) {
+      return { kind: "owned", text: `Já é seu. Aperte VENDER para receber ${displayMoney(item.price)}.` };
+    }
+    if (!state.metricAvailable.balance) return { kind: "ok", text: "Aperte COMPRAR para levar este item." };
+    const after = state.balance - item.price;
+    if (after >= 0) return { kind: "ok", text: `Aperte COMPRAR: seu saldo fica em ${displayMoney(after)}.` };
+    return { kind: "risk", text: `Comprar deixa o saldo em ${displayMoney(after)}: você perde o jogo.` };
+  }
+
+  function renderSelector() {
+    const panel = $("#selector-panel");
+    if (!panel) return;
+    const selected = catalog.find((item) => item.id === state.selectorItem);
+    const image = $("#selector-current-image");
+    panel.classList.toggle("waiting", !selected);
+    if (selected) {
+      const verdict = selectorVerdict(selected);
+      image.src = selected.image;
+      image.alt = selected.name;
+      image.hidden = false;
+      $("#selector-position").textContent = String(selected.id);
+      $("#selector-name").textContent = selected.name;
+      $("#selector-price").textContent = displayMoney(selected.price);
+      $("#selector-expense").textContent = selected.expense
+        ? `+ ${displayMoney(selected.expense)} de despesa por rodada`
+        : "Sem despesa por rodada";
+      const verdictNode = $("#selector-verdict");
+      verdictNode.textContent = verdict.text;
+      verdictNode.className = `selector-verdict ${verdict.kind}`;
+    } else {
+      image.hidden = true;
+      $("#selector-position").textContent = "—";
+      $("#selector-name").textContent = "Gire o seletor da placa";
+      $("#selector-price").textContent = "";
+      $("#selector-expense").textContent = "";
+      const verdictNode = $("#selector-verdict");
+      verdictNode.textContent = "O item escolhido aparece aqui assim que o seletor parar numa posição.";
+      verdictNode.className = "selector-verdict";
+    }
+    $("#selector-dial").replaceChildren(...catalog.map((item) => {
+      const owned = state.inventory.includes(item.id);
+      const current = item.id === state.selectorItem;
+      const affordable = state.metricAvailable.balance && state.balance >= item.price;
+      const entry = document.createElement("li");
+      entry.className = `selector-slot${current ? " current" : ""}${owned ? " owned" : ""}${!owned && state.metricAvailable.balance && !affordable ? " risk" : ""}`;
+      if (current) entry.setAttribute("aria-current", "true");
+      const number = document.createElement("span");
+      number.className = "selector-slot-number";
+      number.textContent = String(item.id);
+      const picture = document.createElement("img");
+      picture.src = item.image;
+      picture.alt = "";
+      picture.loading = "lazy";
+      const name = document.createElement("span");
+      name.className = "selector-slot-name";
+      name.textContent = item.name;
+      const price = document.createElement("span");
+      price.className = "selector-slot-price";
+      price.textContent = owned ? "✓ seu" : displayCompactMoney(item.price);
+      entry.setAttribute("aria-label", `Posição ${item.id}: ${item.name}, ${displayMoney(item.price)}${owned ? ", no inventário" : ""}${current ? ", selecionado" : ""}`);
+      entry.append(number, picture, name, price);
+      return entry;
+    }));
   }
 
   function renderLastMove() {
@@ -361,9 +430,10 @@
     list.replaceChildren(...inventory.map((item) => {
       const badge = document.createElement("span");
       badge.className = "inventory-item";
-      const icon = document.createElement("span");
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = item.icon;
+      const icon = document.createElement("img");
+      icon.className = "inventory-item-image";
+      icon.src = item.image;
+      icon.alt = "";
       const name = document.createElement("span");
       name.textContent = item.name;
       badge.append(icon, name);
@@ -378,13 +448,14 @@
       const owned = state.inventory.includes(item.id);
       const canAfford = state.metricAvailable.balance && state.balance >= item.price;
       const card = document.createElement("article");
-      card.className = `product-card${owned ? " owned" : !canAfford ? " unaffordable" : ""}`;
+      card.className = `product-card${owned ? " owned" : !canAfford ? " unaffordable" : ""}${item.id === state.selectorItem ? " selected" : ""}`;
       const top = document.createElement("div");
       top.className = "product-top";
-      const glyph = document.createElement("span");
-      glyph.className = "product-glyph";
-      glyph.setAttribute("aria-hidden", "true");
-      glyph.textContent = item.icon;
+      const glyph = document.createElement("img");
+      glyph.className = "product-image";
+      glyph.src = item.image;
+      glyph.alt = "";
+      glyph.loading = "lazy";
       const status = document.createElement("span");
       status.className = `product-status${!owned && !canAfford ? " locked" : ""}`;
       status.textContent = owned ? "NO INVENTÁRIO" : !state.metricAvailable.balance ? "AGUARDANDO" : canAfford ? "PODE COMPRAR" : "RISCO DE FALÊNCIA";
@@ -563,6 +634,7 @@
         : payload;
     const eventCode = String(firstValue(nested, ["evento", "event", "tipo_evento", "tipo", "type", "acao", "action"]) || "atualizacao");
     const lowerCode = eventCode.toLowerCase();
+    const isSelector = /seletor/.test(lowerCode);
     const balance = readMoney(
       nested,
       ["saldo", "balance", "saldo_atual", "saldo_final", "valor_saldo", "valor_resultante"],
@@ -650,9 +722,14 @@
         state.inventory = state.inventory.filter((id) => id !== item.id);
       }
     }
+    if (isSelector && Number.isInteger(itemIndex) && itemIndex >= 1 && itemIndex <= catalog.length) {
+      state.selectorItem = itemIndex;
+    }
+    event.isSelector = isSelector;
     if (balance !== undefined) {
       state.balance = balance;
-      state.history.push(balance);
+      // Girar o seletor não muda o saldo: não entra no gráfico.
+      if (!isSelector) state.history.push(balance);
     }
     return event;
   }
@@ -660,6 +737,11 @@
   function recordPayload(payload, topic) {
     const event = normalizeEvent(payload);
     event.topic = topic;
+    if (event.isSelector) {
+      // Posição do seletor: atualiza o painel, mas não é uma jogada do histórico.
+      render();
+      return;
+    }
     state.events.unshift(event);
     state.events = state.events.slice(0, MAX_EVENTS);
     persistSession();

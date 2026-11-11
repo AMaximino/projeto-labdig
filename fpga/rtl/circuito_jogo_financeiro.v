@@ -101,6 +101,7 @@ module circuito_jogo_financeiro (
         .vender         ( ~vender ),
         .config_display ( ~config_display ),
         .seletor_item   ( ~seletor_item ),
+        .fsm_espera_acao( w_estado == 5'b00100 ), // ESPERA_ACAO: janela segura p/ evento do seletor
         .rfid_item_id   ( rfid_item ),
         .rfid_item_valid(rfid_command_ready),
         .rfid_ack       ( rfid_ack ),

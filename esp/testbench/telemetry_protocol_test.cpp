@@ -75,8 +75,17 @@ int main() {
   check(!parseTestLine(
       "AEF1,000021,06,07,+0000150,+0000064,+0000000,+0000040,+0000000,0G40,01,01,1",
       frame), "malformed inventory mask is rejected");
+  const char *selectorFrame =
+      "AEF1,000022,14,05,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,0";
+  check(parseTestLine(selectorFrame, frame) && frame.eventCode == 14 && frame.itemId == 5,
+        "selector position frame parses");
+  check(strcmp(eventName(frame.eventCode), "seletor_item") == 0,
+        "selector event maps to seletor_item");
   check(!parseTestLine(
-      "AEF1,000021,14,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
+      "AEF1,000022,14,05,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
+      frame), "selector event with success status is rejected");
+  check(!parseTestLine(
+      "AEF1,000021,15,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
       frame), "unknown event code is rejected");
   check(!parseTestLine(
       "AEF1,000021,07,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",

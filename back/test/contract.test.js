@@ -60,3 +60,11 @@ test("fills a missing device timestamp from backend receive time", () => {
   assert.equal(accepted.timestamp, "2026-11-02T23:47:00.000Z");
   assert.equal(accepted.device_timestamp, null);
 });
+
+test("accepts the selector position event", () => {
+  const accepted = validateTelemetry({
+    ...sample, event: "seletor_item", item_id: 5, status: "info", delta_saldo_centavos: 0,
+  });
+  assert.equal(accepted.event, "seletor_item");
+  assert.equal(accepted.item_id, 5);
+});

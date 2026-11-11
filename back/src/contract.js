@@ -11,6 +11,7 @@ export const EVENTS = new Set([
   "fim_rodada",
   "fim_jogo",
   "falencia",
+  "seletor_item",
 ]);
 
 const MONEY_FIELDS = [

@@ -64,9 +64,14 @@ o item 8.
 | `11` | Fim de rodada |
 | `12` | Fim de jogo |
 | `13` | Falencia |
+| `14` | Posicao do seletor de item (`seletor_item`) |
 
-Para os eventos `06` a `09`, `item_id` indica o item comprado ou vendido. Para
-os outros eventos, `00` indica que nao ha um item associado. O codigo `10` nao
+Para os eventos `06` a `09`, `item_id` indica o item comprado ou vendido. No
+evento `14`, `item_id` e a posicao atual do seletor de item (`01` a `10`), com
+`status` `0`. A FPGA so envia o `14` quando o seletor fica ~80 ms parado numa
+posicao valida diferente da ultima informada, e apenas com a FSM em
+`ESPERA_ACAO`; depois de `iniciar`, a posicao e reenviada. Para os outros
+eventos, `00` indica que nao ha um item associado. O codigo `10` nao
 e usado atualmente.
 
 ### Exemplo decodificado
