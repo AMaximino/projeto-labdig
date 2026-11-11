@@ -28,7 +28,13 @@ Cartão ─► RC522 ──SPI──► ESP32 ──UART2 TX (GPIO17)──► F
 | `tools/uid_reader/uid_reader.ino` | Ferramenta para descobrir o UID de cada cartão |
 | `tools/rfid_test/` | Teste rápido do RC522 com janela guiada no Windows |
 | `testbench/` | Teste do parser no PC, sem hardware |
-| `esp32_wifi/` | Teste simples de conexão Wi-Fi na ESP32 |
+| `tools/esp32_wifi/` | Teste simples de conexão Wi-Fi na ESP32 |
+| `tools/teste-uart-esp32/` | Recebe a telemetria da FPGA na UART2 e repassa ao Monitor Serial |
+| `tools/teste-uart/` | Mesmo teste de UART para ESP8266 (versão antiga); descreve o formato `AEF1` |
+| `tools/teste-uart-arduino/` | Mesmo teste de UART para Arduino Uno (SoftwareSerial) |
+| `tools/conectar_wifi/` | Teste de Wi-Fi para ESP8266 (versão antiga) |
+| `tools/anything_arduino/` | Sketch de teste de botão/LED |
+| `archive/esp8266.zip` | Firmware da ponte na versão ESP8266, só como histórico |
 
 ## O que mudou em relação à versão ESP8266
 

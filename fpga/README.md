@@ -5,7 +5,12 @@
 - `quartus/`: projeto e atribuições de pinos para Terasic DE0-CV
   (`5CEBA4F23C7`).
 - `sim/`: arquivos de simulação ModelSim/QuestaSim.
-- `configuracao/pinagens/`: pinagens e diagramas de montagem.
+- `configuracao/`: pinagens da placa (PDF/CSV com os botões do jogo) e
+  configuração de forma de onda.
+- `docs/`: estratégias de montagem e depuração da semana 3 e datasheet do
+  MC74HC164.
+- `archive/`: projetos ModelSim antigos e pacotes `.zip` de simulações
+  anteriores, mantidos só como histórico.
 
 ## Entrada RFID
 
@@ -38,7 +43,7 @@ O teste completo da partida fica em
 ser mantidas em sincronia com a revisão da placa usada na bancada.
 
 Os testes, diagramas e o roteiro físico da semana 3 ficam em
-`fpga/testbench/semana3/` e `fpga/ESTRATEGIA_MONTAGEM_SEMANA3.md`. Execute a
+`fpga/testbench/semana3/` e `fpga/docs/ESTRATEGIA_MONTAGEM_SEMANA3.md`. Execute a
 suíte isolada da semana com:
 
 ```tcl

@@ -4,7 +4,7 @@
 
 Este mapeamento considera a Terasic DE0-CV selecionada no QSF e uma ESP32
 (módulo ESP32-WROOM-32U, placa ESP32 Dev Module). O RC522 usa o SPI padrão
-(VSPI) e recebe 3,3 V. Detalhes e links de pinout em [`esp/README.md`](esp/README.md).
+(VSPI) e recebe 3,3 V. Detalhes e links de pinout em [`esp/README.md`](../esp/README.md).
 
 | RC522 | ESP32 |
 |---|---|

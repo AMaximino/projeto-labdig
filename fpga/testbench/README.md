@@ -28,4 +28,4 @@ testa os caminhos principais de ação, avanço de jogada/rodada, falência, fim
 jogo e seleção de display. Os diagramas de estado e a estratégia física estão,
 respectivamente, em
 [`DIAGRAMA_ESTADOS_SEMANA3.md`](semana3/DIAGRAMA_ESTADOS_SEMANA3.md) e
-[`../ESTRATEGIA_MONTAGEM_SEMANA3.md`](../ESTRATEGIA_MONTAGEM_SEMANA3.md).
+[`../docs/ESTRATEGIA_MONTAGEM_SEMANA3.md`](../docs/ESTRATEGIA_MONTAGEM_SEMANA3.md).

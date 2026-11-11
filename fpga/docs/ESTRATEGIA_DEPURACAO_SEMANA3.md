@@ -88,8 +88,8 @@ separadas e níveis compatíveis com 3,3 V.
 
 ## Referências
 
-- [RTL, pinos e simulação FPGA](README.md)
+- [RTL, pinos e simulação FPGA](../README.md)
 - [Estratégia de montagem da semana 3](ESTRATEGIA_MONTAGEM_SEMANA3.md)
-- [Testbenches FPGA](testbench/README.md)
-- [Diagramas de estados da semana 3](testbench/semana3/DIAGRAMA_ESTADOS_SEMANA3.md)
-- [Guia de montagem e execução](../GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md)
+- [Testbenches FPGA](../testbench/README.md)
+- [Diagramas de estados da semana 3](../testbench/semana3/DIAGRAMA_ESTADOS_SEMANA3.md)
+- [Guia de montagem e execução](../../docs/GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md)

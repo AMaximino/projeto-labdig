@@ -15,7 +15,7 @@ e inventário e emitir a telemetria. O painel não envia comandos ao jogo.
    revisão DE0-CV indicada no projeto e compile. Confirme no QSF `rfid_rx` em
    `PIN_C15`/`GPIO_1_D22` e `uart_tx` em `PIN_A14`/`GPIO_1_D20`.
 3. **Desenergizar antes de ligar fios.** Conecte o RC522 à ESP32 conforme a
-   pinagem de `GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md`. Conecte depois a UART
+   pinagem de [`docs/GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md`](../../docs/GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md). Conecte depois a UART
    ESP32–FPGA e GND comum; não interligue os pinos VCC das placas.
 4. **Carregar o jogo.** Programe a DE0-CV com o arquivo de programação produzido
    pelo Quartus. Os fios UART da ESP32 (GPIO16/17) podem ficar ligados durante a
@@ -57,4 +57,4 @@ vsim -do fpga/testbench/semana3/run_semana3.do
 
 A suíte verifica a faixa e o latch do comando RFID e as transições principais
 da FSM (início, ação, despesa, rodada, falência, fim de jogo e seleção de
-display). Consulte [os diagramas de estados](testbench/semana3/DIAGRAMA_ESTADOS_SEMANA3.md).
+display). Consulte [os diagramas de estados](../testbench/semana3/DIAGRAMA_ESTADOS_SEMANA3.md).

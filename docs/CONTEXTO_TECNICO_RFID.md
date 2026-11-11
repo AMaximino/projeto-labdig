@@ -74,7 +74,8 @@ QSF. Compartilhe GND. Não conecte VCC entre as placas nem aplique 5 V aos GPIOs
 ## Referências
 
 - [Guia de ligação e execução](GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md)
-- [Firmware e pinagem ESP](esp/README.md)
-- [RTL e Quartus](fpga/README.md)
-- [Backend](back/README.md)
-- [Painel](front/README.md)
+- [Como jogar (passo a passo)](COMO_JOGAR.md)
+- [Firmware e pinagem ESP](../esp/README.md)
+- [RTL e Quartus](../fpga/README.md)
+- [Backend](../back/README.md)
+- [Painel](../front/README.md)
