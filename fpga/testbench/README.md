@@ -33,3 +33,23 @@ texto, use `vsim -c -do ...`. Os mesmos arquivos estão empacotados em
 respectivamente, em
 [`DIAGRAMA_ESTADOS_SEMANA3.md`](semana3/DIAGRAMA_ESTADOS_SEMANA3.md) e
 [`../docs/ESTRATEGIA_MONTAGEM_SEMANA3.md`](../docs/ESTRATEGIA_MONTAGEM_SEMANA3.md).
+
+## Semana 4
+
+A pasta `fpga/testbench/semana4/` traz a regressão da semana (cenário 8, todos os
+testbenches anteriores) e o cenário 10, `circuito_caixa_semana4_tb.v`, que simula
+o topo `circuito_jogo_financeiro` do ponto de vista da tampa da caixa: botões e
+seletor ativos em 0, cartão RFID chegando como `RNN\n` em `rfid_rx`, LEDs dos
+itens, FALIU, FIM DO JOGO e ÚLTIMA. O testbench reduz o divisor de clock do jogo
+por `defparam` para a partida inteira simular em segundos.
+
+```tcl
+vsim -c -do fpga/testbench/semana4/run_semana4.do   # regressão + cenário 10
+vsim -do fpga/testbench/semana4/wave_semana4.do     # formas de onda do cenário 10
+```
+
+O cenário 10 imprime um `AVISO`: o evento 12 (fim de jogo) da telemetria sai
+quando começa a última jogada, antes de a UC chegar a `FIM_JOGO`; o LED
+`terminou` está correto. Os arquivos estão empacotados em
+`fpga/archive/simulacoes-semana4.zip`, e o projeto Quartus da semana em
+`fpga/quartus/projeto_labdig_semana_4.qar`.

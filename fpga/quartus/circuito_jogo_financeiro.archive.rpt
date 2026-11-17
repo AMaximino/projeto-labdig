@@ -1,5 +1,5 @@
 Archive Project report for circuito_jogo_financeiro
-Wed Nov 11 14:09:40 2026
+Tue Nov 17 07:31:15 2026
 Quartus Prime Version 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 
 
@@ -36,7 +36,7 @@ on the Quartus Prime software download page.
 +----------------------------------------------------------------+
 ; Archive Project Summary                                        ;
 +------------------------+---------------------------------------+
-; Archive Project Status ; Successful - Wed Nov 11 14:09:40 2026 ;
+; Archive Project Status ; Successful - Tue Nov 17 07:31:15 2026 ;
 ; Revision Name          ; circuito_jogo_financeiro              ;
 ; Top-level Entity Name  ; circuito_jogo_financeiro              ;
 ; Family                 ; Cyclone V                             ;
@@ -54,16 +54,16 @@ Info: Archive will store files relative to the closest common parent directory
 Info (13213): Using common directory C:/Users/Sophia/documents/projeto-labdig/fpga/
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
-Info: Generated archive 'projeto_labdig_semana_3.qar'
+Info: Generated archive 'projeto_labdig_semana_4.qar'
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
 Info: Generated report 'circuito_jogo_financeiro.archive.rpt'
 Info (23030): Evaluation of Tcl script c:/intelfpga_lite/24.1std/quartus/common/tcl/apps/qpm/qar.tcl was successful
 Info: Quartus Prime Shell was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4914 megabytes
-    Info: Processing ended: Wed Nov 11 14:09:40 2026
-    Info: Elapsed time: 00:00:04
-    Info: Total CPU time (on all processors): 00:00:01
+    Info: Peak virtual memory: 4913 megabytes
+    Info: Processing ended: Tue Nov 17 07:31:15 2026
+    Info: Elapsed time: 00:00:10
+    Info: Total CPU time (on all processors): 00:00:04
 
 
 +------------------------------------------------------------------------------+
