@@ -1,0 +1,13 @@
+﻿peca;descricao;comprimento_mm;largura_mm;espessura_mm;chapa;girada_90
+tampa_topo;Tampa: topo (furos dos botões e do seletor);415;315;3;1;não
+tampa_aba_frente;Tampa: aba da frente;415;40;3;1;não
+tampa_aba_esq;Tampa: aba esquerda;315;40;3;1;sim
+tampa_aba_dir;Tampa: aba direita;315;40;3;1;sim
+teste_a;Teste: encaixe macho + furos do botão e do seletor;60;40;3;1;sim
+teste_b;Teste: encaixe fêmea;60;30;3;1;sim
+tampa_aba_tras;Tampa: aba de trás;415;40;3;2;não
+corpo_fundo;Corpo: fundo;408;308;3;2;não
+corpo_frente;Corpo: frente (contorno do logotipo gravado);408;202;3;3;não
+corpo_tras;Corpo: traseira (rasgo dos cabos);408;202;3;4;não
+corpo_lat_esq;Corpo: lateral esquerda;308;202;3;5;não
+corpo_lat_dir;Corpo: lateral direita;308;202;3;5;sim

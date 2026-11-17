@@ -1,0 +1,27 @@
+﻿componente;tipo;zona;x_mm;y_mm;furo;cor;sinal;pino_fpga;conector
+TRABALHAR;botão 12x12 + capa;Trabalho e estudo;167.0;228.0;Ø13;capa azul;trabalhar;PIN_K16;GPIO_1_D35
+ESTUDAR;botão 12x12 + capa;Trabalho e estudo;205.0;228.0;Ø13;capa branco;estudar;PIN_G12;GPIO_1_D33
+INVESTIR;botão 12x12 + capa;Investimentos;251.0;228.0;Ø13;capa preto;investir;PIN_G15;GPIO_1_D31
+RESGATAR;botão 12x12 + capa;Investimentos;289.0;228.0;Ø13;capa vermelho;resgatar;PIN_F12;GPIO_1_D29
+COMPRAR;botão 12x12 + capa;Compras;335.0;228.0;Ø13;capa verde;comprar;PIN_E16;GPIO_1_D25
+VENDER;botão 12x12 + capa;Compras;373.0;228.0;Ø13;capa amarelo;vender;PIN_F15;GPIO_1_D27
+INICIAR;botão 12x12 + capa;Partida;359.5;120.0;Ø13;capa verde;iniciar;PIN_E14;GPIO_1_D23
+RESET;botão 12x12 + capa;Partida;359.5;60.0;Ø13;capa vermelho;reset;PIN_B15;GPIO_1_D21
+SELETOR posição 1 (carro compacto);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[0] (ativo em 0);PIN_J13;GPIO_1_D18
+SELETOR posição 2 (carro familiar);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[1] (ativo em 0);PIN_H14;GPIO_1_D16
+SELETOR posição 3 (carro premium);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[2] (ativo em 0);PIN_H10;GPIO_1_D14
+SELETOR posição 4 (casa pequena);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[3] (ativo em 0);PIN_J19;GPIO_1_D12
+SELETOR posição 5 (casa confortável);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[4] (ativo em 0);PIN_H18;GPIO_1_D10
+SELETOR posição 6 (casa dos sonhos);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[5] (ativo em 0);PIN_G18;GPIO_1_D8
+SELETOR posição 7 (computador);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[6] (ativo em 0);PIN_C13;GPIO_1_D6
+SELETOR posição 8 (jogos);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[7] (ativo em 0);PIN_A13;GPIO_1_D4
+SELETOR posição 9 (livros);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[8] (ativo em 0);PIN_H15;GPIO_1_D2
+SELETOR posição 10 (lego);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[9] (ativo em 0);PIN_H16;GPIO_1_D0
+RC522;leitor RFID (sem furo, colado por baixo);Pague com o cartão;237.0;92.0;—;—;SPI na ESP32 (GPIO 5/18/19/22/23);—;ESP32
+ESP32;ponte RFID/telemetria (sob a tampa);Pague com o cartão;237.0;150.0;—;—;GPIO17→rfid_rx, uart_tx→GPIO16, GND;PIN_C15 / PIN_A14;GPIO_1_D22 / GPIO_1_D20
+10 LEDs 'meus itens';NÃO VAI NA CAIXA;—;—;—;—;—;indicador_itens[9:0];não ligar;o painel web já mostra (inventário no painel web)
+display RODADA;NÃO VAI NA CAIXA;—;—;—;—;—;display_rodadas;não ligar;o painel web já mostra (rodada no painel web)
+display JOGADA;NÃO VAI NA CAIXA;—;—;—;—;—;display_jogadas;não ligar;o painel web já mostra (jogada no painel web)
+LEDs ÚLTIMA RODADA/JOGADA;NÃO VAI NA CAIXA;—;—;—;—;—;ultima_rodada, ultima_jogada;não ligar;o painel web já mostra (rodada/jogada no painel)
+LEDs FIM DO JOGO / FALIU;NÃO VAI NA CAIXA;—;—;—;—;—;terminou, perdeu;não ligar;o painel web já mostra (tela de fim de jogo no painel)
+6 botões de consulta;NÃO VAI NA CAIXA;—;—;—;—;—;config_display[5:0];não ligar;o painel web já mostra (saldo, salário, investido, rendimento e gastos no painel)

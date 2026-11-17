@@ -32,12 +32,13 @@
 <body>
 <div id="cena"></div>
 <div id="painel">
-  <h1>Caixa do jogo (415 × 315 × 205 mm)</h1>
+  <h1 id="titulo">Caixa do jogo (MDF cortado a laser)</h1>
   <h2>Peças</h2>
   <div id="pecas"></div>
   <h2>Tampa</h2>
   <label>Abrir tampa (levantar)</label>
   <input id="abrir" type="range" min="0" max="250" value="0">
+  <p style="font-size:12px;opacity:.7;margin:4px 0 0">Tudo que é preso na tampa sobe junto.</p>
   <label><input id="transp" type="checkbox"> Caixa e tampa transparentes</label>
   <h2>Vistas</h2>
   <div class="linha">
@@ -61,8 +62,11 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const NOMES = { corpo: "Caixa", tampa: "Tampa", botoes: "Botões (8)", rc522: "Leitor RC522",
-  de0_cv: "FPGA DE0-CV", esp32: "ESP32" };
+const NOMES = {
+  corpo: "Corpo (fundo + 4 paredes)", tampa_topo: "Tampa: topo", tampa_aba: "Tampa: abas (verde-menta)",
+  adesivos: "Adesivos coloridos", botoes: "Botões (8)", seletor: "Seletor de item",
+  rc522: "Leitor RC522", esp32: "ESP32 (sob a tampa)", placas_tampa: "Placas dos botões",
+  logo_frente: "Logotipo da frente", de0_cv: "FPGA DE0-CV" };
 
 const el = document.getElementById("cena");
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -87,6 +91,10 @@ redimensionar();
 
 let centro = new THREE.Vector3(), raio = 1, escalaMm = 0.001, tampa = null, tampaY0 = 0;
 const pecas = {};
+// Posição das texturas e medidas, gerados por caixa.py
+const cfg = await fetch("../saida/visualizador.json").then((r) => r.json());
+document.getElementById("titulo").textContent =
+  `Caixa do jogo (${cfg.caixa.join(" × ")} mm)`;
 
 new GLTFLoader().load("../saida/caixa.glb", (gltf) => {
   const raiz = gltf.scene;
@@ -96,17 +104,34 @@ new GLTFLoader().load("../saida/caixa.glb", (gltf) => {
     if (o.isMesh) {
       o.material = o.material.clone();
       o.material.side = THREE.DoubleSide;
+      // O GLB do cadquery vem com material metálico, o que escurece as cores.
+      o.material.roughness = 0.75;
+      o.material.metalness = 0;
     }
   });
   const caixa = new THREE.Box3().setFromObject(raiz);
   caixa.getCenter(centro);
   const tam = caixa.getSize(new THREE.Vector3());
   raio = tam.length() / 2;
-  escalaMm = Math.max(tam.x, tam.y, tam.z) / 415;   // unidades da cena por mm
-  tampa = pecas.tampa;
+  escalaMm = Math.max(tam.x, tam.y, tam.z) / Math.max(...cfg.caixa);   // unidades da cena por mm
+  tampa = null;
+  raiz.traverse((o) => { if (!tampa && o.name === "tampa") tampa = o; });
   if (tampa) tampaY0 = tampa.position.z;   // eixo Z do CAD = altura
+  aplicarArtes();
   montarLista();
-  vista("iso");
+  // Parâmetros opcionais na URL: ?vista=cima&abrir=180&painel=0
+  const q = new URLSearchParams(location.search);
+  if (q.get("abrir")) {
+    const ctl = document.getElementById("abrir");
+    ctl.value = q.get("abrir");
+    ctl.dispatchEvent(new Event("input"));
+    // Enquadra a caixa com a tampa levantada
+    const aberta = new THREE.Box3().setFromObject(raiz);
+    aberta.getCenter(centro);
+    raio = aberta.getSize(new THREE.Vector3()).length() / 2;
+  }
+  vista(q.get("vista") || "iso");
+  if (q.get("painel") === "0") document.getElementById("painel").style.display = "none";
   document.getElementById("status").textContent = "Modelo carregado.";
 }, undefined, (erro) => {
   document.getElementById("status").textContent =
@@ -114,7 +139,37 @@ new GLTFLoader().load("../saida/caixa.glb", (gltf) => {
   console.error(erro);
 });
 
+// Arte impressa (adesivos e logotipo) como textura, em coordenadas do CAD (mm)
+const artes = [];
+function planoArte(arquivo, largura, altura, pai, posicionar) {
+  const tex = new THREE.TextureLoader().load(arquivo);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.8,
+    polygonOffset: true, polygonOffsetFactor: -2 });
+  const plano = new THREE.Mesh(new THREE.PlaneGeometry(largura * escalaMm, altura * escalaMm), mat);
+  posicionar(plano);
+  pai.add(plano);
+  artes.push(plano);
+}
+function aplicarArtes() {
+  const mm = escalaMm;
+  for (const a of cfg.artes) {
+    // Coordenadas do CAD: a tampa leva a arte junto quando abre
+    const pai = a.pai === "tampa" ? tampa : pecas.corpo?.parent;
+    if (!pai) continue;
+    planoArte("../saida/" + a.arquivo, a.c, a.l, pai, (p) => {
+      if (a.plano === "xz") p.rotation.x = Math.PI / 2;   // virado para -Y (frente)
+      p.position.set(a.pos[0] * mm, a.pos[1] * mm, a.pos[2] * mm);
+    });
+  }
+}
+
 function montarLista() {
+  const l0 = document.createElement("label");
+  l0.innerHTML = `<input type="checkbox" checked><span class="cor" style="background:#f2c14e"></span>Arte impressa (textura)`;
+  l0.querySelector("input").addEventListener("change", (e) => artes.forEach((a) => { a.visible = e.target.checked; }));
+  document.getElementById("pecas").appendChild(l0);
   const lista = document.getElementById("pecas");
   for (const [nome, rotulo] of Object.entries(NOMES)) {
     const obj = pecas[nome];
@@ -133,7 +188,7 @@ document.getElementById("abrir").addEventListener("input", (e) => {
 });
 
 document.getElementById("transp").addEventListener("change", (e) => {
-  for (const nome of ["corpo", "tampa"]) {
+  for (const nome of ["corpo", "tampa_topo", "tampa_aba"]) {
     pecas[nome]?.traverse((o) => {
       if (!o.isMesh) return;
       o.material.transparent = e.target.checked;
