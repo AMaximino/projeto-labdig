@@ -1063,3 +1063,45 @@ body.game-won .turn-banner { border-color: #126527; background: #1f9e3d; box-sha
 .game-end-overlay.won .game-end-button { background: #1f9e3d; }
 @keyframes game-end-pop { from { transform: scale(.92); } to { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .game-end-card { animation: none; } }
+
+/* ---------- Modo jogador x modo professor ----------
+   Padrão: modo jogador, só o que interessa a quem joga (sem menus, abas,
+   conexão nem botões). "?professor" no endereço ou Ctrl+Alt+P mostra tudo. */
+body:not(.modo-professor) .so-professor { display: none !important; }
+body.modo-professor .so-jogador { display: none !important; }
+body:not(.modo-professor) .main-content { margin-left: 0 !important; }
+body:not(.modo-professor) .page-content { max-width: 1280px; margin-right: auto; margin-left: auto; }
+.player-name-tag { color: #263b27; font: 800 20px/1 Manrope, sans-serif; }
+.player-name-tag:empty { display: none; }
+.professor-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 8px clamp(24px, 4vw, 58px); border-bottom: 1px solid #f1d570; background: #fff2bd; color: #5e5439; font-size: 12px; }
+.professor-bar strong { color: #4a3d12; }
+
+/* Faixa da partida: dinheiro em primeiro plano, rodada e jogada ao lado */
+.turn-banner { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.turn-money { padding: 14px 20px; }
+.turn-money > strong { font-size: clamp(40px, 4.4vw, 60px); letter-spacing: -1.2px; }
+.turn-label { font-size: 13px; }
+.turn-money > #game-balance-hint { display: block; margin-top: 5px; color: #d6ebcf; font-size: 13px; }
+.turn-money > #game-balance-hint[hidden] { display: none; }
+.move-progress-step { width: 40px; height: 12px; }
+@media (max-width: 1200px) {
+  .turn-banner { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+}
+@media (max-width: 620px) {
+  .turn-banner { grid-template-columns: 1fr 1fr; }
+  .turn-money { grid-column: 1 / 3; }
+  .turn-money > strong { font-size: 34px; }
+}
+
+/* Textos que ficaram curtos podem ser maiores */
+.selector-verdict { font-size: 15px; }
+.selector-verdict[hidden] { display: none; }
+.last-move-copy strong { font-size: 22px; }
+#last-move-description { font-size: 18px; font-weight: 800; }
+#last-move-description:empty { display: none; }
+#inventory-count:empty { display: none; }
+/* Nomes inteiros no seletor (sem "Computa-dor"): a fileira ganha espaço */
+@media (min-width: 1201px) {
+  .selector-panel { grid-template-columns: minmax(270px, .85fr) minmax(0, 2.4fr); }
+}
+.selector-slot-name { width: calc(100% + 8px); margin-right: -4px; margin-left: -4px; hyphens: none; overflow-wrap: normal; word-break: keep-all; font-size: 10px; letter-spacing: -.3px; }

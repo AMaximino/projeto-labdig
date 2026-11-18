@@ -21,7 +21,7 @@
   <body>
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Menu principal">
+      <aside class="sidebar so-professor" aria-label="Menu principal">
         <a class="brand" href="#inicio" aria-label="Aventura Financeira, início">
           <img class="brand-logo" src="./images/logo.jpe" alt="Logo Aventura Financeira Evolution" />
         </a>
@@ -74,27 +74,33 @@
         <header class="topbar">
           <a class="topbar-brand" href="#inicio" aria-label="Aventura Financeira Evolution, início">
             <img class="topbar-logo" src="./images/logo.jpe" alt="" />
-            <span><strong>Aventura Financeira</strong><small>EVOLUTION · SUA PRÓXIMA CONQUISTA</small></span>
+            <span><strong>Aventura Financeira</strong><small class="so-professor">EVOLUTION · SUA PRÓXIMA CONQUISTA</small></span>
           </a>
           <div class="topbar-actions">
-            <span class="connection-pill demo" id="connection-pill">
+            <span class="connection-pill demo so-professor" id="connection-pill">
               <span class="status-dot"></span>
               <span id="connection-label">Modo demonstração</span>
             </span>
-            <button class="button button-outline settings-trigger" id="open-settings" type="button">
+            <button class="button button-outline settings-trigger so-professor" id="open-settings" type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10m4 0h2M4 17h2m4 0h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></svg>
               Conexão de dados
             </button>
-            <button class="player-chip" id="player-chip" type="button" aria-label="Trocar jogador">
+            <span class="player-name-tag so-jogador" id="player-name-tag">—</span>
+            <button class="player-chip so-professor" id="player-chip" type="button" aria-label="Trocar jogador">
               <span class="player-chip-label">JOGADOR</span>
               <strong id="player-chip-name">—</strong>
               <span class="player-chip-change">Trocar</span>
             </button>
-            <button class="avatar" id="player-avatar" type="button" aria-label="Trocar jogador" title="Trocar jogador">J</button>
+            <button class="avatar so-professor" id="player-avatar" type="button" aria-label="Trocar jogador" title="Trocar jogador">J</button>
           </div>
         </header>
 
-        <nav class="primary-tabs" aria-label="Navegação principal">
+        <div class="professor-bar so-professor" role="note">
+          <strong>Modo professor</strong>
+          <span>Para voltar à tela do jogador, abra o endereço sem <code>?professor</code> ou aperte Ctrl+Alt+P.</span>
+        </div>
+
+        <nav class="primary-tabs so-professor" aria-label="Navegação principal">
           <a class="primary-tab active" href="#painel-jogo" data-app-tab="game" aria-current="page">Partida</a>
           <a class="primary-tab" href="#estatisticas" data-app-tab="stats">Estatísticas</a>
           <a class="primary-tab" href="#calculadora" data-app-tab="calculator">Calculadora</a>
@@ -103,35 +109,31 @@
         <div class="page-content" id="inicio">
           <section class="game-screen tab-panel" id="painel-jogo" data-tab-panel="game" aria-label="Tabuleiro da aventura financeira">
             <header class="turn-banner">
-              <div class="turn-round">
-                <span class="turn-label">SUA JORNADA</span>
-                <div class="turn-round-row"><span class="round-token" aria-hidden="true">✦</span><span>Rodada <strong id="game-round-value">1</strong></span></div>
-                <span class="turn-round-hint">Uma etapa de cada vez</span>
+              <div class="turn-money">
+                <span class="turn-label">SEU DINHEIRO</span>
+                <strong id="game-balance-value">R$ 15 mil</strong>
+                <span id="game-balance-hint" hidden>Aguardando o jogo</span>
               </div>
-              <div class="turn-divider" aria-hidden="true"></div>
+              <div class="turn-round">
+                <span class="turn-label">RODADA</span>
+                <div class="turn-move-row"><strong id="game-round-value">1</strong><span>de 15</span></div>
+              </div>
               <div class="turn-move">
-                <span class="turn-label">SUA JOGADA</span>
+                <span class="turn-label">JOGADA</span>
                 <div class="turn-move-row"><strong id="game-move-value">1</strong><span>de 3</span></div>
                 <div class="move-progress" aria-label="Progresso da jogada"><span class="move-progress-step current" id="move-step-1"></span><span class="move-progress-step" id="move-step-2"></span><span class="move-progress-step" id="move-step-3"></span></div>
               </div>
-              <div class="turn-money">
-                <span class="turn-label">DINHEIRO DISPONÍVEL</span>
-                <strong id="game-balance-value">R$ 15 mil</strong>
-                <small class="money-exact" id="game-balance-value-exact">Valor exato: R$ 15.000,00</small>
-                <span id="game-balance-hint">Comece com calma. Você decide.</span>
-              </div>
-              <span class="turn-plant" aria-hidden="true">✦</span>
             </header>
 
             <section class="selector-panel waiting" id="selector-panel" aria-labelledby="selector-title">
               <div class="selector-current" aria-live="polite">
                 <img class="selector-current-image" id="selector-current-image" src="images/itens/item-01.svg" alt="" hidden>
                 <div class="selector-current-copy">
-                  <span class="selector-label" id="selector-title">SELETOR DE ITEM · POSIÇÃO <strong id="selector-position">—</strong></span>
-                  <strong class="selector-name" id="selector-name">Gire o seletor da placa</strong>
+                  <span class="selector-label" id="selector-title">SELETOR · POSIÇÃO <strong id="selector-position">—</strong></span>
+                  <strong class="selector-name" id="selector-name">Gire o seletor</strong>
                   <span class="selector-price" id="selector-price"></span>
                   <span class="selector-expense" id="selector-expense"></span>
-                  <span class="selector-verdict" id="selector-verdict">O item escolhido aparece aqui assim que o seletor parar numa posição.</span>
+                  <span class="selector-verdict" id="selector-verdict" hidden></span>
                 </div>
               </div>
               <ol class="selector-dial" id="selector-dial" aria-label="Itens em cada posição do seletor"></ol>
@@ -140,40 +142,38 @@
             <div class="game-columns">
               <section class="play-column" aria-labelledby="last-move-title">
                 <div class="game-section-heading">
-                  <span class="section-step">1</span>
-                  <div><h1 id="last-move-title">Como está sua partida?</h1><p>O tabuleiro físico envia cada atualização para esta tela.</p></div>
+                  <h1 id="last-move-title">Última jogada</h1>
                 </div>
                 <div class="last-move-card" id="last-move-card" aria-live="polite">
                   <span class="last-move-icon waiting" id="last-move-icon" aria-hidden="true">…</span>
                   <div class="last-move-copy">
-                    <span class="last-move-label" id="last-move-label">AGUARDANDO O TABULEIRO</span>
-                    <strong id="last-move-title-value">Sua próxima jogada aparecerá aqui</strong>
-                    <span id="last-move-description">Quando a FPGA atualizar o jogo, você verá o resultado nesta tela.</span>
+                    <span class="last-move-label" id="last-move-label">COMEÇAR</span>
+                    <strong id="last-move-title-value">Aperte INICIAR na caixa</strong>
+                    <span id="last-move-description"></span>
                   </div>
-                  <span class="last-move-time" id="last-move-time">—</span>
+                  <span class="last-move-time so-professor" id="last-move-time">—</span>
                 </div>
-                <div class="display-note"><span class="display-note-icon" aria-hidden="true">▣</span><span><strong>Esta tela é só para acompanhar.</strong><small>As ações são feitas nos botões físicos do jogo.</small></span></div>
               </section>
 
               <aside class="inventory-column" aria-label="Inventário e resumo">
                 <section class="inventory-panel" id="inventory-panel">
                   <div class="panel-heading">
-                    <span class="section-step">2</span><div><h2>O que você já tem</h2><p id="inventory-count">0 itens no inventário</p></div>
+                    <div><h2>Seus itens</h2><p id="inventory-count"></p></div>
                   </div>
-                  <div class="inventory-content" id="inventory-list"><span class="inventory-empty-icon" aria-hidden="true">✦</span><strong>Seu inventário está vazio</strong><span>Suas conquistas vão aparecer aqui.</span></div>
+                  <div class="inventory-content" id="inventory-list"><strong>Nenhum item ainda</strong></div>
                 </section>
                 <section class="money-summary" aria-label="Resumo do dinheiro">
-                  <div><span class="summary-label">SALÁRIO POR JOGADA</span><strong id="game-income-value">R$ 6,4 mil</strong><small class="money-exact" id="game-income-value-exact">Valor exato: R$ 6.400,00</small></div>
-                  <div><span class="summary-label">INVESTIDO</span><strong id="game-investment-value">R$ 0</strong><small class="money-exact" id="game-investment-value-exact">Valor exato: R$ 0,00</small></div>
-                  <div><span class="summary-label">DESPESAS POR RODADA</span><strong id="game-expenses-value">R$ 4 mil</strong><small class="money-exact" id="game-expenses-value-exact">Valor exato: R$ 4.000,00</small></div>
+                  <div><span class="summary-label">SALÁRIO</span><strong id="game-income-value">R$ 6,4 mil</strong></div>
+                  <div><span class="summary-label">INVESTIDO</span><strong id="game-investment-value">R$ 0</strong></div>
+                  <div><span class="summary-label">DESPESAS DA RODADA</span><strong id="game-expenses-value">R$ 4 mil</strong></div>
                 </section>
               </aside>
             </div>
 
-            <section class="shop-section" aria-labelledby="shop-title">
+            <section class="shop-section so-professor" aria-labelledby="shop-title">
               <div class="game-section-heading shop-heading">
                 <span class="section-step">3</span>
-                <div><h2 id="shop-title">Itens do jogo</h2><p>Consulte os preços e veja o que já faz parte do seu inventário.</p></div>
+                <div><h2 id="shop-title">Itens do jogo</h2></div>
                 <span class="shop-count" id="shop-count">10 itens</span>
               </div>
               <div class="shop-grid" id="shop-grid" aria-live="polite"></div>
@@ -387,15 +387,14 @@
     <dialog class="settings-dialog name-dialog" id="name-dialog" aria-labelledby="name-dialog-title">
       <form class="settings-form" id="name-form">
         <div class="dialog-heading">
-          <div><span class="eyebrow"><span class="eyebrow-line"></span> ANTES DE JOGAR</span><h2 id="name-dialog-title">Quem vai jogar?</h2></div>
+          <div><h2 id="name-dialog-title">Qual é o seu nome?</h2></div>
         </div>
-        <p class="dialog-copy">Digite seu nome para começar. Ele fica salvo neste computador e é usado nas próximas partidas até você trocar.</p>
-        <label class="field-label" for="name-dialog-input">Nome do jogador</label>
+        <label class="field-label" for="name-dialog-input">Nome</label>
         <input id="name-dialog-input" name="playerName" type="text" maxlength="24" placeholder="Seu nome" autocomplete="off" required />
         <p class="connection-feedback" id="name-dialog-feedback" role="status"></p>
         <div class="dialog-actions">
           <button class="button button-outline" id="name-dialog-cancel" type="button">Manter o nome atual</button>
-          <button class="button button-primary" type="submit">Começar a jogar</button>
+          <button class="button button-primary" type="submit">Jogar</button>
         </div>
       </form>
     </dialog>
@@ -408,8 +407,8 @@
         <h2 id="game-end-title">Você perdeu</h2>
         <p id="game-end-message">Seu saldo ficou negativo.</p>
         <div class="game-end-balance"><span>SALDO FINAL</span><strong id="game-end-balance">—</strong></div>
-        <p class="game-end-hint">Aperte <strong>iniciar</strong> na placa para jogar de novo.</p>
-        <button class="button game-end-button" id="game-end-close" type="button">Ver o painel</button>
+        <p class="game-end-hint">Aperte <strong>INICIAR</strong> para jogar de novo.</p>
+        <button class="button game-end-button" id="game-end-close" type="button">Fechar</button>
       </section>
     </div>
 

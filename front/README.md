@@ -16,3 +16,19 @@ seguem o contrato canônico em centavos BRL.
 
 O leitor RFID só gera eventos através da FPGA; o painel não recebe UID de
 cartões e não inicia compras.
+
+## Modo jogador e modo professor
+
+O painel abre no **modo jogador**: uma tela só, sem menus nem botões, com o
+que interessa a quem joga, nesta ordem: o dinheiro (bem grande), a rodada e a
+jogada, o seletor de item, a última jogada e os itens que o jogador já tem. Os
+textos são curtos e literais ("Você trabalhou", "+ R$ 6,4 mil", "Se comprar,
+você PERDE"). Isso segue o feedback da especialista: mostrar só o que
+interessa, não ter nada que pareça clicável sem ser, e cortar texto.
+
+O **modo professor** mostra também as abas (Estatísticas, Calculadora), o
+histórico, a loja detalhada, a conexão com o backend, a troca de jogador e a
+exportação da sessão. Para abrir:
+
+- `http://localhost:3000/?professor`; ou
+- **Ctrl+Alt+P** na tela do jogo (aperte de novo para voltar ao modo jogador).

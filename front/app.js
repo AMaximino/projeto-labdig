@@ -7,16 +7,16 @@
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
   const catalog = [
-    { id: 1, name: "Carro compacto", icon: "🚗", image: "images/itens/item-01.svg", price: 60000, expense: 3600 },
-    { id: 2, name: "Carro familiar", icon: "🚙", image: "images/itens/item-02.svg", price: 100000, expense: 4800 },
-    { id: 3, name: "Carro premium", icon: "🚘", image: "images/itens/item-03.svg", price: 200000, expense: 8000 },
+    { id: 1, name: "Carro pequeno", icon: "🚗", image: "images/itens/item-01.svg", price: 60000, expense: 3600 },
+    { id: 2, name: "Carro médio", icon: "🚙", image: "images/itens/item-02.svg", price: 100000, expense: 4800 },
+    { id: 3, name: "Carro de luxo", icon: "🚘", image: "images/itens/item-03.svg", price: 200000, expense: 8000 },
     { id: 4, name: "Casa pequena", icon: "🏠", image: "images/itens/item-04.svg", price: 500000, expense: 2400 },
-    { id: 5, name: "Casa confortável", icon: "🏡", image: "images/itens/item-05.svg", price: 900000, expense: 3200 },
-    { id: 6, name: "Casa dos sonhos", icon: "🏰", image: "images/itens/item-06.svg", price: 1900000, expense: 6000 },
-    { id: 7, name: "Computador gamer", icon: "🖥️", image: "images/itens/item-07.svg", price: 12000, expense: 0 },
-    { id: 8, name: "Jogos de tabuleiro", icon: "🎲", image: "images/itens/item-08.svg", price: 8000, expense: 0 },
-    { id: 9, name: "Coleção de livros", icon: "📚", image: "images/itens/item-09.svg", price: 20000, expense: 0 },
-    { id: 10, name: "Kit de LEGO", icon: "🧱", image: "images/itens/item-10.svg", price: 42000, expense: 0 },
+    { id: 5, name: "Casa média", icon: "🏡", image: "images/itens/item-05.svg", price: 900000, expense: 3200 },
+    { id: 6, name: "Casa grande", icon: "🏰", image: "images/itens/item-06.svg", price: 1900000, expense: 6000 },
+    { id: 7, name: "Computador", icon: "🖥️", image: "images/itens/item-07.svg", price: 12000, expense: 0 },
+    { id: 8, name: "Jogos", icon: "🎲", image: "images/itens/item-08.svg", price: 8000, expense: 0 },
+    { id: 9, name: "Livros", icon: "📚", image: "images/itens/item-09.svg", price: 20000, expense: 0 },
+    { id: 10, name: "LEGO", icon: "🧱", image: "images/itens/item-10.svg", price: 42000, expense: 0 },
   ];
   const demoInitial = {
     balance: 15000,
@@ -29,6 +29,9 @@
     move: 1,
   };
   const $ = (selector) => document.querySelector(selector);
+  // Modo jogador (padrão): só o que interessa a quem joga, sem menus nem
+  // botões. Modo professor: abas, conexão, histórico e calculadora.
+  let professorMode = new URLSearchParams(window.location.search).has("professor");
   const ui = {
     balance: $("#balance-value"),
     income: $("#income-value"),
@@ -179,7 +182,9 @@
     state.mode = mode;
     const connected = mode === "connected";
     const error = mode === "error";
-    ui.connectionPill.className = `connection-pill${connected ? " connected" : error ? " error" : " demo"}`;
+    ui.connectionPill.classList.toggle("connected", connected);
+    ui.connectionPill.classList.toggle("error", error);
+    ui.connectionPill.classList.toggle("demo", !connected && !error);
     ui.sidebarDot.className = `device-dot${connected ? " connected" : error ? " error" : ""}`;
     ui.connectionLabel.textContent = connected
       ? "Backend conectado"
@@ -203,19 +208,23 @@
 
   function eventPresentation(event) {
     const value = (event.event || event.label || "").toLowerCase();
-    if (/recus|insuficiente|rejeitad|negad/.test(value)) return { icon: "!", className: "refused", label: "Compra não realizada" };
-    if (/trabalh|sal.rio|renda/.test(value)) return { icon: "↗", className: "income", label: "Salário recebido" };
-    if (/resgat/.test(value)) return { icon: "↗", className: "income", label: "Resgate de investimento" };
-    if (/compra|comprar|pagamento|item/.test(value)) {
-      return { icon: "↘", className: "expense", label: event.itemName || (event.label && event.label !== event.event ? event.label : "Compra realizada") };
+    const item = event.itemName ? ` ${event.itemName}` : "";
+    if (/recus|insuficiente|rejeitad|negad/.test(value)) {
+      return /vend/.test(value)
+        ? { icon: "!", className: "refused", label: "Você não tem esse item" }
+        : { icon: "!", className: "refused", label: "Você já tem esse item" };
     }
-    if (/estud/.test(value)) return { icon: "↘", className: "expense", label: "Estudo" };
-    if (/invest/.test(value)) return { icon: "✳", className: "expense", label: "Investimento realizado" };
-    if (/vender|venda/.test(value)) return { icon: "↗", className: "income", label: event.itemName ? `Venda: ${event.itemName}` : "Venda realizada" };
+    if (/trabalh|sal.rio|renda/.test(value)) return { icon: "↗", className: "income", label: "Você trabalhou" };
+    if (/resgat/.test(value)) return { icon: "↗", className: "income", label: "Você resgatou" };
+    if (/vender|venda/.test(value)) return { icon: "↗", className: "income", label: `Você vendeu${item}` };
+    if (/compra|comprar|pagamento|item/.test(value)) return { icon: "↘", className: "expense", label: `Você comprou${item}` };
+    if (/estud/.test(value)) return { icon: "↘", className: "expense", label: "Você estudou" };
+    if (/invest/.test(value)) return { icon: "✳", className: "expense", label: "Você investiu" };
     if (/rodada|fim_de_rodada|fim_rodada/.test(value)) return { icon: "◎", className: "neutral", label: "Nova rodada" };
-    if (/fal[eê]ncia/.test(value)) return { icon: "!", className: "refused", label: "Saldo negativo: você perdeu" };
-    if (/fim_jogo/.test(value)) return { icon: "◎", className: "neutral", label: "Fim de jogo" };
-    return { icon: "•", className: "neutral", label: event.label || event.event || "Atualização do jogo" };
+    if (/fal[eê]ncia/.test(value)) return { icon: "!", className: "refused", label: "Você perdeu" };
+    if (/fim_jogo/.test(value)) return { icon: "★", className: "neutral", label: "Fim do jogo" };
+    if (/inicio_sessao/.test(value)) return { icon: "▶", className: "neutral", label: "Jogo começou" };
+    return { icon: "•", className: "neutral", label: event.label || event.event || "Atualização do jogo", generic: true };
   }
 
   function renderEvent(event, index) {
@@ -312,11 +321,7 @@
     $("#game-round-value").textContent = String(state.round);
     $("#game-move-value").textContent = String(Math.min(Math.max(state.move, 1), 3));
     setMoneyDisplay("#game-balance-value", state.metricAvailable.balance ? state.balance : Number.NaN);
-    $("#game-balance-hint").textContent = state.metricAvailable.balance
-      ? state.mode === "connected"
-        ? "Saldo recebido pelo backend do jogo."
-        : "Esse é o valor que você tem para usar."
-      : "Aguardando o primeiro dado do jogo.";
+    $("#game-balance-hint").hidden = state.metricAvailable.balance;
     setMoneyDisplay("#game-income-value", state.metricAvailable.salary ? state.salary : Number.NaN);
     setMoneyDisplay("#game-investment-value", state.metricAvailable.investments ? state.investments : Number.NaN);
     setMoneyDisplay("#game-expenses-value", state.metricAvailable.fixedExpenses ? state.fixedExpenses : Number.NaN);
@@ -337,13 +342,11 @@
 
   function selectorVerdict(item) {
     const owned = state.inventory.includes(item.id);
-    if (owned) {
-      return { kind: "owned", text: `Já é seu. Aperte VENDER para receber ${displayMoney(item.price)}.` };
-    }
-    if (!state.metricAvailable.balance) return { kind: "ok", text: "Aperte COMPRAR para levar este item." };
+    if (owned) return { kind: "owned", text: `Já é seu. VENDER: + ${displayCompactMoney(item.price)}` };
+    if (!state.metricAvailable.balance) return { kind: "ok", text: "COMPRAR" };
     const after = state.balance - item.price;
-    if (after >= 0) return { kind: "ok", text: `Aperte COMPRAR: seu saldo fica em ${displayMoney(after)}.` };
-    return { kind: "risk", text: `Comprar deixa o saldo em ${displayMoney(after)}: você perde o jogo.` };
+    if (after >= 0) return { kind: "ok", text: `COMPRAR: sobra ${displayCompactMoney(after)}` };
+    return { kind: "risk", text: "Se comprar, você PERDE" };
   }
 
   function renderSelector() {
@@ -359,21 +362,22 @@
       image.hidden = false;
       $("#selector-position").textContent = String(selected.id);
       $("#selector-name").textContent = selected.name;
-      $("#selector-price").textContent = displayMoney(selected.price);
+      $("#selector-price").textContent = displayCompactMoney(selected.price);
       $("#selector-expense").textContent = selected.expense
-        ? `+ ${displayMoney(selected.expense)} de despesa por rodada`
-        : "Sem despesa por rodada";
+        ? `Gasto: + ${displayCompactMoney(selected.expense)} por rodada`
+        : "";
       const verdictNode = $("#selector-verdict");
+      verdictNode.hidden = false;
       verdictNode.textContent = verdict.text;
       verdictNode.className = `selector-verdict ${verdict.kind}`;
     } else {
       image.hidden = true;
       $("#selector-position").textContent = "—";
-      $("#selector-name").textContent = "Gire o seletor da placa";
+      $("#selector-name").textContent = "Gire o seletor";
       $("#selector-price").textContent = "";
       $("#selector-expense").textContent = "";
       const verdictNode = $("#selector-verdict");
-      verdictNode.textContent = "O item escolhido aparece aqui assim que o seletor parar numa posição.";
+      verdictNode.hidden = true;
       verdictNode.className = "selector-verdict";
     }
     $("#selector-dial").replaceChildren(...catalog.map((item) => {
@@ -395,7 +399,7 @@
       name.textContent = item.name;
       const price = document.createElement("span");
       price.className = "selector-slot-price";
-      price.textContent = owned ? "✓ seu" : displayCompactMoney(item.price);
+      price.textContent = owned ? "✓ É seu" : displayCompactMoney(item.price);
       entry.setAttribute("aria-label", `Posição ${item.id}: ${item.name}, ${displayMoney(item.price)}${owned ? ", no inventário" : ""}${current ? ", selecionado" : ""}`);
       entry.append(number, picture, name, price);
       return entry;
@@ -403,7 +407,9 @@
   }
 
   function renderLastMove() {
-    const event = state.events[0];
+    // Atualizações sem jogada (ex.: estado inicial enviado pelo backend) não
+    // aparecem para o jogador: o código cru do evento não diz nada a ele.
+    const event = state.events.find((entry) => !eventPresentation(entry).generic);
     if (!event) return;
     const presentation = eventPresentation(event);
     const icon = $("#last-move-icon");
@@ -411,12 +417,12 @@
     icon.textContent = presentation.icon;
     $("#last-move-label").textContent = /fal[eê]ncia|fim_jogo/.test(event.event || "")
       ? "FIM DE JOGO"
-      : presentation.className === "refused" ? "COMPRA NÃO REALIZADA" : "ÚLTIMA ATUALIZAÇÃO";
+      : presentation.className === "refused" ? "NÃO DEU CERTO" : "AGORA";
     $("#last-move-title-value").textContent = presentation.label;
-    const detail = event.detail || (typeof event.amount === "number" && event.amount !== 0
-      ? `${event.amount > 0 ? "+" : "−"} ${displayMoney(Math.abs(event.amount))}${typeof event.balance === "number" ? ` · saldo ${displayMoney(event.balance)}` : ""}`
-      : typeof event.balance === "number" ? `Saldo após a jogada: ${displayMoney(event.balance)}` : "Dados recebidos do tabuleiro.");
-    $("#last-move-description").textContent = detail;
+    // Só o quanto o dinheiro mudou; o saldo já aparece grande na faixa de cima.
+    $("#last-move-description").textContent = typeof event.amount === "number" && event.amount !== 0
+      ? `${event.amount > 0 ? "+" : "−"} ${displayCompactMoney(Math.abs(event.amount))}`
+      : "";
     $("#last-move-time").textContent = event.time || "Agora";
   }
 
@@ -424,10 +430,12 @@
     const inventory = state.inventory
       .map((id) => catalog.find((item) => item.id === id))
       .filter(Boolean);
-    $("#inventory-count").textContent = `${inventory.length} ${inventory.length === 1 ? "item no inventário" : "itens no inventário"}`;
+    $("#inventory-count").textContent = inventory.length
+      ? `${inventory.length} ${inventory.length === 1 ? "item" : "itens"}`
+      : "";
     const list = $("#inventory-list");
     if (!inventory.length) {
-      list.innerHTML = '<span class="inventory-empty-icon" aria-hidden="true">✦</span><strong>Seu inventário está vazio</strong><span>Suas conquistas vão aparecer aqui.</span>';
+      list.innerHTML = "<strong>Nenhum item ainda</strong>";
       return;
     }
     list.replaceChildren(...inventory.map((item) => {
@@ -554,6 +562,13 @@
       : "Esse valor sobraria depois das entradas e despesas informadas.";
   }
 
+  function setProfessorMode(enabled) {
+    professorMode = enabled;
+    document.body.classList.toggle("modo-professor", enabled);
+    // O jogador só vê a tela da partida.
+    if (!enabled) activateTab("game");
+  }
+
   function activateTab(tabName, scrollTarget) {
     document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
       panel.hidden = panel.dataset.tabPanel !== tabName;
@@ -599,6 +614,7 @@
       ? `${Math.min(100, (state.uniqueExpenses / maxExpense) * 100)}%` : "0%";
     $("#player-name-heading").textContent = state.playerName || "Jogador";
     $("#player-chip-name").textContent = state.playerName || "—";
+    $("#player-name-tag").textContent = state.playerName || "";
     $("#player-avatar").textContent = (state.playerName || "J").trim().charAt(0).toLocaleUpperCase("pt-BR");
     drawChart();
     renderGame();
@@ -751,9 +767,7 @@
     persistSession();
     render();
     if (event.kind === "refused") {
-      showToast(/venda/.test(event.event || "")
-        ? "Venda não realizada: o item não está no inventário."
-        : "Compra não realizada: o item já está no inventário.");
+      showToast(eventPresentation(event).label);
     }
     const code = event.event || "";
     if (/fal[eê]ncia/.test(code)) setGameResult("lost");
@@ -941,7 +955,7 @@
       state.reconnectAttempts = 0;
       if (!state.hasLiveConnection) resetLiveSession();
       setConnection("connected", "Conexão ativa com o backend.");
-      showToast("Conexão ativa. Aguardando dados do jogo.");
+      if (professorMode) showToast("Conexão ativa. Aguardando dados do jogo.");
     });
     socket.addEventListener("message", (message) => {
       if (typeof message.data !== "string") {
@@ -1031,8 +1045,15 @@
     fillCalculatorItemOptions();
     render();
 
+    setProfessorMode(professorMode);
     const savedTab = [...document.querySelectorAll("[data-app-tab]")].find((link) => link.getAttribute("href") === window.location.hash);
-    if (savedTab) activateTab(savedTab.dataset.appTab, savedTab.dataset.appScroll);
+    if (savedTab && professorMode) activateTab(savedTab.dataset.appTab, savedTab.dataset.appScroll);
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.altKey && event.key.toLowerCase() === "p") {
+        event.preventDefault();
+        setProfessorMode(!professorMode);
+      }
+    });
     document.querySelectorAll("[data-app-tab]").forEach((link) => {
       link.addEventListener("click", (event) => {
         event.preventDefault();
