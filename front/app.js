@@ -368,11 +368,21 @@
     return Math.floor(state.investments / 400) * 100;
   }
 
-  function fillTrack(selector, filled, total, danger = false) {
+  // Barras de ícones, como os corações do Minecraft: cada ícone colorido é
+  // um nível atingido; os demais ficam escuros.
+  const STAT_ICONS = { dinheiro: "💰", estudo: "🧠", investimento: "🏦" };
+  const STAT_SLOTS = 10;
+
+  function fillTrack(selector, filled, total, danger = false, symbol = "") {
     const track = $(selector);
     if (track.children.length !== total) {
-      track.replaceChildren(...Array.from({ length: total }, () => document.createElement("i")));
+      track.replaceChildren(...Array.from({ length: total }, () => {
+        const slot = document.createElement("i");
+        slot.textContent = symbol;
+        return slot;
+      }));
     }
+    track.classList.toggle("icons", Boolean(symbol));
     [...track.children].forEach((block, index) => block.classList.toggle("on", index < filled));
     track.classList.toggle("danger", danger);
   }
@@ -381,37 +391,39 @@
     const value = progressValues();
 
     // Dinheiro: quantas rodadas de contas o dinheiro paga (é a "vida": acabou, perdeu).
+    // Um 💰 por rodada de contas.
     const moneyText = $("#stat-dinheiro-text");
     if (value.balance === null || value.fixed === null) {
-      fillTrack("#stat-dinheiro-track", 0, 5);
+      fillTrack("#stat-dinheiro-track", 0, STAT_SLOTS, false, STAT_ICONS.dinheiro);
       moneyText.textContent = "Aguardando o jogo";
     } else {
-      const rounds = value.fixed > 0 ? Math.floor(Math.max(value.balance, 0) / value.fixed) : 5;
+      const rounds = value.fixed > 0 ? Math.floor(Math.max(value.balance, 0) / value.fixed) : STAT_SLOTS;
       const danger = value.balance < value.fixed;
-      fillTrack("#stat-dinheiro-track", Math.min(rounds, 5), 5, danger);
+      fillTrack("#stat-dinheiro-track", Math.min(rounds, STAT_SLOTS), STAT_SLOTS, danger, STAT_ICONS.dinheiro);
       moneyText.textContent = value.balance < 0 ? "Acabou o dinheiro"
         : value.fixed <= 0 ? "Sem contas para pagar"
           : rounds === 0 ? "Cuidado: não paga as contas"
-            : rounds >= 5 ? "Paga 5 ou mais rodadas de contas"
+            : rounds >= STAT_SLOTS ? `Paga ${STAT_SLOTS} ou mais rodadas de contas`
               : `Paga ${rounds} ${rounds === 1 ? "rodada" : "rodadas"} de contas`;
       $('.stat[data-stat="dinheiro"]').classList.toggle("danger", danger);
     }
 
-    // Estudo: cada ESTUDAR sobe 1 nível e o salário (o nível sai do salário).
+    // Estudo: cada ESTUDAR acende um 🧠 e sobe o salário (o nível sai do salário).
     if (value.level === null) {
-      fillTrack("#stat-estudo-track", 0, 10);
+      fillTrack("#stat-estudo-track", 0, STAT_SLOTS, false, STAT_ICONS.estudo);
       $("#stat-estudo-text").textContent = "Aguardando o jogo";
     } else {
-      fillTrack("#stat-estudo-track", Math.min(value.level, 10), 10);
+      fillTrack("#stat-estudo-track", Math.min(value.level, STAT_SLOTS), STAT_SLOTS, false, STAT_ICONS.estudo);
       $("#stat-estudo-text").textContent = `Nível ${value.level} · salário ${displayCompactMoney(state.salary)}`;
     }
 
-    // Investimento: um bloco a cada R$ 1 mil guardado.
+    // Investimento: um 🏦 a cada R$ 1 mil guardado.
     if (value.invested === null) {
-      fillTrack("#stat-investimento-track", 0, 10);
+      fillTrack("#stat-investimento-track", 0, STAT_SLOTS, false, STAT_ICONS.investimento);
       $("#stat-investimento-text").textContent = "Aguardando o jogo";
     } else {
-      fillTrack("#stat-investimento-track", Math.min(Math.floor(value.invested / RULES.investStep), 10), 10);
+      fillTrack("#stat-investimento-track", Math.min(Math.floor(value.invested / RULES.investStep), STAT_SLOTS),
+        STAT_SLOTS, false, STAT_ICONS.investimento);
       $("#stat-investimento-text").textContent = value.invested > 0
         ? `${displayCompactMoney(value.invested)} guardado · rende + ${displayCompactMoney(nextYield())} por rodada`
         : "Nada guardado ainda";

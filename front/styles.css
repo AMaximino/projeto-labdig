@@ -1172,3 +1172,15 @@ body:not(.modo-professor) .page-content { max-width: 1280px; margin-right: auto;
 .bills-list li > span:first-child { width: 24px; }
 .selector-name { font-size: 20px; overflow-wrap: normal; word-break: keep-all; }
 @media (min-width: 1201px) { .selector-current-image { width: 76px; height: 76px; } }
+
+/* Barras de ícones (💰 🧠 🏦), como os corações do Minecraft:
+   colorido = nível atingido; escuro = ainda não */
+.stat-track.icons { display: flex; flex-wrap: nowrap; gap: 3px; }
+.stat-track.icons i { width: auto; height: auto; border-radius: 0; background: none !important; font-size: 24px; font-style: normal; line-height: 1.1; filter: grayscale(1) brightness(.28); opacity: .75; transition: filter .3s ease, opacity .3s ease; }
+.stat-track.icons i.on { filter: none; opacity: 1; }
+.stat[data-stat="dinheiro"] .stat-track.icons.danger i:first-child { outline: none; }
+/* Pouco dinheiro: os 💰 tremem, como os corações com pouca vida */
+.stat-track.icons.danger i.on { animation: stat-low 0.7s ease-in-out infinite; }
+.stat-track.icons.danger i:first-child { filter: grayscale(1) brightness(.35) drop-shadow(0 0 3px #d0573c); opacity: .8; }
+@keyframes stat-low { 25% { transform: translateY(-2px); } 75% { transform: translateY(2px); } }
+@media (prefers-reduced-motion: reduce) { .stat-track.icons.danger i.on { animation: none; } }

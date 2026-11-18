@@ -36,14 +36,16 @@ exportação da sessão. Para abrir:
 ## Barras de progresso e "O que você pode fazer agora?"
 
 Cada barra mostra algo que muda o jogo de verdade (regras da FPGA em
-`fpga/rtl/processador_acao.v`) e tem o nome do botão que a faz subir:
+`fpga/rtl/processador_acao.v`) e tem o nome do botão que a faz subir. Dinheiro,
+Estudo e Investimento são barras de 10 ícones, como os corações do Minecraft:
+cada ícone colorido é um nível atingido e os demais ficam escuros.
 
 | Barra | O que mostra | Sobe com |
 |---|---|---|
-| **Dinheiro** | quantas rodadas de contas o dinheiro paga (5 blocos); fica vermelha quando não paga a próxima | TRABALHAR, RESGATAR, VENDER |
-| **Estudo** | nível = (salário − R$ 6,4 mil) ÷ R$ 4 mil, com o salário atual | ESTUDAR |
-| **Investimento** | 1 bloco a cada R$ 1 mil guardado e quanto rende na próxima rodada | INVESTIR e o rendimento de 25% por rodada |
-| **Jornada** (na faixa verde) | rodada atual de 15 | cada fim de rodada |
+| **Dinheiro** 💰 | um 💰 por rodada de contas que o dinheiro paga; os 💰 tremem quando não dá para pagar a próxima | TRABALHAR, RESGATAR, VENDER |
+| **Estudo** 🧠 | um 🧠 por nível; nível = (salário − R$ 6,4 mil) ÷ R$ 4 mil, com o salário atual | ESTUDAR |
+| **Investimento** 🏦 | um 🏦 a cada R$ 1 mil guardado e quanto rende na próxima rodada | INVESTIR e o rendimento de 25% por rodada |
+| **Jornada** (na faixa verde) | 15 blocos: a rodada atual | cada fim de rodada |
 
 Na hora da jogada, a barra que mudou pisca e mostra quanto mudou ("+1 nível",
 "+ R$ 6,4 mil"). O estado inicial enviado pelo backend ao conectar não anima.
