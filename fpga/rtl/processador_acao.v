@@ -17,7 +17,8 @@ module processador_acao (
     output reg [9:0] itens_out, //atualizar os itens q o jogador ja tem
     output reg acao_aceita
 );
-wire signed [20:0] custo_estudo = 20'd120;      // 12.000
+// Estudar nao custa dinheiro: a jogada so paga o custo de vida (APLICA_DESPESA).
+wire signed [20:0] custo_estudo = 20'd0;        // 0 (antes 12.000)
 wire signed [20:0] investimento = 20'd10;       // 1.000
 wire signed [20:0] incremento_salario = 20'd40; // 4.000
 

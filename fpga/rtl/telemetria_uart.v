@@ -16,11 +16,12 @@ module telemetria_uart #(
     input [9:0] inventory_mask,
     input [3:0] round_index,
     input [3:0] move_index,
+    input [1:0] lives,          // vidas restantes (0 a 3)
     output reg tx
 );
     localparam integer BAUD_DIVISOR = CLOCK_HZ / BAUD_RATE;
     localparam [2:0] IDLE = 3'd0, START = 3'd1, DATA = 3'd2, STOP = 3'd3, GAP = 3'd4;
-    localparam [6:0] LAST_CHAR = 7'd75;
+    localparam [6:0] LAST_CHAR = 7'd77;  // AEF2: ...,status,vidas\n
 
     reg send_meta;
     reg send_sync;
@@ -32,7 +33,7 @@ module telemetria_uart #(
     reg [7:0] shift_register;
     reg [19:0] sequence_number;
     reg [19:0] saved_sequence;
-    reg [156:0] event_queue [0:3];
+    reg [158:0] event_queue [0:3];
     reg [1:0] queue_head;
     reg [1:0] queue_tail;
     reg [2:0] queue_count;
@@ -47,6 +48,7 @@ module telemetria_uart #(
     reg [9:0] saved_inventory;
     reg [3:0] saved_round;
     reg [3:0] saved_move;
+    reg [1:0] saved_lives;
     wire send_rising = send_sync && !send_previous;
     wire pop_event = (state == IDLE) && (queue_count != 0);
     wire push_event = send_rising && ((queue_count < 4) || pop_event);
@@ -103,13 +105,14 @@ module telemetria_uart #(
         input [3:0] round_value;
         input [3:0] move_value;
         input [1:0] status_value;
+        input [1:0] lives_value;
         begin
             case (position)
                 0: frame_character = "A";
                 1: frame_character = "E";
                 2: frame_character = "F";
-                3: frame_character = "1";
-                4, 11, 14, 17, 26, 35, 44, 53, 62, 67, 70, 73: frame_character = ",";
+                3: frame_character = "2";
+                4, 11, 14, 17, 26, 35, 44, 53, 62, 67, 70, 73, 75: frame_character = ",";
                 5: frame_character = decimal_digit(sequence_value, 4'd5);
                 6: frame_character = decimal_digit(sequence_value, 4'd4);
                 7: frame_character = decimal_digit(sequence_value, 4'd3);
@@ -134,6 +137,7 @@ module telemetria_uart #(
                 71: frame_character = decimal_digit({28'd0, move_value}, 4'd1);
                 72: frame_character = decimal_digit({28'd0, move_value}, 4'd0);
                 74: frame_character = decimal_digit({30'd0, status_value}, 4'd0);
+                76: frame_character = decimal_digit({30'd0, lives_value}, 4'd0);
                 default: frame_character = 8'h0a;
             endcase
         end
@@ -143,7 +147,7 @@ module telemetria_uart #(
         char_index, saved_sequence, saved_event, saved_item, saved_balance,
         saved_salary, saved_investment, saved_fixed_expenses,
         saved_unique_expenses, saved_inventory, saved_round, saved_move,
-        saved_status
+        saved_status, saved_lives
     );
 
     always @(posedge clock or posedge reset) begin
@@ -181,6 +185,7 @@ module telemetria_uart #(
             saved_inventory <= 0;
             saved_round <= 0;
             saved_move <= 0;
+            saved_lives <= 0;
             tx <= 1'b1;
         end else begin
             if (push_event) begin
@@ -196,7 +201,8 @@ module telemetria_uart #(
                     unique_expenses,
                     inventory_mask,
                     round_index,
-                    move_index
+                    move_index,
+                    lives
                 };
                 queue_tail <= queue_tail + 1'b1;
                 sequence_number <= next_sequence;
@@ -213,18 +219,19 @@ module telemetria_uart #(
                 IDLE: begin
                     tx <= 1'b1;
                     if (pop_event) begin
-                        saved_sequence <= event_queue[queue_head][156:137];
-                        saved_event <= event_queue[queue_head][136:129];
-                        saved_status <= event_queue[queue_head][128:127];
-                        saved_item <= event_queue[queue_head][126:123];
-                        saved_balance <= event_queue[queue_head][122:102];
-                        saved_salary <= event_queue[queue_head][101:81];
-                        saved_investment <= event_queue[queue_head][80:60];
-                        saved_fixed_expenses <= event_queue[queue_head][59:39];
-                        saved_unique_expenses <= event_queue[queue_head][38:18];
-                        saved_inventory <= event_queue[queue_head][17:8];
-                        saved_round <= event_queue[queue_head][7:4];
-                        saved_move <= event_queue[queue_head][3:0];
+                        saved_sequence <= event_queue[queue_head][158:139];
+                        saved_event <= event_queue[queue_head][138:131];
+                        saved_status <= event_queue[queue_head][130:129];
+                        saved_item <= event_queue[queue_head][128:125];
+                        saved_balance <= event_queue[queue_head][124:104];
+                        saved_salary <= event_queue[queue_head][103:83];
+                        saved_investment <= event_queue[queue_head][82:62];
+                        saved_fixed_expenses <= event_queue[queue_head][61:41];
+                        saved_unique_expenses <= event_queue[queue_head][40:20];
+                        saved_inventory <= event_queue[queue_head][19:10];
+                        saved_round <= event_queue[queue_head][9:6];
+                        saved_move <= event_queue[queue_head][5:2];
+                        saved_lives <= event_queue[queue_head][1:0];
                         char_index <= 0;
                         bit_index <= 0;
                         baud_counter <= 0;

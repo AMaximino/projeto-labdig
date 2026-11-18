@@ -114,21 +114,34 @@
                 <strong id="game-balance-value">R$ 15 mil</strong>
                 <span id="game-balance-hint" hidden>Aguardando o jogo</span>
               </div>
-              <div class="turn-round stat" data-stat="jornada">
-                <span class="turn-label">JORNADA</span>
-                <div class="turn-move-row"><strong id="game-round-value">1</strong><span>de 15 rodadas</span></div>
-                <div class="stat-track journey-track" id="stat-jornada-track" aria-hidden="true"></div>
+              <div class="turn-cost">
+                <span class="turn-label">CUSTO DE VIDA</span>
+                <strong id="game-cost-value">− R$ 4 mil</strong>
+                <span class="turn-note">por jogada</span>
+              </div>
+              <div class="turn-round stat" data-stat="rodada">
+                <span class="turn-label">RODADA</span>
+                <div class="turn-move-row"><strong id="game-round-value">1</strong><span>de 15</span></div>
+                <div class="stat-track journey-track" id="stat-rodada-track" aria-hidden="true"></div>
+                <span class="turn-note">1 rodada = 1 ano</span>
               </div>
               <div class="turn-move">
                 <span class="turn-label">JOGADA</span>
                 <div class="turn-move-row"><strong id="game-move-value">1</strong><span>de 3</span></div>
                 <div class="move-progress" aria-label="Progresso da jogada"><span class="move-progress-step current" id="move-step-1"></span><span class="move-progress-step" id="move-step-2"></span><span class="move-progress-step" id="move-step-3"></span></div>
+                <span class="turn-note">1 jogada = 1 quadrimestre</span>
+              </div>
+              <div class="turn-lives stat" data-stat="vidas">
+                <span class="turn-label">VIDAS</span>
+                <div class="stat-track lives-track" id="stat-vidas-track" aria-hidden="true"></div>
+                <span class="lives-text" id="stat-vidas-text">3 de 3</span>
               </div>
             </header>
 
             <div class="now-row">
               <section class="now-panel" aria-labelledby="now-title">
                 <h2 id="now-title">O que você pode fazer agora?</h2>
+                <p class="now-note"><span aria-hidden="true">👉</span> Aperte o botão <strong>na caixa</strong>. Esta lista só mostra as opções: ela não tem botões para clicar.</p>
                 <ul class="now-list" id="now-list" aria-live="polite"></ul>
               </section>
               <section class="stats-panel" aria-labelledby="stats-panel-title">
@@ -165,7 +178,7 @@
             <div class="game-columns">
               <section class="play-column" aria-labelledby="last-move-title">
                 <div class="game-section-heading">
-                  <h1 id="last-move-title">Última jogada</h1>
+                  <h1 id="last-move-title">Últimas jogadas</h1>
                 </div>
                 <div class="last-move-card" id="last-move-card" aria-live="polite">
                   <span class="last-move-icon waiting" id="last-move-icon" aria-hidden="true">…</span>
@@ -176,6 +189,7 @@
                   </div>
                   <span class="last-move-time so-professor" id="last-move-time">—</span>
                 </div>
+                <ol class="recent-moves" id="recent-moves" aria-label="Jogadas anteriores"></ol>
               </section>
 
               <aside class="inventory-column" aria-label="Inventário e resumo">
@@ -186,9 +200,9 @@
                   <div class="inventory-content" id="inventory-list"><strong>Nenhum item ainda</strong></div>
                 </section>
                 <section class="bills-panel" aria-labelledby="bills-title">
-                  <div class="panel-heading"><div><h2 id="bills-title">Pagamentos</h2><p>Pagos no fim de cada rodada</p></div></div>
+                  <div class="panel-heading"><div><h2 id="bills-title">Pagamentos</h2><p>Custo de vida: pago a cada jogada (TRABALHAR ou ESTUDAR)</p></div></div>
                   <ul class="bills-list" id="bills-list"></ul>
-                  <div class="bills-total"><span>Total por rodada</span><strong id="bills-total">—</strong></div>
+                  <div class="bills-total"><span>Total por jogada</span><strong id="bills-total">—</strong></div>
                 </section>
               </aside>
             </div>
@@ -432,6 +446,17 @@
         <div class="game-end-balance"><span>SALDO FINAL</span><strong id="game-end-balance">—</strong></div>
         <p class="game-end-hint">Aperte <strong>INICIAR</strong> para jogar de novo.</p>
         <button class="button game-end-button" id="game-end-close" type="button">Fechar</button>
+      </section>
+    </div>
+
+    <div class="life-lost-overlay" id="life-lost-overlay" hidden>
+      <section class="life-lost-card" role="alertdialog" aria-modal="true" aria-labelledby="life-lost-title" aria-describedby="life-lost-message">
+        <span class="life-lost-icon" aria-hidden="true">💔</span>
+        <h2 id="life-lost-title">Você perdeu uma vida</h2>
+        <p id="life-lost-message">Você gastou mais dinheiro do que tinha.</p>
+        <p class="life-lost-back">Por isso, você <strong>volta uma jogada</strong>.</p>
+        <div class="life-lost-hearts" id="life-lost-hearts" aria-hidden="true"></div>
+        <p class="life-lost-left" id="life-lost-left">Restam 2 vidas</p>
       </section>
     </div>
 

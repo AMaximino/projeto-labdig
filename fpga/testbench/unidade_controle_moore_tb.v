@@ -10,6 +10,7 @@ module unidade_controle_moore_tb;
     reg fim_jogo = 1'b0;
     reg fim_perdeu = 1'b0;
     reg fim_rodada = 1'b0;
+    reg tem_vida = 1'b0;
 
     wire desligaDisplay;
     wire rstED;
@@ -45,6 +46,7 @@ module unidade_controle_moore_tb;
         .fim_jogo(fim_jogo),
         .fim_perdeu(fim_perdeu),
         .fim_rodada(fim_rodada),
+        .tem_vida(tem_vida),
         .desligaDisplay(desligaDisplay),
         .rstED(rstED),
         .init(init),

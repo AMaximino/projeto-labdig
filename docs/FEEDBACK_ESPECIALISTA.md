@@ -44,7 +44,7 @@ defesa.
 | Só o que interessa; nada que pareça clicável sem ser | Modo jogador sem menus, abas, conexão nem botões; o resto foi para o modo professor (`?professor` ou Ctrl+Alt+P) | `front/` (commit `3c02774`) |
 | Hierarquia | Dinheiro em primeiro plano e bem grande; depois ações possíveis, progresso, loja e última jogada | `front/` |
 | Menos texto, ser literal | Textos curtos ("Você trabalhou", "+ R$ 6,4 mil", "Se comprar, você PERDE"); nomes curtos dos itens; um valor só, sem "valor exato" | `front/` |
-| Recompensa imediata (barras) | Barras Dinheiro, Estudo, Investimento e Jornada, com o nome do botão que as faz subir; a barra pisca e mostra "+1 nível", "+ R$ 200" na hora | `front/` (commit `3affaa3`) |
+| Recompensa imediata (barras) | Barras Dinheiro, Estudo, Investimento e Rodada, com o nome do botão que as faz subir; a barra pisca e mostra "+1 nível", "+ R$ 200" na hora | `front/` (commit `3affaa3`) |
 | "O que você pode fazer agora?" | Lista só as ações possíveis, com a cor da capa de cada botão; ações que levam à falência em vermelho | `front/` (commit `3affaa3`) |
 | Separar Loja e Pagamentos | Seletor virou "Loja"; bloco Pagamentos com contas básicas, conta de cada carro ou casa e o total por rodada | `front/` (commit `3affaa3`) |
 | Aluguel e conta de luz | **Pendente:** decidir se só renomeia a despesa fixa ou se muda a regra na FPGA (comprar casa zera o aluguel; LED da conta de luz na caixa) | — |

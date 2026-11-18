@@ -29,6 +29,8 @@ module fluxo_dados (
     input registraV,
     input zeraM,
     input registraM,
+    input perdeVida,     // UC em PERDE_VIDA: restaura a copia e tira 1 vida
+    input fim_falencia,  // UC em FIM_FALENCIA (acabaram as vidas)
 
     output fim_jogo,
     output fim_perdeu,
@@ -42,6 +44,8 @@ module fluxo_dados (
     output ultima_rodada,
     output [23:0] dinheiro,
     output [9:0] itens_out,
+    output tem_vida,                 // mais de 1 vida: a proxima falha nao encerra o jogo
+    output [1:0] telemetry_lives,
     output reg telemetry_send,
     output reg [7:0] telemetry_event,
     output reg [1:0] telemetry_status,
@@ -183,6 +187,43 @@ module fluxo_dados (
         .Q      ( itens )
     );
 
+//////////////vidas//////////////////////////////////////////////////////
+    // O jogador tem 3 vidas. Antes de cada acao (REGISTRA_ACAO) os valores
+    // sao copiados; se a acao ou as contas deixarem o saldo negativo e ainda
+    // houver vida, a UC vai para PERDE_VIDA: os valores voltam a copia (a
+    // jogada e desfeita) e o jogador perde 1 vida. Rodada e jogada so avancam
+    // depois das verificacoes de falencia, entao nao precisam ser desfeitas.
+    localparam [1:0] VIDAS_INICIAIS = 2'd3;
+    reg [1:0] vidas;
+    always @(posedge clock) begin
+        if (rstED || init)
+            vidas <= VIDAS_INICIAIS;
+        else if (perdeVida && vidas != 2'd0)
+            vidas <= vidas - 1'b1;
+    end
+    assign tem_vida = vidas > 2'd1;
+    // Na falencia final o painel mostra 0 vidas.
+    assign telemetry_lives = fim_falencia ? 2'd0 : vidas;
+
+    wire [20:0] saldo_snap;
+    wire [20:0] salario_snap;
+    wire [20:0] valorInvestido_snap;
+    wire [20:0] gastosFixos_snap;
+    wire [20:0] gastosUnicos_snap;
+    wire [9:0]  itens_snap;
+    registrador_n #(.N(21)) snap_saldo (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( saldo ), .Q ( saldo_snap ) );
+    registrador_n #(.N(21)) snap_salario (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( salario ), .Q ( salario_snap ) );
+    registrador_n #(.N(21)) snap_valorInvestido (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( valorInvestido ), .Q ( valorInvestido_snap ) );
+    registrador_n #(.N(21)) snap_gastosFixos (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( gastosFixos ), .Q ( gastosFixos_snap ) );
+    registrador_n #(.N(21)) snap_gastosUnicos (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( gastosUnicos ), .Q ( gastosUnicos_snap ) );
+    registrador_n #(.N(10)) snap_itens (
+        .clock ( clock ), .clear ( zeraV ), .enable ( registraA ), .D ( itens ), .Q ( itens_snap ) );
+
 ///////////////////////////////////////////////////////////////////////////
 ////////////////processamento//////////////////////////////////////////////
 
@@ -311,6 +352,12 @@ module fluxo_dados (
                 telemetry_event <= 8'd11;
                 telemetry_status <= 2'd0;
                 telemetry_item <= 4'd0;
+            // Perdeu 1 vida (evento 15): sai com os valores ja restaurados.
+            end else if (perdeVida) begin
+                telemetry_send <= 1'b1;
+                telemetry_event <= 8'd15;
+                telemetry_status <= 2'd0;
+                telemetry_item <= 4'd0;
             // Eventos terminais esperam um ciclo com telemetry_send em 0: a UART detecta
             // borda de subida, e dois pulsos colados (ex.: compra + falencia) virariam um so.
             end else if (!terminal_sent && !telemetry_send && fim_jogo) begin
@@ -319,7 +366,9 @@ module fluxo_dados (
                 telemetry_status <= 2'd0;
                 telemetry_item <= 4'd0;
                 terminal_sent <= 1'b1;
-            end else if (!terminal_sent && !telemetry_send && fim_perdeu) begin
+            // So em FIM_FALENCIA: com vidas, o saldo fica negativo por alguns
+            // ciclos antes de PERDE_VIDA restaurar, e isso nao e falencia.
+            end else if (!terminal_sent && !telemetry_send && fim_falencia) begin
                 telemetry_send <= 1'b1;
                 telemetry_event <= 8'd13;
                 telemetry_status <= 2'd0;
@@ -393,8 +442,15 @@ module fluxo_dados (
         .valorInvestido_evento ( valorInvestido_evento ),
         .gastosFixos_evento    ( gastosFixos_evento ),
         .gastosUnicos_evento   ( gastosUnicos_evento ),
+        .saldo_snap            ( saldo_snap ),
+        .salario_snap          ( salario_snap ),
+        .valorInvestido_snap   ( valorInvestido_snap ),
+        .gastosFixos_snap      ( gastosFixos_snap ),
+        .gastosUnicos_snap     ( gastosUnicos_snap ),
+        .itens_snap            ( itens_snap ),
         .init                  ( init ),
         .processaE             ( processaE ),
+        .restaura              ( perdeVida ),
         .saldo_out             ( saldo_next ),
         .salario_out           ( salario_next ),
         .valorInvestido_out    ( valorInvestido_next ),

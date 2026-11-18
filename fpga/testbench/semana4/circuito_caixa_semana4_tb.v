@@ -17,11 +17,13 @@
 //   1  reset e INICIAR: saldo inicial 150, LEDs apagados
 //   2  seletor girado da posicao 1 ate a 10: evento 14 com o item certo
 //   3  painel de consulta: config_display mostra salario e volta ao saldo
-//   4  TRABALHAR, ESTUDAR, INVESTIR, RESGATAR e avanco de rodada
+//   4  TRABALHAR, ESTUDAR (sem custo, so o custo de vida), INVESTIR, RESGATAR e avanco de rodada
 //   5  cartao R08: compra aceita, LED do item 8 aceso (evento 06)
 //   6  seletor no 8 + VENDER: LED 8 apaga (evento 08)
 //   7  cartao R08 duas vezes: a segunda e recusada (evento 07)
-//   8  seletor no 1 + COMPRAR sem saldo: saldo negativo, LED FALIU (evento 13)
+//   8  3 vidas (adaptado depois da semana 4): COMPRAR sem saldo e ESTUDAR que
+//      fale no custo de vida desfazem a jogada e tiram 1 vida (evento 15); na
+//      3a falha, saldo negativo, LED FALIU (evento 13)
 //   9  RESET, INICIAR e partida ate a ultima rodada: 15|15, LEDs ULTIMA e
 //      FIM DO JOGO (evento 12; ver AVISO no caso 9)
 //
@@ -97,6 +99,7 @@ module circuito_caixa_semana4_tb;
     wire signed [20:0] investido  = dut.fd.valorInvestido;
     wire [3:0]         rodada     = dut.w_rodada;
     wire [3:0]         jogada     = dut.w_contagem;
+    wire [1:0]         vidas      = dut.fd.vidas;
     wire [23:0]        dinheiro   = dut.dinheiro;      // BCD do display HEX
     wire               tel_send   = dut.fd.telemetry_send;
     wire [7:0]         tel_evento = dut.fd.telemetry_event;
@@ -105,6 +108,8 @@ module circuito_caixa_semana4_tb;
     wire               rfid_ack   = dut.rfid_ack;
 
     reg [31:0] caso = 0;
+    reg [3:0]  jogada_antes;
+    reg signed [20:0] salario_antes;
     integer    erros = 0;
     integer    verificacoes = 0;
 
@@ -304,29 +309,29 @@ module circuito_caixa_semana4_tb;
         aperta(B_TRABALHAR);                      // 150 + 64 - 40
         confere_saldo(174, "TRABALHAR + despesa fixa");
         confere(jogada == 1, "jogada 2 de 3");
-        aperta(B_ESTUDAR);                        // 174 - 120 - 40, salario 104
-        confere_saldo(14, "ESTUDAR + despesa fixa");
+        aperta(B_ESTUDAR);                        // 174 - 40 (estudar nao custa), salario 104
+        confere_saldo(134, "ESTUDAR so paga a despesa fixa");
         confere(salario == 104, "salario aumenta com ESTUDAR");
         confere(jogada == 2 && ultima_jogada, "jogada 3 de 3 e LED ULTIMA (jogada)");
-        aperta(B_TRABALHAR);                      // 14 + 104 - 40, nova rodada
-        confere_saldo(78, "TRABALHAR na ultima jogada");
+        aperta(B_TRABALHAR);                      // 134 + 104 - 40, nova rodada
+        confere_saldo(198, "TRABALHAR na ultima jogada");
         confere(rodada == 1 && jogada == 0, "rodada 2, jogada 1");
-        aperta(B_TRABALHAR);                      // 142
-        aperta(B_TRABALHAR);                      // 206
-        confere_saldo(206, "mais duas jogadas de TRABALHAR");
+        aperta(B_TRABALHAR);                      // 262
+        aperta(B_TRABALHAR);                      // 326
+        confere_saldo(326, "mais duas jogadas de TRABALHAR");
         aperta(B_INVESTIR);
-        confere_saldo(196, "INVESTIR retira 10 do saldo");
+        confere_saldo(316, "INVESTIR retira 10 do saldo");
         confere(investido == 10, "valor investido = 10");
         confere_evento(8'd4, 4'd0, "evento 04 (investir)");
         aperta(B_RESGATAR);
-        confere_saldo(206, "RESGATAR devolve o investimento");
+        confere_saldo(326, "RESGATAR devolve o investimento");
         confere(investido == 0, "investimento zerado");
         confere_evento(8'd5, 4'd0, "evento 05 (resgatar)");
 
         // ---- caso 5: cartao no item 8 ----
         caso = 5;
         cartao(8);
-        confere_saldo(126, "compra do item 8 pelo cartao (80)");
+        confere_saldo(246, "compra do item 8 pelo cartao (80)");
         confere(indicador_itens == 10'b00_1000_0000, "LED do item 8 aceso");
         confere(!rfid_valid, "comando RFID consumido pelo acknowledge");
         confere_evento(8'd6, 4'd8, "evento 06 (compra aceita, item 8)");
@@ -335,28 +340,56 @@ module circuito_caixa_semana4_tb;
         caso = 6;
         gira_seletor(8);
         aperta(B_VENDER);
-        confere_saldo(206, "venda devolve o preco do item 8");
+        confere_saldo(326, "venda devolve o preco do item 8");
         confere(indicador_itens == 10'd0, "LED do item 8 apaga");
         confere_evento(8'd8, 4'd8, "evento 08 (venda aceita, item 8)");
 
         // ---- caso 7: item repetido pelo cartao ----
         caso = 7;
         cartao(8);
-        confere_saldo(126, "nova compra do item 8");
+        confere_saldo(246, "nova compra do item 8");
         cartao(8);
-        confere_saldo(126, "item repetido nao debita o saldo");
+        confere_saldo(246, "item repetido nao debita o saldo");
         confere(indicador_itens == 10'b00_1000_0000, "inventario inalterado");
         confere_evento(8'd7, 4'd8, "evento 07 (compra recusada)");
         confere(estado == ESPERA_ACAO, "jogo continua apos a recusa");
 
-        // ---- caso 8: compra sem saldo com o botao COMPRAR ----
+        // ---- caso 8: 3 vidas; a 3a falha e falencia ----
         caso = 8;
+        confere(vidas == 3, "partida comeca com 3 vidas");
+        // 8a: COMPRAR o item 1 (600) com 246: falha na acao. A compra e desfeita
+        // e o jogador perde 1 vida.
         gira_seletor(1);
-        aperta(B_COMPRAR);                        // 126 - 600 = -474
-        confere_saldo(-474, "compra sem saldo deixa o saldo negativo");
-        confere(indicador_itens == 10'b00_1000_0001, "LEDs dos itens 1 e 8 acesos");
+        aperta(B_COMPRAR);
+        confere_saldo(246, "compra sem saldo e desfeita");
+        confere(indicador_itens == 10'b00_1000_0000, "item 1 nao entra no inventario");
+        confere(vidas == 2 && estado == ESPERA_ACAO && !perdeu, "perde 1 vida e continua (2 vidas)");
+        espera_jogo(4);
+        confere_evento(8'd15, 4'd0, "evento 15 (vida perdida)");
+        // 8b: falha no custo de vida. Compra o item 7 (120) e investe ate sobrar
+        // 36; ESTUDAR paga 40 de custo de vida: 36 - 40 = -4. A jogada e desfeita:
+        // saldo, salario e jogada voltam; perde mais 1 vida.
+        gira_seletor(7);
+        aperta(B_COMPRAR);                        // 246 - 120 = 126
+        for (i = 0; i < 9; i = i + 1) aperta(B_INVESTIR);  // 126 - 90 = 36
+        confere_saldo(36, "saldo menor que o custo de vida");
+        jogada_antes = jogada;
+        salario_antes = salario;
+        aperta(B_ESTUDAR);
+        confere_saldo(36, "ESTUDAR que fale no custo de vida e desfeito");
+        confere(salario == salario_antes, "aumento de salario do estudo desfeito");
+        confere(jogada == jogada_antes, "jogada nao avanca: o jogador repete a jogada");
+        confere(vidas == 1 && estado == ESPERA_ACAO && !perdeu, "perde 1 vida e continua (1 vida)");
+        espera_jogo(4);
+        confere_evento(8'd15, 4'd0, "evento 15 (vida perdida)");
+        // 8c: 3a falha: falencia de verdade.
+        gira_seletor(1);
+        aperta(B_COMPRAR);                        // 36 - 600 = -564
+        confere_saldo(-564, "3a falha deixa o saldo negativo");
+        confere(indicador_itens == 10'b00_1100_0001, "LEDs dos itens 1, 7 e 8 acesos");
         confere(estado == FIM_FALENCIA && perdeu, "LED FALIU aceso (FIM_FALENCIA)");
         confere(!terminou, "LED FIM DO JOGO apagado na falencia");
+        confere(dut.fd.telemetry_lives == 0, "telemetria mostra 0 vidas na falencia");
         espera_jogo(4);
         confere_evento(8'd13, 4'd0, "evento 13 (falencia)");
 
@@ -395,7 +428,7 @@ module circuito_caixa_semana4_tb;
         aperta(B_TRABALHAR);
         confere(estado == FIM_JOGO, "acoes ignoradas apos o fim do jogo");
 
-        confere(bytes_tx > 0, "FPGA enviou quadros AEF1 pela uart_tx");
+        confere(bytes_tx > 0, "FPGA enviou quadros AEF2 pela uart_tx");
 
         $display("  verificacoes: %0d, avisos: %0d, eventos de telemetria: %0d, bytes na uart_tx: %0d",
                  verificacoes, avisos, n_eventos, bytes_tx);

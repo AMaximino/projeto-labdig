@@ -16,6 +16,7 @@ module unidade_controle_semana3_tb;
     localparam [4:0] AVANCA_RODADA = 5'b01100;
     localparam [4:0] APLICA_DESPESA = 5'b01101;
     localparam [4:0] VERIFICA_FALENCIA_DESPESA = 5'b01110;
+    localparam [4:0] PERDE_VIDA = 5'b01111;
     localparam [4:0] REGISTRA_DISPLAY = 5'b11010;
     localparam [4:0] REGISTRA_DISPLAY_FINAL = 5'b11011;
     localparam [4:0] REGISTRA_DISPLAY_FALENCIA = 5'b11100;
@@ -30,6 +31,8 @@ module unidade_controle_semana3_tb;
     reg display_pulso = 1'b0;
     reg fim_jogo = 1'b0;
     reg fim_perdeu = 1'b0;
+    reg tem_vida = 1'b0;   // 0: sem vida sobrando, falencia direta (regra da semana 3)
+    wire perdeVida;
     reg fim_rodada = 1'b0;
 
     wire desligaDisplay;
@@ -66,6 +69,8 @@ module unidade_controle_semana3_tb;
         .fim_jogo(fim_jogo),
         .fim_perdeu(fim_perdeu),
         .fim_rodada(fim_rodada),
+        .tem_vida(tem_vida),
+        .perdeVida(perdeVida),
         .desligaDisplay(desligaDisplay),
         .rstED(rstED),
         .init(init),
@@ -228,6 +233,40 @@ module unidade_controle_semana3_tb;
         tick;
         expect_state(FIM_FALENCIA, "bankruptcy after expenses");
         if (!perdeu) $fatal(1, "perdeu output not asserted after expenses");
+        fim_perdeu = 1'b0;
+
+        // 3 vidas: com vida sobrando, a falencia desfaz a jogada (PERDE_VIDA)
+        // e volta a esperar acao, tanto depois da acao quanto depois das contas.
+        start_game();
+        tem_vida = 1'b1;
+        register_action();
+        fim_perdeu = 1'b1;
+        tick;
+        expect_state(PERDE_VIDA, "lose a life after action");
+        if (!perdeVida || !registraV) $fatal(1, "perdeVida/registraV not asserted in PERDE_VIDA");
+        fim_perdeu = 1'b0;
+        tick;
+        expect_state(ESPERA_ACAO, "continue after losing a life");
+        register_action();
+        tick;
+        eh_jogada = 1'b1;
+        tick;
+        expect_state(APLICA_DESPESA, "apply move before losing a life");
+        eh_jogada = 1'b0;
+        tick;
+        fim_perdeu = 1'b1;
+        tick;
+        expect_state(PERDE_VIDA, "lose a life after expenses");
+        fim_perdeu = 1'b0;
+        tick;
+        expect_state(ESPERA_ACAO, "continue after expense life loss");
+        if (perdeu) $fatal(1, "perdeu asserted while lives remain");
+        // Ultima vida: a proxima falha e falencia de verdade.
+        tem_vida = 1'b0;
+        register_action();
+        fim_perdeu = 1'b1;
+        tick;
+        expect_state(FIM_FALENCIA, "bankruptcy on the last life");
         fim_perdeu = 1'b0;
 
         start_game();

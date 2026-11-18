@@ -19,6 +19,7 @@ struct TelemetryFrame {
   uint8_t roundIndex;
   uint8_t moveIndex;
   uint8_t status;
+  int8_t lives;  // vidas restantes (0 a 3); -1 no quadro AEF1, que nao traz vidas
 };
 
 inline const char *eventName(uint8_t code) {
@@ -36,6 +37,7 @@ inline const char *eventName(uint8_t code) {
     case 12: return "fim_jogo";
     case 13: return "falencia";
     case 14: return "seletor_item";  // posicao do seletor de item (status 0)
+    case 15: return "vida_perdida";  // falencia com vida sobrando: jogada desfeita
     default: return nullptr;
   }
 }
@@ -77,19 +79,23 @@ inline bool parseHexMask(const char *text, uint16_t &mask) {
   return true;
 }
 
+// AEF2 (atual): 14 campos, o ultimo e o numero de vidas (0 a 3).
+// AEF1 (FPGA antiga): 13 campos, sem vidas; lives fica -1.
 inline bool parseFrame(char *line, TelemetryFrame &frame) {
-  char *fields[13] = {};
+  char *fields[14] = {};
   size_t fieldCount = 0;
   for (char *token = strtok(line, ","); token != nullptr; token = strtok(nullptr, ",")) {
-    if (fieldCount == 13) return false;
+    if (fieldCount == 14) return false;
     fields[fieldCount++] = token;
   }
-  if (fieldCount != 13 || strcmp(fields[0], "AEF1") != 0) return false;
+  const bool v2 = fieldCount == 14 && strcmp(fields[0], "AEF2") == 0;
+  const bool v1 = fieldCount == 13 && strcmp(fields[0], "AEF1") == 0;
+  if (!v1 && !v2) return false;
 
   uint32_t parsed = 0;
   if (!parseUnsigned(fields[1], 6, 999999, parsed) || parsed == 0) return false;
   frame.sequence = parsed;
-  if (!parseUnsigned(fields[2], 2, 14, parsed) || parsed == 0 ||
+  if (!parseUnsigned(fields[2], 2, 15, parsed) || parsed == 0 ||
       eventName(static_cast<uint8_t>(parsed)) == nullptr) return false;
   frame.eventCode = static_cast<uint8_t>(parsed);
   if (!parseUnsigned(fields[3], 2, 10, parsed)) return false;
@@ -106,6 +112,11 @@ inline bool parseFrame(char *line, TelemetryFrame &frame) {
   frame.moveIndex = static_cast<uint8_t>(parsed);
   if (!parseUnsigned(fields[12], 1, 2, parsed)) return false;
   frame.status = static_cast<uint8_t>(parsed);
+  frame.lives = -1;
+  if (v2) {
+    if (!parseUnsigned(fields[13], 1, 3, parsed)) return false;
+    frame.lives = static_cast<int8_t>(parsed);
+  }
 
   if ((frame.eventCode == 7 || frame.eventCode == 9) != (frame.status == 2)) return false;
   if ((frame.eventCode == 6 || frame.eventCode == 8) && frame.status != 1) return false;
@@ -128,6 +139,11 @@ inline bool formatTelemetryJson(
     int64_t deltaCents) {
   const char *name = eventName(frame.eventCode);
   if (name == nullptr) return false;
+  // "vidas" so aparece quando o quadro traz o campo (AEF2).
+  char livesField[16] = "";
+  if (frame.lives >= 0) {
+    snprintf(livesField, sizeof(livesField), ",\"vidas\":%d", static_cast<int>(frame.lives));
+  }
   int written = snprintf(
       output, capacity,
       "{\"schema_version\":1,\"device_id\":\"%s\",\"session_id\":\"%s\","
@@ -136,7 +152,7 @@ inline bool formatTelemetryJson(
       "\"saldo_centavos\":%lld,\"salario_centavos\":%lld,"
       "\"valor_investido_centavos\":%lld,\"rendimento_centavos\":%lld,"
       "\"gastos_fixos_centavos\":%lld,\"gastos_unicos_centavos\":%lld,"
-      "\"inventario_mask\":%u,\"delta_saldo_centavos\":%lld}",
+      "\"inventario_mask\":%u,\"delta_saldo_centavos\":%lld%s}",
       deviceId, sessionId, static_cast<unsigned long>(frame.sequence),
       timestamp, name, static_cast<unsigned>(frame.itemId),
       frame.status == 1 ? "ok" : frame.status == 2 ? "recusada" : "info",
@@ -149,6 +165,6 @@ inline bool formatTelemetryJson(
       static_cast<long long>(rtlToCents(frame.fixedExpensesRaw)),
       static_cast<long long>(rtlToCents(frame.uniqueExpensesRaw)),
       static_cast<unsigned>(frame.inventoryMask),
-      static_cast<long long>(deltaCents));
+      static_cast<long long>(deltaCents), livesField);
   return written >= 0 && static_cast<size_t>(written) < capacity;
 }

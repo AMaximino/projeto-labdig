@@ -85,8 +85,37 @@ int main() {
       "AEF1,000022,14,05,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
       frame), "selector event with success status is rejected");
   check(!parseTestLine(
-      "AEF1,000021,15,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
+      "AEF1,000021,16,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
       frame), "unknown event code is rejected");
+  check(parseTestLine(approvedPurchase, frame) && frame.lives == -1 &&
+        formatTelemetryJson(json, sizeof(json), frame, "aef-fpga-01", "session-01", "null", 0) &&
+        strstr(json, "vidas") == nullptr,
+        "AEF1 frame has no lives and JSON omits vidas");
+
+  // AEF2: 14o campo com as vidas
+  const char *lifeLost =
+      "AEF2,000023,15,00,+0000126,+0000064,+0000000,+0000040,+0000000,0080,03,01,0,2";
+  check(parseTestLine(lifeLost, frame) && frame.eventCode == 15 && frame.lives == 2 &&
+        frame.balanceRaw == 126,
+        "AEF2 life-lost frame parses with restored balance and lives");
+  check(strcmp(eventName(frame.eventCode), "vida_perdida") == 0,
+        "event 15 maps to vida_perdida");
+  check(formatTelemetryJson(json, sizeof(json), frame, "aef-fpga-01", "session-01", "null", 0) &&
+        strstr(json, "\"event\":\"vida_perdida\"") != nullptr &&
+        strstr(json, ",\"vidas\":2}") != nullptr,
+        "AEF2 JSON carries the lives count");
+  check(parseTestLine(
+      "AEF2,000024,13,00,-0000474,+0000064,+0000000,+0000040,+0000000,0081,03,01,0,0",
+      frame) && frame.lives == 0, "final bankruptcy carries zero lives");
+  check(!parseTestLine(
+      "AEF2,000025,02,00,+0000150,+0000064,+0000000,+0000040,+0000000,0000,00,00,1,4",
+      frame), "more than 3 lives is rejected");
+  check(!parseTestLine(
+      "AEF2,000025,02,00,+0000150,+0000064,+0000000,+0000040,+0000000,0000,00,00,1",
+      frame), "AEF2 frame without lives is rejected");
+  check(!parseTestLine(
+      "AEF1,000025,02,00,+0000150,+0000064,+0000000,+0000040,+0000000,0000,00,00,1,3",
+      frame), "AEF1 frame with an extra field is rejected");
   check(!parseTestLine(
       "AEF1,000021,07,07,+0000150,+0000064,+0000000,+0000040,+0000000,0040,01,01,1",
       frame), "refused event with success status is rejected");

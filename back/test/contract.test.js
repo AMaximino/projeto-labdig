@@ -68,3 +68,17 @@ test("accepts the selector position event", () => {
   assert.equal(accepted.event, "seletor_item");
   assert.equal(accepted.item_id, 5);
 });
+
+test("accepts the life-lost event with the lives count", () => {
+  const accepted = validateTelemetry({
+    ...sample, event: "vida_perdida", item_id: 0, status: "info", delta_saldo_centavos: 0, vidas: 2,
+  });
+  assert.equal(accepted.event, "vida_perdida");
+  assert.equal(accepted.vidas, 2);
+});
+
+test("accepts frames without lives (old FPGA) and rejects invalid lives", () => {
+  assert.equal(validateTelemetry(sample).vidas, undefined);
+  assert.throws(() => validateTelemetry({ ...sample, vidas: 4 }), /vidas/);
+  assert.throws(() => validateTelemetry({ ...sample, vidas: "3" }), /vidas/);
+});

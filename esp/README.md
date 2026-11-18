@@ -4,7 +4,7 @@ Firmware para **ESP32-WROOM-32U** que faz três coisas ao mesmo tempo:
 
 1. **Lê cartões RFID** no módulo **RC522** (via SPI).
 2. **Conversa com a FPGA** (DE0-CV) por **UART**: envia a compra (`RNN\n`) e
-   recebe os quadros de telemetria `AEF1`.
+   recebe os quadros de telemetria `AEF2`.
 3. **Publica a telemetria no backend** via Wi-Fi/MQTT, no tópico
    `aventura_financeira/telemetria`.
 
@@ -13,7 +13,7 @@ ESP32 apenas traduz UID → item, transporta mensagens e converte valores.
 
 ```
 Cartão ─► RC522 ──SPI──► ESP32 ──UART2 TX (GPIO17)──► FPGA rfid_rx   (comando RNN)
-                         ESP32 ◄─UART2 RX (GPIO16)─── FPGA uart_tx   (telemetria AEF1)
+                         ESP32 ◄─UART2 RX (GPIO16)─── FPGA uart_tx   (telemetria AEF2)
                          ESP32 ──Wi-Fi/MQTT──► broker ──► back ──WebSocket──► front
                          ESP32 ──USB (UART0)──► computador (gravação + logs)
 ```
@@ -24,7 +24,7 @@ Cartão ─► RC522 ──SPI──► ESP32 ──UART2 TX (GPIO17)──► F
 |---|---|
 | `aef_bridge/aef_bridge.ino` | Firmware principal da ponte (RFID + UART + MQTT) |
 | `aef_bridge/config.example.h` | Modelo de configuração (Wi-Fi, broker, UIDs, pinos) |
-| `aef_bridge/telemetry_protocol.h` | Parser do quadro `AEF1` e geração do JSON |
+| `aef_bridge/telemetry_protocol.h` | Parser do quadro `AEF2` (e do `AEF1` antigo) e geração do JSON |
 | `tools/uid_reader/uid_reader.ino` | Ferramenta para descobrir o UID de cada cartão |
 | `tools/rfid_test/` | Teste rápido do RC522 com janela guiada no Windows |
 | `testbench/` | Teste do parser no PC, sem hardware |
@@ -115,7 +115,7 @@ em comum.
 | De | Para | Sinal |
 |---|---|---|
 | ESP32 **GPIO17** (TX2) | DE0-CV JP2 GPIO_1_D22 / PIN_C15 | `rfid_rx`: comando `RNN\n` |
-| DE0-CV JP2 GPIO_1_D20 / PIN_A14 | ESP32 **GPIO16** (RX2) | `uart_tx`: telemetria `AEF1` |
+| DE0-CV JP2 GPIO_1_D20 / PIN_A14 | ESP32 **GPIO16** (RX2) | `uart_tx`: telemetria `AEF2` |
 | GND ESP32 | GND DE0-CV | Referência comum (obrigatória) |
 
 A UART usa **115200 baud, 8-N-1** e níveis de **3,3 V** dos dois lados. A
@@ -221,8 +221,12 @@ registrar a ação. Saldo e inventário são verificados lá.
 
 ### Telemetria (FPGA → backend)
 
-A FPGA envia linhas `AEF1,...` (13 campos separados por vírgula, terminadas em
-`\n`) pela UART2. A ESP32:
+A FPGA envia linhas `AEF2,...` (14 campos separados por vírgula, terminadas em
+`\n`) pela UART2. O 14º campo é o número de vidas (0 a 3). O quadro antigo
+`AEF1` (13 campos, sem vidas) continua aceito, para uma FPGA com o `.sof`
+antigo; nesse caso o JSON sai sem o campo `vidas`. O evento 15 é
+`vida_perdida`: o saldo ficou negativo, a FPGA desfez a jogada e tirou 1 vida.
+A ESP32:
 
 1. Valida o quadro. Linhas inválidas ou longas demais são descartadas e geram
    log.
@@ -277,7 +281,7 @@ arduino-cli compile -b esp32:esp32:esp32 esp/tools/uid_reader
 | Cartão lido, mas `nao cadastrado` | UID em `config.h` diferente do impresso (sem espaços, hexadecimal) |
 | `R0N` enviado, mas a FPGA não reage | GPIO17 → PIN_C15, GND comum, FPGA programada com o `.sof` atual |
 | FPGA envia, mas não aparece `[FPGA]` | PIN_A14 → GPIO16, baud 115200 |
-| `[FPGA] quadro invalido` | Formato `AEF1` diferente do esperado (ver `telemetry_protocol.h`) |
+| `[FPGA] quadro invalido` | Formato `AEF2` diferente do esperado (ver `telemetry_protocol.h`) |
 | Wi-Fi não conecta | Antena U.FL ligada? Rede é 2,4 GHz? SSID/senha corretos? |
 | `[MQTT] falha ... (estado -2)` | IP do broker, firewall do Windows na porta 1883, broker ouvindo em `0.0.0.0` |
 | Upload preso em `Connecting...` | Segurar o botão BOOT durante o início da gravação |

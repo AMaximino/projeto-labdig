@@ -146,14 +146,17 @@ do backend: `http://localhost:3000/health` deve mostrar `"mqtt_connected":true`.
    COMPRAR da placa também compra o item do seletor. (Para voltar ao modo em
    que cada cartão tem um item fixo, use `AEF_RFID_USE_SELECTOR 0` no
    `config.h`.)
-5. A compra é aceita **mesmo sem saldo suficiente**. Se o saldo ficar
-   negativo, a FPGA declara `falencia` e o jogador perde. Uma compra só é
-   recusada se o item já estiver no inventário.
+5. A compra é aceita **mesmo sem saldo suficiente**. O jogador tem **3 vidas**
+   (❤️❤️❤️ no painel). Se uma jogada deixar o saldo negativo (comprar, estudar,
+   investir ou as contas de TRABALHAR/ESTUDAR), a FPGA desfaz a jogada, o
+   jogador perde 1 vida e o painel mostra um aviso. Na 3ª vez, a FPGA declara
+   `falencia` e o jogador perde. Uma compra só é recusada se o item já estiver
+   no inventário.
 6. **Seletor de item:** ao girar o seletor da placa, o painel mostra logo
    abaixo da faixa da rodada qual item está selecionado, o preço e o que
    acontece ao apertar COMPRAR/VENDER, junto com os itens das outras posições.
    A posição aparece depois que o jogo começa (aperte **iniciar**).
-7. Se o jogador falir (`falencia`) ou o jogo acabar (`fim_jogo`), a FPGA ignora
+7. Se acabarem as vidas (`falencia`) ou o jogo acabar (`fim_jogo`), a FPGA ignora
    as compras até apertar **iniciar** de novo.
 
 ## Ver o log da ESP32 (opcional)

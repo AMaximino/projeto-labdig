@@ -12,7 +12,7 @@ UID é mantido localmente no ESP32 e nunca é publicado no MQTT. UID não é um
 segredo criptográfico: não usar esta solução como pagamento real.
 
 - `fpga/rtl/`: regras do jogo, parser UART de comando e telemetria.
-- `esp/aef_bridge/`: leitura RC522, mapa UID→item, MQTT e parser `AEF1`.
+- `esp/aef_bridge/`: leitura RC522, mapa UID→item, MQTT e parser `AEF2` (aceita também o `AEF1` antigo).
 - `back/src/`: validação, deduplicação, diário JSONL, HTTP e WebSocket.
 - `front/`: painel somente de leitura.
 
@@ -30,13 +30,17 @@ segredo criptográfico: não usar esta solução como pagamento real.
 
 ## Telemetria FPGA → ESP32
 
-Continua o framing ASCII `AEF1` já descrito pelo firmware: snapshots em linhas
-terminadas por LF, 115200 baud, 8-N-1, sequência, evento, item, valores
-financeiros com sinal, máscara de inventário, rodada, jogada e status. Os eventos
+Framing ASCII `AEF2` (antes `AEF1`): snapshots em linhas terminadas por LF,
+115200 baud, 8-N-1, sequência, evento, item, valores financeiros com sinal,
+máscara de inventário, rodada, jogada, status e **vidas** (0 a 3, campo novo do
+`AEF2`). Os eventos
 de compra são `06` aprovada e `07` recusada. A compra só é recusada quando o
 item é inválido ou já está no inventário. Se o saldo não for suficiente, a compra
-**é aprovada** e o saldo fica negativo. Na sequência, a FSM detecta a falência
-(`saldo[20]`) e a FPGA envia o evento `13` (`falencia`) logo após o `06`. Campos monetários no JSON MQTT são
+**é aprovada** e o saldo fica negativo. Na sequência, a FSM detecta o saldo
+negativo (`saldo[20]`). O jogador tem **3 vidas**: com vida sobrando, a FSM vai
+para `PERDE_VIDA`, restaura os valores de antes da ação (a jogada é desfeita),
+tira 1 vida e envia o evento `15` (`vida_perdida`); na 3ª falha, vai para
+`FIM_FALENCIA` e envia o evento `13` (`falencia`) com 0 vidas. Campos monetários no JSON MQTT são
 centavos de BRL; cada unidade financeira RTL equivale a R$ 100, portanto
 `valor_centavos = valor_RTL × 10.000`.
 

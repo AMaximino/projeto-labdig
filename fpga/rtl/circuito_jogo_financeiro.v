@@ -60,6 +60,9 @@ module circuito_jogo_financeiro (
     wire [3:0] w_contagem;
     wire [3:0] w_rodada;
     wire [4:0] w_estado;
+    wire w_perdeVida;
+    wire w_tem_vida;
+    wire [1:0] w_vidas;
     wire telemetry_send;
     wire [7:0] telemetry_event;
     wire [3:0] rfid_item;
@@ -123,6 +126,8 @@ module circuito_jogo_financeiro (
         .registraV      ( w_registraV ),
         .zeraM          ( w_zeraM ),
         .registraM      ( w_registraM ),
+        .perdeVida      ( w_perdeVida ),
+        .fim_falencia   ( perdeu ),
 
         .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
@@ -136,6 +141,8 @@ module circuito_jogo_financeiro (
         .ultima_rodada  ( ultima_rodada ),
         .dinheiro       ( dinheiro ),
         .itens_out      ( indicador_itens ),
+        .tem_vida       ( w_tem_vida ),
+        .telemetry_lives( w_vidas ),
         .telemetry_send ( telemetry_send ),
         .telemetry_event ( telemetry_event ),
         .telemetry_status ( telemetry_status ),
@@ -162,6 +169,7 @@ module circuito_jogo_financeiro (
         .inventory_mask ( indicador_itens ),
         .round_index    ( w_rodada ),
         .move_index     ( w_contagem ),
+        .lives          ( w_vidas ),
         .tx             ( uart_tx )
     );
 
@@ -175,6 +183,7 @@ module circuito_jogo_financeiro (
         .fim_jogo       ( w_fim_jogo ),
         .fim_perdeu     ( w_fim_perdeu ),
         .fim_rodada     ( w_fim_rodada ),
+        .tem_vida       ( w_tem_vida ),
 
         .desligaDisplay ( w_desligaDisplay ),
         .rstED          ( w_rstED ),
@@ -194,6 +203,7 @@ module circuito_jogo_financeiro (
         .registraV      ( w_registraV ),
         .zeraM          ( w_zeraM ),
         .registraM      ( w_registraM ),
+        .perdeVida      ( w_perdeVida ),
         .terminou       ( terminou ),
         .perdeu         ( perdeu ),
         .estado         ( w_estado )

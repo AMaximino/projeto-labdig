@@ -12,6 +12,7 @@ export const EVENTS = new Set([
   "fim_jogo",
   "falencia",
   "seletor_item",
+  "vida_perdida", // saldo negativo com vida sobrando: a FPGA desfez a jogada
 ]);
 
 const MONEY_FIELDS = [
@@ -58,6 +59,11 @@ export function validateTelemetry(payload, receivedAt = new Date().toISOString()
   }
   if (!Number.isInteger(payload.inventario_mask) || payload.inventario_mask < 0 || payload.inventario_mask > 1023) {
     throw new TypeError("inventario_mask deve estar entre 0 e 1023");
+  }
+  // "vidas" vem da FPGA nova (quadro AEF2); a antiga (AEF1) nao manda.
+  if (payload.vidas !== undefined &&
+      (!Number.isInteger(payload.vidas) || payload.vidas < 0 || payload.vidas > 3)) {
+    throw new TypeError("vidas deve estar entre 0 e 3");
   }
   if (!Number.isSafeInteger(payload.delta_saldo_centavos) ||
       Math.abs(payload.delta_saldo_centavos) > MAX_MONEY_CENTS * 2) {

@@ -8,6 +8,7 @@ module unidade_controle (
     input      fim_jogo,
     input      fim_perdeu,
     input      fim_rodada,
+    input      tem_vida,      // 1 se o jogador tem mais de 1 vida
 
     output reg desligaDisplay,
     output reg rstED,
@@ -27,6 +28,7 @@ module unidade_controle (
     output reg registraV,
     output reg zeraM,
     output reg registraM,
+    output reg perdeVida,     // restaura os valores de antes da acao e tira 1 vida
 
     output reg terminou,
     output reg perdeu,
@@ -48,6 +50,7 @@ module unidade_controle (
     localparam [4:0] AVANCA_JOGADA             = 5'b01011;
     localparam [4:0] AVANCA_RODADA             = 5'b01100;
     localparam [4:0] VERIFICA_FALENCIA_DESPESA = 5'b01110;
+    localparam [4:0] PERDE_VIDA                = 5'b01111;
     localparam [4:0] REGISTRA_DISPLAY          = 5'b11010;
     localparam [4:0] REGISTRA_DISPLAY_FINAL    = 5'b11011;
     localparam [4:0] REGISTRA_DISPLAY_FALENCIA = 5'b11100;
@@ -86,10 +89,15 @@ module unidade_controle (
                                                         display_pulso ? REGISTRA_DISPLAY : ESPERA_ACAO;
             REGISTRA_ACAO:             proximo_estado = PROCESSA_ACAO;
             PROCESSA_ACAO:             proximo_estado = VERIFICA_FALENCIA;
-            VERIFICA_FALENCIA:         proximo_estado = fim_perdeu ? FIM_FALENCIA : VERIFICA_JOGADA;
+            // Saldo negativo: com vida sobrando, desfaz a jogada e perde 1 vida;
+            // sem vida sobrando (3a falha), fim de jogo por falencia.
+            VERIFICA_FALENCIA:         proximo_estado = fim_perdeu ? (tem_vida ? PERDE_VIDA : FIM_FALENCIA)
+                                                                   : VERIFICA_JOGADA;
             VERIFICA_JOGADA:           proximo_estado = eh_jogada ? APLICA_DESPESA : ESPERA_ACAO;
             APLICA_DESPESA:            proximo_estado = VERIFICA_FALENCIA_DESPESA;
-            VERIFICA_FALENCIA_DESPESA: proximo_estado = fim_perdeu ? FIM_FALENCIA : VERIFICA_FIM_JOGO;
+            VERIFICA_FALENCIA_DESPESA: proximo_estado = fim_perdeu ? (tem_vida ? PERDE_VIDA : FIM_FALENCIA)
+                                                                   : VERIFICA_FIM_JOGO;
+            PERDE_VIDA:                proximo_estado = ESPERA_ACAO;
             VERIFICA_FIM_JOGO:         proximo_estado = fim_jogo ? FIM_JOGO : VERIFICA_FIM_RODADA;
             VERIFICA_FIM_RODADA:       proximo_estado = fim_rodada ? AVANCA_RODADA : AVANCA_JOGADA;
             AVANCA_JOGADA:             proximo_estado = ESPERA_ACAO;
@@ -128,11 +136,13 @@ module unidade_controle (
         registraV        = estado_atual == INICIALIZA_JOGO ||
                            estado_atual == PROCESSA_ACAO ||
                            estado_atual == APLICA_DESPESA ||
-                           estado_atual == AVANCA_RODADA;
+                           estado_atual == AVANCA_RODADA ||
+                           estado_atual == PERDE_VIDA;
         zeraM            = estado_atual == INICIO;
         registraM        = estado_atual == ESPERA_INICIO ||
                            estado_atual == FIM_JOGO ||
                            estado_atual == FIM_FALENCIA;
+        perdeVida        = estado_atual == PERDE_VIDA;
         terminou         = estado_atual == FIM_JOGO;
         perdeu           = estado_atual == FIM_FALENCIA;
         

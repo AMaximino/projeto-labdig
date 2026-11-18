@@ -1184,3 +1184,77 @@ body:not(.modo-professor) .page-content { max-width: 1280px; margin-right: auto;
 .stat-track.icons.danger i:first-child { filter: grayscale(1) brightness(.35) drop-shadow(0 0 3px #d0573c); opacity: .8; }
 @keyframes stat-low { 25% { transform: translateY(-2px); } 75% { transform: translateY(2px); } }
 @media (prefers-reduced-motion: reduce) { .stat-track.icons.danger i.on { animation: none; } }
+
+/* ---------- Vidas: 3 ❤️ na faixa verde, à direita da jogada ---------- */
+.turn-banner { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.05fr) minmax(0, .8fr) minmax(0, .8fr); }
+.turn-lives { position: relative; z-index: 1; }
+.turn-lives .lives-track { display: flex; gap: 4px; margin-top: 2px; }
+.turn-lives .lives-track i { font-size: 34px; line-height: 1.1; }
+/* No verde, a vida perdida fica escura mas visível */
+.turn-lives .stat-track.icons i:not(.on) { filter: grayscale(1) brightness(.25); opacity: .6; }
+.turn-lives .stat-track.icons.danger i.on { animation: stat-low 0.7s ease-in-out infinite; }
+.turn-lives .stat-track.icons.danger i:first-child { filter: none; }
+.lives-text { display: block; margin-top: 4px; color: #e0f2d3; font-size: 13px; font-weight: 800; }
+.turn-lives .stat-delta { top: -4px; right: auto; left: 0; background: #c0392b; color: #fff; }
+@media (max-width: 1200px) {
+  .turn-banner { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, .8fr); }
+  .turn-lives .lives-track i { font-size: 28px; }
+}
+@media (max-width: 620px) {
+  .turn-banner { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Pop-up: perdeu uma vida (some sozinho, sem botão) ---------- */
+.life-lost-overlay { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: 16px; background: rgb(60 12 8 / 45%); }
+.life-lost-overlay[hidden] { display: none; }
+.life-lost-card { display: grid; justify-items: center; gap: 10px; width: min(520px, 100%); padding: 30px 28px 26px; border: 3px solid #e7a08f; border-radius: 20px; background: #fff6f2; box-shadow: 0 10px 0 rgb(120 30 20 / 25%); text-align: center; animation: game-end-pop .25s ease; }
+.life-lost-icon { font-size: 64px; line-height: 1; }
+.life-lost-card h2 { margin: 0; color: #8f2f1f; font: 800 30px/1.15 Manrope, sans-serif; letter-spacing: -.6px; }
+.life-lost-card p { margin: 0; color: #4a2a22; font-size: 19px; font-weight: 700; line-height: 1.35; }
+.life-lost-back strong { color: #8f2f1f; }
+.life-lost-hearts { display: flex; gap: 8px; margin-top: 6px; }
+.life-lost-hearts i { font-size: 40px; font-style: normal; line-height: 1; filter: grayscale(1) brightness(.3); opacity: .7; }
+.life-lost-hearts i.on { filter: none; opacity: 1; }
+.life-lost-left { color: #8f2f1f !important; font-size: 17px !important; font-weight: 800 !important; }
+@media (prefers-reduced-motion: reduce) { .life-lost-card { animation: none; } }
+
+/* ---------- Faixa: dinheiro, custo de vida, rodada (ano), jogada (quadrimestre), vidas ---------- */
+.turn-banner { grid-template-columns: minmax(0, 1.45fr) minmax(0, .85fr) minmax(0, 1fr) minmax(0, .9fr) minmax(0, .8fr); gap: 18px; padding-right: 22px; padding-left: 22px; }
+.turn-money > strong { font-size: clamp(34px, 3.6vw, 52px); }
+.turn-cost { position: relative; z-index: 1; padding: 12px 14px; border: 1px solid rgb(255 255 255 / 23%); border-radius: 11px; background: rgb(120 30 20 / 28%); }
+.turn-cost > strong { display: block; color: #ffd9cf; font: 800 clamp(22px, 2.2vw, 30px)/1.1 Manrope, sans-serif; letter-spacing: -.6px; }
+.turn-note { display: block; margin-top: 5px; color: #d6ebcf; font-size: 12px; font-weight: 700; }
+.turn-cost .turn-note { color: #ffe3db; }
+@media (max-width: 1200px) {
+  .turn-banner { grid-template-columns: minmax(0, 1.3fr) minmax(0, .85fr) minmax(0, 1fr) minmax(0, .9fr) minmax(0, .8fr); gap: 12px; }
+}
+@media (max-width: 1000px) {
+  .turn-banner { grid-template-columns: 1fr 1fr 1fr; }
+  .turn-money { grid-column: 1 / 3; }
+}
+
+/* ---------- "O que você pode fazer agora?" não é clicável ---------- */
+.now-note { display: flex; align-items: center; gap: 8px; margin: -4px 0 12px; padding: 8px 11px; border-radius: 10px; background: #fff2bd; color: #5e5439; font-size: 13px; font-weight: 700; line-height: 1.35; }
+.now-note strong { color: #3b2f05; }
+/* Linhas de texto, não botões: sem moldura de botão, sem cursor de clique */
+.now-item { border: 0; border-bottom: 1px dashed #e5e3d5; border-radius: 0; background: transparent; cursor: default; user-select: none; }
+.now-item:last-child { border-bottom: 0; }
+.now-item.risk { border-radius: 9px; background: #fbe4dc; }
+.now-item.hint { border-style: none; background: transparent; }
+
+/* ---------- Últimas jogadas: as anteriores descem em vez de sumir ---------- */
+.recent-moves { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.recent-move { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid #e5e3d5; border-radius: 11px; background: #fffef9; opacity: .85; }
+.recent-move-icon { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 8px; background: #eef3ea; font-size: 15px; }
+.recent-move.refused .recent-move-icon { background: #fbe4dc; }
+.recent-move strong { color: #34422d; font: 700 14px/1.25 Manrope, sans-serif; }
+.recent-move > span:last-child { color: #4d5a45; font-size: 14px; font-weight: 800; white-space: nowrap; }
+#last-move-card { animation: move-new .6s ease; }
+@keyframes move-new { from { box-shadow: 0 0 0 4px rgb(242 172 41 / 55%); } }
+@media (prefers-reduced-motion: reduce) { #last-move-card { animation: none; } }
+/* Valores da faixa numa linha só; aviso da lista como texto corrido */
+.turn-money > strong, .turn-cost > strong { white-space: nowrap; }
+.turn-money > strong { font-size: clamp(28px, 2.9vw, 44px); letter-spacing: -1px; }
+.turn-cost > strong { font-size: clamp(18px, 1.75vw, 25px); }
+.turn-money { padding: 12px 16px; }
+.now-note { display: block; }

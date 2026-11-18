@@ -50,8 +50,10 @@ Cada UID cadastrado no firmware corresponde a um item (1–10). O ESP32 envia
 confirmar que ele saiu do campo. A FPGA valida a compra com suas regras atuais,
 atualiza o saldo e o inventário e transmite o evento `compra_aprovada` ou
 `compra_recusada`. Só item repetido ou inválido é recusado. Uma compra maior que
-o saldo é aprovada, deixa o saldo negativo e encerra o jogo por falência
-(evento `falencia`). O painel não envia ações ao jogo.
+o saldo é aprovada e deixa o saldo negativo. O jogador tem 3 vidas: com vida
+sobrando, a FPGA desfaz a jogada e tira 1 vida (evento `vida_perdida`); na 3ª
+falha, encerra o jogo por falência (evento `falencia`). O painel não envia ações
+ao jogo.
 
 ## Início rápido
 

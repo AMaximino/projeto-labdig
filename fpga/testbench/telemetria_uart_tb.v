@@ -10,9 +10,10 @@ module telemetria_uart_tb;
     reg event_send = 1'b0;
     wire tx;
     reg signed [20:0] test_balance = 21'sd150;
-    reg [7:0] received [0:75];
-    reg [7:0] received_second [0:75];
+    reg [7:0] received [0:77];
+    reg [7:0] received_second [0:77];
     reg [7:0] event_code = 8'd6;
+    reg [1:0] test_lives = 2'd3;
     integer i;
 
     always #(CLOCK_PERIOD / 2) clock = ~clock;
@@ -35,6 +36,7 @@ module telemetria_uart_tb;
         .inventory_mask(10'h040),
         .round_index(4'd1),
         .move_index(4'd0),
+        .lives(test_lives),
         .tx(tx)
     );
 
@@ -62,29 +64,30 @@ module telemetria_uart_tb;
         #20;
         event_send = 1'b0;
 
-        for (i = 0; i <= 75; i = i + 1) begin
+        for (i = 0; i <= 77; i = i + 1) begin
             receive_byte(received[i]);
             if (i == 0) begin
-                event_code = 8'd2;
+                event_code = 8'd15;  // vida_perdida
                 test_balance = -21'sd10;
+                test_lives = 2'd2;
                 event_send = 1'b1;
                 #20;
                 event_send = 1'b0;
             end
-            if (received[i] == 8'h0a) i = 76;
+            if (received[i] == 8'h0a) i = 78;
         end
-        for (i = 0; i <= 75; i = i + 1) begin
+        for (i = 0; i <= 77; i = i + 1) begin
             receive_byte(received_second[i]);
-            if (received_second[i] == 8'h0a) i = 76;
+            if (received_second[i] == 8'h0a) i = 78;
         end
 
-        if ({received[0], received[1], received[2], received[3]} !== "AEF1")
+        if ({received[0], received[1], received[2], received[3]} !== "AEF2")
             $fatal(1, "Unexpected UART frame header");
         if ({received[5], received[6], received[7], received[8], received[9], received[10]} !== "000001" ||
             {received[12], received[13]} !== "06" || {received[15], received[16]} !== "07")
             $fatal(1, "Unexpected first frame sequence, event or item");
-        if (received[74] !== "1" || received[75] !== 8'h0a)
-            $fatal(1, "Unexpected final status or newline");
+        if (received[74] !== "1" || received[75] !== "," || received[76] !== "3" || received[77] !== 8'h0a)
+            $fatal(1, "Unexpected final status, lives or newline");
         if (received[18] !== "+" || received[19] !== "0" ||
             received[24] !== "5" || received[25] !== "0")
             $fatal(1, "Unexpected signed balance encoding");
@@ -95,12 +98,12 @@ module telemetria_uart_tb;
             $fatal(1, "Unexpected snapshot, inventory or counter encoding");
         if ({received_second[5], received_second[6], received_second[7],
              received_second[8], received_second[9], received_second[10]} !== "000002" ||
-            {received_second[12], received_second[13]} !== "02" ||
+            {received_second[12], received_second[13]} !== "15" ||
             received_second[18] !== "-" || received_second[24] !== "1" ||
-            received_second[75] !== 8'h0a)
+            received_second[76] !== "2" || received_second[77] !== 8'h0a)
             $fatal(1, "UART queue did not preserve the second event");
 
-        $display("UART framing and queued event sequence verified.");
+        $display("UART framing (AEF2, com vidas) and queued event sequence verified.");
         $finish;
     end
 endmodule
