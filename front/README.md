@@ -32,3 +32,26 @@ exportação da sessão. Para abrir:
 
 - `http://localhost:3000/?professor`; ou
 - **Ctrl+Alt+P** na tela do jogo (aperte de novo para voltar ao modo jogador).
+
+## Barras de progresso e "O que você pode fazer agora?"
+
+Cada barra mostra algo que muda o jogo de verdade (regras da FPGA em
+`fpga/rtl/processador_acao.v`) e tem o nome do botão que a faz subir:
+
+| Barra | O que mostra | Sobe com |
+|---|---|---|
+| **Dinheiro** | quantas rodadas de contas o dinheiro paga (5 blocos); fica vermelha quando não paga a próxima | TRABALHAR, RESGATAR, VENDER |
+| **Estudo** | nível = (salário − R$ 6,4 mil) ÷ R$ 4 mil, com o salário atual | ESTUDAR |
+| **Investimento** | 1 bloco a cada R$ 1 mil guardado e quanto rende na próxima rodada | INVESTIR e o rendimento de 25% por rodada |
+| **Jornada** (na faixa verde) | rodada atual de 15 | cada fim de rodada |
+
+Na hora da jogada, a barra que mudou pisca e mostra quanto mudou ("+1 nível",
+"+ R$ 6,4 mil"). O estado inicial enviado pelo backend ao conectar não anima.
+
+"O que você pode fazer agora?" lista só as ações possíveis, com a cor da capa
+do botão da caixa (TRABALHAR azul, ESTUDAR branco, INVESTIR preto, RESGATAR
+vermelho, COMPRAR amarelo, VENDER verde). Uma ação que deixaria o dinheiro
+negativo aparece em vermelho: "Se estudar agora, você PERDE".
+
+**Pagamentos** lista o que sai no fim de cada rodada: as contas básicas e a
+conta de cada carro ou casa comprado.

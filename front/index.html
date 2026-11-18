@@ -114,9 +114,10 @@
                 <strong id="game-balance-value">R$ 15 mil</strong>
                 <span id="game-balance-hint" hidden>Aguardando o jogo</span>
               </div>
-              <div class="turn-round">
-                <span class="turn-label">RODADA</span>
-                <div class="turn-move-row"><strong id="game-round-value">1</strong><span>de 15</span></div>
+              <div class="turn-round stat" data-stat="jornada">
+                <span class="turn-label">JORNADA</span>
+                <div class="turn-move-row"><strong id="game-round-value">1</strong><span>de 15 rodadas</span></div>
+                <div class="stat-track journey-track" id="stat-jornada-track" aria-hidden="true"></div>
               </div>
               <div class="turn-move">
                 <span class="turn-label">JOGADA</span>
@@ -125,11 +126,33 @@
               </div>
             </header>
 
+            <div class="now-row">
+              <section class="now-panel" aria-labelledby="now-title">
+                <h2 id="now-title">O que você pode fazer agora?</h2>
+                <ul class="now-list" id="now-list" aria-live="polite"></ul>
+              </section>
+              <section class="stats-panel" aria-labelledby="stats-panel-title">
+                <h2 id="stats-panel-title">Seu progresso</h2>
+                <div class="stat" data-stat="dinheiro">
+                  <div class="stat-head"><strong>Dinheiro</strong><span class="stat-text" id="stat-dinheiro-text"></span></div>
+                  <div class="stat-track" id="stat-dinheiro-track" aria-hidden="true"></div>
+                </div>
+                <div class="stat" data-stat="estudo">
+                  <div class="stat-head"><strong>Estudo</strong><span class="stat-text" id="stat-estudo-text"></span></div>
+                  <div class="stat-track" id="stat-estudo-track" aria-hidden="true"></div>
+                </div>
+                <div class="stat" data-stat="investimento">
+                  <div class="stat-head"><strong>Investimento</strong><span class="stat-text" id="stat-investimento-text"></span></div>
+                  <div class="stat-track" id="stat-investimento-track" aria-hidden="true"></div>
+                </div>
+              </section>
+            </div>
+
             <section class="selector-panel waiting" id="selector-panel" aria-labelledby="selector-title">
               <div class="selector-current" aria-live="polite">
                 <img class="selector-current-image" id="selector-current-image" src="images/itens/item-01.svg" alt="" hidden>
                 <div class="selector-current-copy">
-                  <span class="selector-label" id="selector-title">SELETOR · POSIÇÃO <strong id="selector-position">—</strong></span>
+                  <span class="selector-label" id="selector-title">LOJA · POSIÇÃO <strong id="selector-position">—</strong></span>
                   <strong class="selector-name" id="selector-name">Gire o seletor</strong>
                   <span class="selector-price" id="selector-price"></span>
                   <span class="selector-expense" id="selector-expense"></span>
@@ -162,10 +185,10 @@
                   </div>
                   <div class="inventory-content" id="inventory-list"><strong>Nenhum item ainda</strong></div>
                 </section>
-                <section class="money-summary" aria-label="Resumo do dinheiro">
-                  <div><span class="summary-label">SALÁRIO</span><strong id="game-income-value">R$ 6,4 mil</strong></div>
-                  <div><span class="summary-label">INVESTIDO</span><strong id="game-investment-value">R$ 0</strong></div>
-                  <div><span class="summary-label">DESPESAS DA RODADA</span><strong id="game-expenses-value">R$ 4 mil</strong></div>
+                <section class="bills-panel" aria-labelledby="bills-title">
+                  <div class="panel-heading"><div><h2 id="bills-title">Pagamentos</h2><p>Pagos no fim de cada rodada</p></div></div>
+                  <ul class="bills-list" id="bills-list"></ul>
+                  <div class="bills-total"><span>Total por rodada</span><strong id="bills-total">—</strong></div>
                 </section>
               </aside>
             </div>

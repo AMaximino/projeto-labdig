@@ -18,6 +18,13 @@
     { id: 9, name: "Livros", icon: "📚", image: "images/itens/item-09.svg", price: 20000, expense: 0 },
     { id: 10, name: "LEGO", icon: "🧱", image: "images/itens/item-10.svg", price: 42000, expense: 0 },
   ];
+  // Regras da FPGA (fpga/rtl/inicializador.v e processador_acao.v), em reais.
+  const RULES = { baseSalary: 6400, studyCost: 12000, studyRaise: 4000, investStep: 1000, rounds: 15 };
+  // Cor da capa de cada botão da caixa: a tela usa a mesma cor do botão.
+  const BUTTON_COLORS = {
+    TRABALHAR: "#2F6DB5", ESTUDAR: "#F4F4F0", INVESTIR: "#2A2A2A", RESGATAR: "#C9433A",
+    COMPRAR: "#F1C232", VENDER: "#3E9A52", INICIAR: "#3E9A52",
+  };
   const demoInitial = {
     balance: 15000,
     salary: 6400,
@@ -220,7 +227,7 @@
     if (/compra|comprar|pagamento|item/.test(value)) return { icon: "↘", className: "expense", label: `Você comprou${item}` };
     if (/estud/.test(value)) return { icon: "↘", className: "expense", label: "Você estudou" };
     if (/invest/.test(value)) return { icon: "✳", className: "expense", label: "Você investiu" };
-    if (/rodada|fim_de_rodada|fim_rodada/.test(value)) return { icon: "◎", className: "neutral", label: "Nova rodada" };
+    if (/rodada|fim_de_rodada|fim_rodada/.test(value)) return { icon: "◎", className: "neutral", label: "Você pagou as contas" };
     if (/fal[eê]ncia/.test(value)) return { icon: "!", className: "refused", label: "Você perdeu" };
     if (/fim_jogo/.test(value)) return { icon: "★", className: "neutral", label: "Fim do jogo" };
     if (/inicio_sessao/.test(value)) return { icon: "▶", className: "neutral", label: "Jogo começou" };
@@ -322,9 +329,6 @@
     $("#game-move-value").textContent = String(Math.min(Math.max(state.move, 1), 3));
     setMoneyDisplay("#game-balance-value", state.metricAvailable.balance ? state.balance : Number.NaN);
     $("#game-balance-hint").hidden = state.metricAvailable.balance;
-    setMoneyDisplay("#game-income-value", state.metricAvailable.salary ? state.salary : Number.NaN);
-    setMoneyDisplay("#game-investment-value", state.metricAvailable.investments ? state.investments : Number.NaN);
-    setMoneyDisplay("#game-expenses-value", state.metricAvailable.fixedExpenses ? state.fixedExpenses : Number.NaN);
     for (let move = 1; move <= 3; move += 1) {
       const progress = $(`#move-step-${move}`);
       progress.classList.toggle("done", move < state.move);
@@ -332,12 +336,211 @@
       progress.setAttribute("aria-label", `Jogada ${move}${move === state.move ? ", atual" : ""}`);
     }
 
+    renderProgress();
+    renderNow();
+    renderBills();
     renderSelector();
     renderLastMove();
     renderInventory();
     renderShop();
     renderStats();
     syncCalculatorWithGame();
+  }
+
+  // ---------- Barras de progresso (Dinheiro, Estudo, Investimento, Jornada) ----------
+  // Cada barra mostra algo que muda o jogo de verdade e sobe com o botão de
+  // mesmo nome: TRABALHAR enche o Dinheiro, ESTUDAR o Estudo, INVESTIR o
+  // Investimento. A Jornada avança uma rodada a cada 3 jogadas.
+  function progressValues() {
+    const known = state.metricAvailable;
+    return {
+      balance: known.balance ? state.balance : null,
+      fixed: known.fixedExpenses ? state.fixedExpenses : null,
+      level: known.salary ? Math.max(0, Math.round((state.salary - RULES.baseSalary) / RULES.studyRaise)) : null,
+      invested: known.investments ? state.investments : null,
+      round: state.round,
+    };
+  }
+
+  function nextYield() {
+    // Na FPGA o rendimento é valorInvestido >> 2 (25%), em unidades de R$ 100.
+    if (state.metricAvailable.yield) return state.yield;
+    return Math.floor(state.investments / 400) * 100;
+  }
+
+  function fillTrack(selector, filled, total, danger = false) {
+    const track = $(selector);
+    if (track.children.length !== total) {
+      track.replaceChildren(...Array.from({ length: total }, () => document.createElement("i")));
+    }
+    [...track.children].forEach((block, index) => block.classList.toggle("on", index < filled));
+    track.classList.toggle("danger", danger);
+  }
+
+  function renderProgress() {
+    const value = progressValues();
+
+    // Dinheiro: quantas rodadas de contas o dinheiro paga (é a "vida": acabou, perdeu).
+    const moneyText = $("#stat-dinheiro-text");
+    if (value.balance === null || value.fixed === null) {
+      fillTrack("#stat-dinheiro-track", 0, 5);
+      moneyText.textContent = "Aguardando o jogo";
+    } else {
+      const rounds = value.fixed > 0 ? Math.floor(Math.max(value.balance, 0) / value.fixed) : 5;
+      const danger = value.balance < value.fixed;
+      fillTrack("#stat-dinheiro-track", Math.min(rounds, 5), 5, danger);
+      moneyText.textContent = value.balance < 0 ? "Acabou o dinheiro"
+        : value.fixed <= 0 ? "Sem contas para pagar"
+          : rounds === 0 ? "Cuidado: não paga as contas"
+            : rounds >= 5 ? "Paga 5 ou mais rodadas de contas"
+              : `Paga ${rounds} ${rounds === 1 ? "rodada" : "rodadas"} de contas`;
+      $('.stat[data-stat="dinheiro"]').classList.toggle("danger", danger);
+    }
+
+    // Estudo: cada ESTUDAR sobe 1 nível e o salário (o nível sai do salário).
+    if (value.level === null) {
+      fillTrack("#stat-estudo-track", 0, 10);
+      $("#stat-estudo-text").textContent = "Aguardando o jogo";
+    } else {
+      fillTrack("#stat-estudo-track", Math.min(value.level, 10), 10);
+      $("#stat-estudo-text").textContent = `Nível ${value.level} · salário ${displayCompactMoney(state.salary)}`;
+    }
+
+    // Investimento: um bloco a cada R$ 1 mil guardado.
+    if (value.invested === null) {
+      fillTrack("#stat-investimento-track", 0, 10);
+      $("#stat-investimento-text").textContent = "Aguardando o jogo";
+    } else {
+      fillTrack("#stat-investimento-track", Math.min(Math.floor(value.invested / RULES.investStep), 10), 10);
+      $("#stat-investimento-text").textContent = value.invested > 0
+        ? `${displayCompactMoney(value.invested)} guardado · rende + ${displayCompactMoney(nextYield())} por rodada`
+        : "Nada guardado ainda";
+    }
+
+    // Jornada: 15 rodadas; chegar ao fim sem ficar sem dinheiro é vencer.
+    fillTrack("#stat-jornada-track", Math.min(state.round, RULES.rounds), RULES.rounds);
+  }
+
+  // Na hora da jogada, a barra que mudou pisca e mostra quanto mudou.
+  function animateProgress(before, after) {
+    const show = (stat, text, up) => {
+      const element = $(`.stat[data-stat="${stat}"]`);
+      if (!element) return;
+      element.classList.remove("pulse-up", "pulse-down");
+      element.querySelectorAll(".stat-delta").forEach((old) => old.remove()); // só a mudança mais nova
+      void element.offsetWidth; // reinicia a animação
+      element.classList.add(up ? "pulse-up" : "pulse-down");
+      const tag = document.createElement("span");
+      tag.className = `stat-delta ${up ? "up" : "down"}`;
+      tag.textContent = text;
+      element.append(tag);
+      window.setTimeout(() => {
+        tag.remove();
+        element.classList.remove("pulse-up", "pulse-down");
+      }, 2400);
+    };
+    const money = (delta) => `${delta > 0 ? "+" : "−"} ${displayCompactMoney(Math.abs(delta))}`;
+    if (before.balance !== null && after.balance !== null && after.balance !== before.balance) {
+      show("dinheiro", money(after.balance - before.balance), after.balance > before.balance);
+    }
+    if (before.level !== null && after.level !== null && after.level !== before.level) {
+      const delta = after.level - before.level;
+      show("estudo", `${delta > 0 ? "+" : "−"}${Math.abs(delta)} nível`, delta > 0);
+    }
+    if (before.invested !== null && after.invested !== null && after.invested !== before.invested) {
+      show("investimento", money(after.invested - before.invested), after.invested > before.invested);
+    }
+    if (after.round > before.round) show("jornada", "+1 rodada", true);
+  }
+
+  // ---------- O que você pode fazer agora? ----------
+  function nowItem(button, text, kind = "ok", tag = "") {
+    const item = document.createElement("li");
+    item.className = `now-item ${kind}`;
+    const cap = document.createElement("span");
+    cap.className = "now-cap";
+    cap.style.background = BUTTON_COLORS[button];
+    cap.setAttribute("aria-hidden", "true");
+    const name = document.createElement("strong");
+    name.textContent = button;
+    const description = document.createElement("span");
+    description.className = "now-text";
+    description.textContent = text;
+    item.append(cap, name, description);
+    if (tag) {
+      const badge = document.createElement("small");
+      badge.textContent = tag;
+      item.append(badge);
+    }
+    return item;
+  }
+
+  function renderNow() {
+    const list = $("#now-list");
+    const started = state.events.some((event) => !eventPresentation(event).generic);
+    if (state.gameResult || !started) {
+      list.replaceChildren(nowItem("INICIAR", state.gameResult ? "para jogar de novo" : "para começar o jogo"));
+      return;
+    }
+    const known = state.metricAvailable.balance;
+    const loses = (cost) => known && state.balance - cost < 0;
+    const money = displayCompactMoney;
+    const items = [nowItem("TRABALHAR", `+ ${money(state.salary)}`, "ok", "usa 1 jogada")];
+    items.push(loses(RULES.studyCost)
+      ? nowItem("ESTUDAR", "Se estudar agora, você PERDE", "risk", "usa 1 jogada")
+      : nowItem("ESTUDAR", `− ${money(RULES.studyCost)} agora, salário + ${money(RULES.studyRaise)}`, "ok", "usa 1 jogada"));
+    items.push(loses(RULES.investStep)
+      ? nowItem("INVESTIR", "Se investir agora, você PERDE", "risk")
+      : nowItem("INVESTIR", `Guarda ${money(RULES.investStep)}, que rende todo fim de rodada`));
+    if (state.metricAvailable.investments && state.investments > 0) {
+      items.push(nowItem("RESGATAR", `+ ${money(Math.min(RULES.investStep, state.investments))} volta para o dinheiro`));
+    }
+    const selected = catalog.find((item) => item.id === state.selectorItem);
+    if (!selected) {
+      items.push(nowItem("COMPRAR", "Gire o seletor para escolher um item", "hint"));
+    } else if (state.inventory.includes(selected.id)) {
+      items.push(nowItem("VENDER", `${selected.name}: + ${money(selected.price)}`));
+    } else if (loses(selected.price)) {
+      items.push(nowItem("COMPRAR", `${selected.name}: se comprar, você PERDE`, "risk"));
+    } else {
+      items.push(nowItem("COMPRAR", `${selected.name}: − ${money(selected.price)}${selected.expense
+        ? ` e + ${money(selected.expense)} de conta por rodada` : ""}`));
+    }
+    list.replaceChildren(...items);
+  }
+
+  // ---------- Pagamentos: o que sai no fim de cada rodada ----------
+  function renderBills() {
+    const list = $("#bills-list");
+    if (!state.metricAvailable.fixedExpenses) {
+      const waiting = document.createElement("li");
+      waiting.textContent = "Aguardando o jogo";
+      list.replaceChildren(waiting);
+      $("#bills-total").textContent = "—";
+      return;
+    }
+    const owned = catalog.filter((item) => item.expense && state.inventory.includes(item.id));
+    const basic = state.fixedExpenses - owned.reduce((sum, item) => sum + item.expense, 0);
+    const row = (name, value, image) => {
+      const item = document.createElement("li");
+      const picture = document.createElement(image ? "img" : "span");
+      if (image) {
+        picture.src = image;
+        picture.alt = "";
+      }
+      item.append(picture);
+      const label = document.createElement("span");
+      label.textContent = name;
+      const amount = document.createElement("strong");
+      amount.textContent = `− ${displayCompactMoney(value)}`;
+      item.append(label, amount);
+      return item;
+    };
+    const rows = [];
+    if (basic > 0) rows.push(row("Contas básicas", basic));
+    rows.push(...owned.map((item) => row(item.name, item.expense, item.image)));
+    list.replaceChildren(...rows);
+    $("#bills-total").textContent = `− ${displayCompactMoney(state.fixedExpenses)}`;
   }
 
   function selectorVerdict(item) {
@@ -364,7 +567,7 @@
       $("#selector-name").textContent = selected.name;
       $("#selector-price").textContent = displayCompactMoney(selected.price);
       $("#selector-expense").textContent = selected.expense
-        ? `Gasto: + ${displayCompactMoney(selected.expense)} por rodada`
+        ? `Conta: + ${displayCompactMoney(selected.expense)} por rodada`
         : "";
       const verdictNode = $("#selector-verdict");
       verdictNode.hidden = false;
@@ -754,7 +957,8 @@
     return event;
   }
 
-  function recordPayload(payload, topic) {
+  function recordPayload(payload, topic, isSnapshot = false) {
+    const before = progressValues();
     const event = normalizeEvent(payload);
     event.topic = topic;
     if (event.isSelector) {
@@ -766,6 +970,8 @@
     state.events = state.events.slice(0, MAX_EVENTS);
     persistSession();
     render();
+    // O estado inicial que o backend manda ao conectar não é uma jogada.
+    if (!isSnapshot) animateProgress(before, progressValues());
     if (event.kind === "refused") {
       showToast(eventPresentation(event).label);
     }
@@ -976,7 +1182,7 @@
       }
       if (["snapshot", "event"].includes(payload.type) && payload.data &&
           typeof payload.data === "object" && !Array.isArray(payload.data)) {
-        recordPayload(payload.data, "backend");
+        recordPayload(payload.data, "backend", payload.type === "snapshot");
       } else {
         recordPayload(payload, "backend");
       }
