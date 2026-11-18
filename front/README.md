@@ -26,6 +26,9 @@ textos são curtos e literais ("Você trabalhou", "+ R$ 6,4 mil", "Se comprar,
 você PERDE"). Isso segue o feedback da especialista: mostrar só o que
 interessa, não ter nada que pareça clicável sem ser, e cortar texto.
 
+Na barra do topo, o jogador vê dois botões: **▶ Como jogar** (modo
+demonstração) e o **nome dele** (com "Trocar").
+
 O **modo professor** mostra também as abas (Estatísticas, Calculadora), o
 histórico, a loja detalhada, a conexão com o backend, a troca de jogador e a
 exportação da sessão. Para abrir:
@@ -83,3 +86,47 @@ aviso grande, que fecha no botão **Fechar** (ou Esc) e também some sozinho em 
 dinheiro do que tinha. Por isso, você volta uma jogada." Os avisos de risco
 dizem "Se comprar agora, você perde 1 vida" e, na última vida, "você PERDE o
 jogo". Na 3ª falha, a FPGA manda `falencia` e aparece a tela de fim de jogo.
+
+## Identificação do aluno
+
+Na primeira vez, a tela pergunta "Quem está jogando?". O nome fica salvo neste
+navegador (`localStorage`) até alguém apertar o nome no topo e trocar. A tela do
+jogador envia o nome para cada partida nova no backend
+(`POST /api/sessions/<sessão>/player`), e assim o professor sabe de quem é cada
+partida. Se um cartão RFID que já tem nome for lido, o painel passa a usar o
+nome do cartão. O modo professor não pede nome nem envia nada.
+
+## Modo demonstração ("Como jogar")
+
+O botão **▶ Como jogar** (também no diálogo do nome) mostra uma partida de
+exemplo em 12 passos: INICIAR, a lista de ações, TRABALHAR, ESTUDAR, INVESTIR,
+o seletor, o fim da rodada, COMPRAR, a vida perdida e VENDER. Cada passo manda
+eventos de exemplo pelo mesmo caminho dos eventos da caixa, então a tela reage
+igual ao jogo de verdade, e a parte de que o passo fala fica destacada. Dá para
+avançar e voltar (botões ou setas ← →) e sair com Esc.
+
+A partida de verdade é guardada antes e volta no fim. O que a caixa mandar
+durante a demonstração espera numa fila e entra depois, na ordem.
+
+## Análise do aluno (modo professor)
+
+A aba **Análise do aluno** lê as partidas do backend e agrupa por aluno (nome
+digitado; sem nome, pelo cartão; sem cartão, "Sem identificação"). As contas
+ficam em `analytics.js` (testes em `back/test/analytics.test.js`).
+
+- **Resumo do aluno**: partidas, vitórias e derrotas, melhor patrimônio final
+  (dinheiro + investido + valor dos itens), rodada média alcançada, vidas
+  perdidas e quanto das jogadas foi estudo.
+- **Patrimônio final por partida**: mostra se o aluno melhora de uma partida
+  para a outra.
+- **Partida selecionada**: renda recebida (e quanto veio do estudo), custo de
+  vida pago, rendimento do investimento, gasto em compras, patrimônio final, o
+  gráfico de dinheiro e investimento a cada jogada (pontos vermelhos: jogadas
+  que deixaram o saldo negativo) e quantas vezes apertou cada botão.
+- **O que a partida mostra**: frases curtas para a conversa com o aluno, como
+  quando começou a estudar, se investiu, compras com conta por jogada, jogadas
+  que estouraram o saldo, quantos itens olhou no seletor antes de comprar,
+  compras repetidas de item que já tinha e o ritmo das decisões (muito rápido
+  pode ser apertar sem ler).
+
+Jogadas desfeitas por uma vida perdida não contam nas decisões nem nos valores.

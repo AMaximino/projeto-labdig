@@ -15,7 +15,11 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" href="./images/favicon.ico" sizes="any" />
+    <link rel="icon" href="./images/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon.png" />
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./analytics.js" defer></script>
     <script src="./app.js" defer></script>
   </head>
   <body>
@@ -31,6 +35,10 @@
           <a class="nav-link active" href="#painel-jogo" data-app-tab="game" aria-current="page">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2" /><rect x="13.5" y="3.5" width="7" height="7" rx="2" /><rect x="3.5" y="13.5" width="7" height="7" rx="2" /><rect x="13.5" y="13.5" width="7" height="7" rx="2" /></svg>
             Partida
+          </a>
+          <a class="nav-link" href="#aluno" data-app-tab="students">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /></svg>
+            Análise do aluno
           </a>
           <a class="nav-link" href="#estatisticas" data-app-tab="stats">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6.5 16v-4m5 4V6m5 10v-7" /></svg>
@@ -85,7 +93,14 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10m4 0h2M4 17h2m4 0h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></svg>
               Conexão de dados
             </button>
-            <span class="player-name-tag so-jogador" id="player-name-tag">—</span>
+            <button class="button tutorial-button" id="open-tutorial" type="button">
+              <span aria-hidden="true">▶</span> Como jogar
+            </button>
+            <button class="player-tag so-jogador" id="player-name-tag" type="button" aria-label="Trocar o nome do jogador">
+              <span class="player-tag-icon" aria-hidden="true">👤</span>
+              <strong id="player-name-tag-value">—</strong>
+              <span class="player-tag-change">Trocar</span>
+            </button>
             <button class="player-chip so-professor" id="player-chip" type="button" aria-label="Trocar jogador">
               <span class="player-chip-label">JOGADOR</span>
               <strong id="player-chip-name">—</strong>
@@ -102,6 +117,7 @@
 
         <nav class="primary-tabs so-professor" aria-label="Navegação principal">
           <a class="primary-tab active" href="#painel-jogo" data-app-tab="game" aria-current="page">Partida</a>
+          <a class="primary-tab" href="#aluno" data-app-tab="students">Análise do aluno</a>
           <a class="primary-tab" href="#estatisticas" data-app-tab="stats">Estatísticas</a>
           <a class="primary-tab" href="#calculadora" data-app-tab="calculator">Calculadora</a>
         </nav>
@@ -216,6 +232,78 @@
               </div>
               <div class="shop-grid" id="shop-grid" aria-live="polite"></div>
             </section>
+          </section>
+
+          <section class="students-view tab-panel" id="aluno" data-tab-panel="students" aria-labelledby="students-title" hidden>
+            <div class="view-intro">
+              <span class="view-art stats-art" aria-hidden="true">🧑‍🎓</span>
+              <div><p class="eyebrow"><span class="eyebrow-line"></span> MODO PROFESSOR</p><h1 id="students-title">Análise do aluno</h1><p>Escolha um aluno para ver como ele joga: decisões, riscos, estudo, investimento e evolução entre partidas.</p></div>
+            </div>
+
+            <div class="students-toolbar panel">
+              <label class="field-label" for="student-select">Aluno</label>
+              <select id="student-select"></select>
+              <label class="students-check"><input type="checkbox" id="students-hide-empty" checked /> Esconder partidas sem jogadas</label>
+              <button class="button button-outline" id="students-refresh" type="button">Atualizar</button>
+              <span class="students-status" id="students-status" role="status"></span>
+            </div>
+
+            <div id="student-content" hidden>
+              <section class="kpi-grid" aria-label="Resumo do aluno">
+                <article class="kpi panel"><span>Partidas jogadas</span><strong id="kpi-games">—</strong><small id="kpi-games-detail"></small></article>
+                <article class="kpi panel"><span>Melhor patrimônio final</span><strong id="kpi-best">—</strong><small>dinheiro + investido + itens</small></article>
+                <article class="kpi panel"><span>Rodada média alcançada</span><strong id="kpi-round">—</strong><small>de 15, nas partidas terminadas</small></article>
+                <article class="kpi panel"><span>Vidas perdidas</span><strong id="kpi-lives">—</strong><small id="kpi-lives-detail">gastou mais do que tinha</small></article>
+                <article class="kpi panel"><span>Jogadas de estudo</span><strong id="kpi-study">—</strong><small>das jogadas de trabalho ou estudo</small></article>
+              </section>
+
+              <section class="panel students-block" aria-labelledby="trend-title">
+                <div class="block-heading"><div><h2 id="trend-title">Patrimônio final por partida</h2><p>Da mais antiga para a mais nova. Mostra se o aluno está melhorando.</p></div><span class="chart-legend-inline" id="trend-legend"></span></div>
+                <div class="chart-box" id="trend-chart"></div>
+              </section>
+
+              <section class="panel students-block" aria-labelledby="games-title">
+                <div class="block-heading"><div><h2 id="games-title">Partidas</h2><p>Clique numa partida para ver os detalhes.</p></div></div>
+                <div class="games-table-wrap">
+                  <table class="games-table">
+                    <thead><tr><th scope="col">Início</th><th scope="col">Resultado</th><th scope="col">Rodada</th><th scope="col">Jogadas</th><th scope="col">Vidas perdidas</th><th scope="col">Patrimônio final</th></tr></thead>
+                    <tbody id="games-body"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="session-detail" id="session-detail" aria-labelledby="session-title">
+                <div class="block-heading"><div><h2 id="session-title">Partida selecionada</h2><p id="session-subtitle"></p></div></div>
+                <div class="kpi-grid kpi-grid-session">
+                  <article class="kpi panel"><span>Renda recebida</span><strong id="sd-income">—</strong><small id="sd-income-detail"></small></article>
+                  <article class="kpi panel"><span>Custo de vida pago</span><strong id="sd-living">—</strong><small id="sd-living-detail"></small></article>
+                  <article class="kpi panel"><span>Rendimento do investimento</span><strong id="sd-yield">—</strong><small id="sd-yield-detail"></small></article>
+                  <article class="kpi panel"><span>Gasto em compras</span><strong id="sd-spent">—</strong><small id="sd-spent-detail"></small></article>
+                  <article class="kpi panel"><span>Patrimônio final</span><strong id="sd-networth">—</strong><small id="sd-networth-detail"></small></article>
+                </div>
+                <div class="detail-columns">
+                  <section class="panel students-block" aria-labelledby="timeline-title">
+                    <div class="block-heading"><div><h2 id="timeline-title">Dinheiro e investimento ao longo da partida</h2><p>Uma marca por jogada. Pontos vermelhos: jogadas que deixaram o saldo negativo.</p></div></div>
+                    <div class="chart-legend" aria-hidden="true"><span><i class="swatch swatch-balance"></i>Dinheiro</span><span><i class="swatch swatch-invested"></i>Investido</span></div>
+                    <div class="chart-box" id="timeline-chart"></div>
+                  </section>
+                  <section class="panel students-block" aria-labelledby="decisions-title">
+                    <div class="block-heading"><div><h2 id="decisions-title">Decisões</h2><p>Quantas vezes apertou cada botão (jogadas desfeitas não contam).</p></div></div>
+                    <ul class="decision-bars" id="decision-bars"></ul>
+                  </section>
+                </div>
+                <section class="panel students-block" aria-labelledby="insights-title">
+                  <div class="block-heading"><div><h2 id="insights-title">O que a partida mostra</h2><p>Leitura automática das jogadas, para apoiar a conversa com o aluno.</p></div></div>
+                  <ul class="insights-list" id="insights-list"></ul>
+                </section>
+              </section>
+            </div>
+
+            <div class="students-empty panel" id="students-empty">
+              <span aria-hidden="true">🧑‍🎓</span>
+              <strong id="students-empty-title">Carregando partidas…</strong>
+              <p id="students-empty-text">Os dados vêm do backend (as partidas jogadas na caixa).</p>
+            </div>
           </section>
 
           <section class="calculator-view tab-panel" id="calculadora" data-tab-panel="calculator" aria-labelledby="calculator-title" hidden>
@@ -425,12 +513,14 @@
     <dialog class="settings-dialog name-dialog" id="name-dialog" aria-labelledby="name-dialog-title">
       <form class="settings-form" id="name-form">
         <div class="dialog-heading">
-          <div><h2 id="name-dialog-title">Qual é o seu nome?</h2></div>
+          <div><span class="eyebrow"><span class="eyebrow-line"></span> ANTES DE COMEÇAR</span><h2 id="name-dialog-title">Quem está jogando?</h2></div>
         </div>
+        <p class="dialog-copy">Escreva seu nome. Ele fica salvo neste computador até você trocar.</p>
         <label class="field-label" for="name-dialog-input">Nome</label>
         <input id="name-dialog-input" name="playerName" type="text" maxlength="24" placeholder="Seu nome" autocomplete="off" required />
         <p class="connection-feedback" id="name-dialog-feedback" role="status"></p>
         <div class="dialog-actions">
+          <button class="button button-outline" id="name-dialog-tutorial" type="button">▶ Ver como jogar</button>
           <button class="button button-outline" id="name-dialog-cancel" type="button">Manter o nome atual</button>
           <button class="button button-primary" type="submit">Jogar</button>
         </div>
@@ -461,6 +551,29 @@
         <button class="button life-lost-close" id="life-lost-close" type="button">Fechar</button>
       </section>
     </div>
+
+    <section class="tutorial-coach" id="tutorial-coach" role="dialog" aria-modal="false" aria-labelledby="tutorial-title" aria-describedby="tutorial-text" hidden>
+      <div class="tutorial-top">
+        <span class="tutorial-badge">MODO DEMONSTRAÇÃO</span>
+        <span class="tutorial-step" id="tutorial-step">1 de 10</span>
+      </div>
+      <div class="tutorial-body">
+        <span class="tutorial-cap" id="tutorial-cap" aria-hidden="true"></span>
+        <div>
+          <h2 id="tutorial-title">Como jogar</h2>
+          <p id="tutorial-text"></p>
+        </div>
+      </div>
+      <div class="tutorial-progress" id="tutorial-progress" aria-hidden="true"></div>
+      <div class="tutorial-actions">
+        <button class="button button-text" id="tutorial-exit" type="button">Sair da demonstração</button>
+        <span class="tutorial-nav">
+          <button class="button button-outline" id="tutorial-back" type="button">← Voltar</button>
+          <button class="button button-primary" id="tutorial-next" type="button">Próximo →</button>
+        </span>
+      </div>
+      <p class="tutorial-note">Isto é só um exemplo: não muda o seu jogo de verdade.</p>
+    </section>
 
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
   </body>

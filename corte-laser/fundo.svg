@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400.0mm" height="300.0mm" viewBox="0 0 400.0 300.0">
+<title>FUNDO 400 × 300 mm (caixa de cabeça para baixo, frente embaixo)</title>
+<g id="referencia_nao_cortar" fill="none" stroke="#0000ff" stroke-width="0.0254"><rect x="0" y="0" width="400.0" height="300.0"/></g>
+<g id="corte" fill="none" stroke="#ff0000" stroke-width="0.0254">
+<rect id="abertura" x="160.000" y="210.000" width="80.000" height="60.000"/>
+</g>
+</svg>

@@ -1,0 +1,38 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 212.598 113.386] /Contents 4 0 R /Resources << >> >>
+endobj
+4 0 obj
+<< /Length 333 >>
+stream
+0.0720 w
+0 J 0 j
+1.000 0.000 0.000 RG
+0.000 0.000 212.598 113.386 re S
+1.000 0.000 0.000 RG
+34.016 35.433 42.520 42.520 re S
+175.748 56.693 m 175.748 72.349 163.057 85.039 147.402 85.039 c 131.746 85.039 119.055 72.349 119.055 56.693 c 119.055 41.037 131.746 28.346 147.402 28.346 c 163.057 28.346 175.748 41.037 175.748 56.693 c h S
+endstream
+endobj
+5 0 obj
+<< /Title (teste) /Creator (corte-laser/gerar.py) >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000227 00000 n 
+0000000611 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R /Info 5 0 R >>
+startxref
+679
+%%EOF

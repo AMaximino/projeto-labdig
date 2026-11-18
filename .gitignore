@@ -38,3 +38,7 @@ back/node_modules/
 # Modelagem (ambiente Python local)
 modelagem/.venv/
 __pycache__/
+
+# Vídeos (grandes demais para o GitHub)
+video-demostracao/*.MOV
+video-demostracao/*.mp4

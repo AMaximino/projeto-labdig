@@ -107,7 +107,11 @@
     reconnectEnabled: false,
     reconnectAttempts: 0,
     visibleLimit: 5,
+    sessionKey: "",
+    syncedName: "",
   };
+  // Modo demonstração (tutorial): partida de exemplo, sem tocar na de verdade.
+  const tutorial = { active: false, step: 0, queue: [], snapshot: null };
 
   function defaultBackendUrl() {
     const scheme = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -115,6 +119,7 @@
   }
 
   function persistSession() {
+    if (tutorial.active) return; // a demonstração não muda a partida salva
     const { reconnectTimer, ...persisted } = state;
     try {
       localStorage.setItem(SESSION_KEY, JSON.stringify({
@@ -144,6 +149,7 @@
     try {
       localStorage.setItem(PREFS_KEY, JSON.stringify({
         playerName: state.playerName,
+        professorStudent: prefs.professorStudent || "",
       }));
     } catch (error) {
       console.warn("Não foi possível salvar as preferências no navegador.", error);
@@ -867,6 +873,7 @@
       if (active) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });
+    if (tabName === "students") loadStudents();
     if (scrollTarget) {
       window.setTimeout(() => document.getElementById(scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
     } else {
@@ -902,7 +909,8 @@
       ? `${Math.min(100, (state.uniqueExpenses / maxExpense) * 100)}%` : "0%";
     $("#player-name-heading").textContent = state.playerName || "Jogador";
     $("#player-chip-name").textContent = state.playerName || "—";
-    $("#player-name-tag").textContent = state.playerName || "";
+    $("#player-name-tag-value").textContent = state.playerName || "";
+    $("#player-name-tag").hidden = !state.playerName;
     $("#player-avatar").textContent = (state.playerName || "J").trim().charAt(0).toLocaleUpperCase("pt-BR");
     drawChart();
     renderGame();
@@ -941,6 +949,9 @@
         ? payload.data
         : payload;
     const eventCode = String(firstValue(nested, ["evento", "event", "tipo_evento", "tipo", "type", "acao", "action"]) || "atualizacao");
+    if (typeof nested.device_id === "string" && typeof nested.session_id === "string" && !tutorial.active) {
+      state.sessionKey = `${nested.device_id}:${nested.session_id}`;
+    }
     const lowerCode = eventCode.toLowerCase();
     const isSelector = /seletor/.test(lowerCode);
     const balance = readMoney(
@@ -1065,6 +1076,7 @@
     if (event.kind === "refused") {
       showToast(eventPresentation(event).label);
     }
+    syncPlayerName();
     const code = event.event || "";
     if (/fal[eê]ncia/.test(code)) setGameResult("lost");
     else if (/fim_jogo/.test(code)) setGameResult("won");
@@ -1190,6 +1202,642 @@
     if (context) context.clearRect(0, 0, canvas.width, canvas.height);
   }
 
+  // ---------- Modo professor: análise do aluno ----------
+  // Partidas vêm do backend (/api/sessions). Cada partida é de um aluno pelo
+  // nome que ele digitou na tela do jogo (ou pelo cartão, se não houver nome).
+  const analytics = window.AEFAnalytics;
+  const students = { sessions: [], byStudent: new Map(), selected: "", sessionKey: "", cache: new Map(), loading: false, loadedAt: 0 };
+  const MAX_SESSIONS_PER_STUDENT = 60;
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const RESULT_LABEL = { venceu: "★ Venceu", faliu: "✕ Perdeu", em_andamento: "… Não terminou" };
+  const DECISIONS = [
+    ["trabalhar", "TRABALHAR"], ["estudar", "ESTUDAR"], ["investir", "INVESTIR"], ["resgatar", "RESGATAR"],
+    ["compra_aprovada", "COMPRAR"], ["venda_aprovada", "VENDER"],
+  ];
+
+  function hasPlays(meta) {
+    return (meta.trabalhou || 0) + (meta.estudou || 0) + (meta.investiu || 0) + (meta.resgatou || 0)
+      + (meta.compras || 0) + (meta.vendas || 0) > 0;
+  }
+
+  function setStudentsStatus(title, text = "") {
+    const empty = !students.byStudent.size || title;
+    $("#students-empty").hidden = !empty;
+    $("#student-content").hidden = Boolean(empty);
+    if (title) {
+      $("#students-empty-title").textContent = title;
+      $("#students-empty-text").textContent = text;
+    }
+  }
+
+  async function loadStudents(force = false) {
+    if (!analytics || students.loading) return;
+    if (!force && Date.now() - students.loadedAt < 15000 && students.sessions.length) return;
+    students.loading = true;
+    $("#students-status").textContent = "Carregando…";
+    try {
+      const response = await fetch(`${apiBase}/api/sessions`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const list = await response.json();
+      students.sessions = Array.isArray(list) ? list : [];
+      students.loadedAt = Date.now();
+      if (force) students.cache.clear();
+      renderStudentOptions();
+      $("#students-status").textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+    } catch (error) {
+      console.warn("Não foi possível carregar as partidas.", error);
+      $("#students-status").textContent = "";
+      students.byStudent.clear();
+      setStudentsStatus("Não foi possível falar com o backend", `Abra o painel pelo endereço do servidor (ex.: http://localhost:3000/?professor). Erro: ${error.message}`);
+    } finally {
+      students.loading = false;
+    }
+  }
+
+  function renderStudentOptions() {
+    const hideEmpty = $("#students-hide-empty").checked;
+    students.byStudent = new Map();
+    for (const meta of students.sessions) {
+      if (hideEmpty && !hasPlays(meta)) continue;
+      const label = analytics.studentLabel(meta);
+      if (!students.byStudent.has(label)) students.byStudent.set(label, []);
+      students.byStudent.get(label).push(meta);
+    }
+    const recent = (meta) => Date.parse(meta.updated_at || meta.started_at || "") || 0;
+    for (const list of students.byStudent.values()) list.sort((a, b) => recent(a) - recent(b));
+    // Alunos com nome primeiro, depois cartões, depois sem identificação; cada grupo do mais recente.
+    const rank = (label) => (label === "Sem identificação" ? 2 : label.startsWith("Cartão ") ? 1 : 0);
+    const labels = [...students.byStudent.keys()].sort((a, b) => rank(a) - rank(b)
+      || recent(students.byStudent.get(b).at(-1)) - recent(students.byStudent.get(a).at(-1)));
+    const select = $("#student-select");
+    select.replaceChildren(...labels.map((label) => {
+      const count = students.byStudent.get(label).length;
+      return new Option(`${label} · ${count} ${count === 1 ? "partida" : "partidas"}`, label);
+    }));
+    if (!labels.length) {
+      setStudentsStatus("Nenhuma partida ainda", hideEmpty
+        ? "Quando um aluno jogar na caixa, as partidas aparecem aqui. Desmarque \"Esconder partidas sem jogadas\" para ver todas."
+        : "Quando um aluno jogar na caixa, as partidas aparecem aqui.");
+      return;
+    }
+    const keep = labels.includes(students.selected) ? students.selected
+      : labels.includes(prefs.professorStudent) ? prefs.professorStudent : labels[0];
+    select.value = keep;
+    selectStudent(keep);
+  }
+
+  async function fetchSessionEvents(key) {
+    if (students.cache.has(key)) return students.cache.get(key);
+    const response = await fetch(`${apiBase}/api/sessions/${encodeURIComponent(key)}/events?limit=500`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const events = await response.json();
+    students.cache.set(key, events);
+    return events;
+  }
+
+  async function selectStudent(label) {
+    students.selected = label;
+    prefs.professorStudent = label;
+    persistPreferences();
+    const metas = (students.byStudent.get(label) || []).slice(-MAX_SESSIONS_PER_STUDENT);
+    $("#students-status").textContent = "Carregando partidas…";
+    let analyses;
+    try {
+      analyses = await Promise.all(metas.map(async (meta) => ({
+        meta,
+        analysis: analytics.analyzeSession(await fetchSessionEvents(meta.key), catalog),
+      })));
+    } catch (error) {
+      setStudentsStatus("Não foi possível carregar as partidas", error.message);
+      return;
+    }
+    if (students.selected !== label) return; // o professor já escolheu outro aluno
+    $("#students-status").textContent = metas.length < (students.byStudent.get(label) || []).length
+      ? `Mostrando as ${metas.length} partidas mais recentes`
+      : "";
+    students.analyses = analyses;
+    setStudentsStatus("");
+    renderStudentSummary(label, analyses);
+    const latest = analyses.at(-1);
+    const keepSession = analyses.find((entry) => entry.meta.key === students.sessionKey) || latest;
+    if (keepSession) renderSessionDetail(keepSession);
+  }
+
+  function formatDateTime(ms) {
+    if (!ms) return "—";
+    return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(ms));
+  }
+
+  function formatDuration(seconds) {
+    if (!Number.isFinite(seconds)) return "";
+    const minutes = Math.round(seconds / 60);
+    return minutes < 1 ? "menos de 1 min" : `${minutes} min`;
+  }
+
+  function percent(value) {
+    return value === null || value === undefined ? "—" : `${Math.round(value * 100)}%`;
+  }
+
+  function renderStudentSummary(label, analyses) {
+    const summary = analytics.analyzeStudent(analyses.map((entry) => entry.analysis));
+    $("#kpi-games").textContent = String(summary.games);
+    $("#kpi-games-detail").textContent = `${summary.wins} ${summary.wins === 1 ? "vitória" : "vitórias"} · ${summary.losses} ${summary.losses === 1 ? "derrota" : "derrotas"} · ${summary.inProgress} sem terminar`;
+    $("#kpi-best").textContent = summary.bestNetWorth === null ? "—" : displayCompactMoney(summary.bestNetWorth);
+    $("#kpi-best").title = summary.bestNetWorth === null ? "" : `Valor exato: ${displayMoney(summary.bestNetWorth)}`;
+    $("#kpi-round").textContent = summary.averageRound === null ? "—" : summary.averageRound.toFixed(1).replace(".", ",");
+    $("#kpi-lives").textContent = String(summary.livesLost);
+    $("#kpi-lives-detail").textContent = summary.games
+      ? `média de ${(summary.livesLost / summary.games).toFixed(1).replace(".", ",")} por partida`
+      : "gastou mais do que tinha";
+    $("#kpi-study").textContent = percent(summary.studyShare);
+    drawTrendChart(analyses);
+    $("#games-body").replaceChildren(...[...analyses].reverse().map((entry) => {
+      const { meta, analysis } = entry;
+      const row = document.createElement("tr");
+      row.dataset.key = meta.key;
+      row.classList.toggle("selected", meta.key === students.sessionKey);
+      const cells = [
+        formatDateTime(analysis.startedAt),
+        RESULT_LABEL[analysis.result],
+        `${analysis.roundReached} de 15`,
+        String(analysis.decisions),
+        String(analysis.livesLost),
+        displayCompactMoney(analysis.netWorth),
+      ];
+      cells.forEach((text, index) => {
+        const cell = document.createElement("td");
+        if (index === 0) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "games-open";
+          button.textContent = text;
+          button.setAttribute("aria-label", `Ver a partida de ${text}`);
+          cell.append(button);
+        } else {
+          cell.textContent = text;
+        }
+        if (index === 1) cell.className = `result ${analysis.result}`;
+        row.append(cell);
+      });
+      row.addEventListener("click", () => {
+        renderSessionDetail(entry);
+        drawTrendChart(analyses);
+      });
+      return row;
+    }));
+  }
+
+  function renderSessionDetail({ meta, analysis }) {
+    students.sessionKey = meta.key;
+    document.querySelectorAll("#games-body tr").forEach((row) => row.classList.toggle("selected", row.dataset.key === meta.key));
+    const a = analysis;
+    $("#session-title").textContent = `Partida de ${formatDateTime(a.startedAt)}`;
+    $("#session-subtitle").textContent = [
+      RESULT_LABEL[a.result],
+      `rodada ${a.roundReached} de 15`,
+      `${a.decisions} decisões`,
+      formatDuration(a.durationSeconds),
+      a.items.length ? `terminou com: ${a.items.join(", ")}` : "",
+    ].filter(Boolean).join(" · ");
+    const put = (id, value, detail) => {
+      $(`#${id}`).textContent = displayCompactMoney(value);
+      $(`#${id}`).title = `Valor exato: ${displayMoney(value)}`;
+      $(`#${id}-detail`).textContent = detail;
+    };
+    put("sd-income", a.income, a.extraIncomeFromStudy > 0
+      ? `${displayCompactMoney(a.extraIncomeFromStudy)} vieram do estudo` : "só o salário inicial");
+    put("sd-living", a.livingCostPaid, a.recurringCostAdded > 0
+      ? `itens comprados somaram + ${displayCompactMoney(a.recurringCostAdded)} por jogada` : "só as contas básicas");
+    put("sd-yield", a.yieldEarned, a.counts.investir ? `investiu ${a.counts.investir}× · resgatou ${a.counts.resgatar}×` : "não investiu");
+    put("sd-spent", a.spentOnItems, a.counts.compra_aprovada
+      ? `${a.counts.compra_aprovada} ${a.counts.compra_aprovada === 1 ? "item" : "itens"}${a.soldItems ? ` · vendeu ${displayCompactMoney(a.soldItems)}` : ""}`
+      : "não comprou");
+    put("sd-networth", a.netWorth, `${percent(a.investedShare)} investido · salário ${displayCompactMoney(a.finalSalary)}`);
+    drawTimelineChart(a.timeline);
+    const max = Math.max(1, ...DECISIONS.map(([code]) => a.counts[code]));
+    $("#decision-bars").replaceChildren(...DECISIONS.map(([code, button]) => {
+      const item = document.createElement("li");
+      const cap = document.createElement("span");
+      cap.className = "now-cap";
+      cap.style.background = BUTTON_COLORS[button];
+      cap.setAttribute("aria-hidden", "true");
+      const name = document.createElement("strong");
+      name.textContent = button;
+      const track = document.createElement("span");
+      track.className = "decision-track";
+      const bar = document.createElement("i");
+      bar.style.width = `${(a.counts[code] / max) * 100}%`;
+      track.append(bar);
+      const value = document.createElement("span");
+      value.className = "decision-value";
+      value.textContent = String(a.counts[code]);
+      item.append(cap, name, track, value);
+      return item;
+    }));
+    const refused = a.counts.compra_recusada + a.counts.venda_recusada;
+    if (refused) {
+      const note = document.createElement("li");
+      note.className = "decision-note";
+      note.textContent = `+ ${refused} ${refused === 1 ? "tentativa recusada" : "tentativas recusadas"} (comprar item que já tinha ou vender item que não tinha)`;
+      $("#decision-bars").append(note);
+    }
+    const list = analytics.insights(a);
+    $("#insights-list").replaceChildren(...(list.length ? list : [{ tone: "info", title: "Pouco para analisar", text: "A partida tem poucas jogadas." }]).map((entry) => {
+      const item = document.createElement("li");
+      item.className = `insight ${entry.tone}`;
+      const icon = document.createElement("span");
+      icon.className = "insight-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = entry.tone === "good" ? "✓" : entry.tone === "warn" ? "!" : "•";
+      const copy = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = `${entry.title}${entry.tone === "good" ? " · bom sinal" : entry.tone === "warn" ? " · vale conversar" : ""}`;
+      const text = document.createElement("p");
+      text.textContent = entry.text;
+      copy.append(title, text);
+      item.append(icon, copy);
+      return item;
+    }));
+  }
+
+  // ---------- Gráficos (SVG simples, com dica ao passar o mouse) ----------
+  function svgEl(name, attributes = {}, text = "") {
+    const element = document.createElementNS(SVG_NS, name);
+    for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, String(value));
+    if (text) element.textContent = text;
+    return element;
+  }
+
+  function niceScale(minValue, maxValue, ticks = 4) {
+    const min = Math.min(0, minValue);
+    const max = Math.max(0, maxValue, min + 1);
+    const rough = (max - min) / ticks;
+    const power = 10 ** Math.floor(Math.log10(rough));
+    const step = [1, 2, 2.5, 5, 10].map((factor) => factor * power).find((candidate) => candidate >= rough) || rough;
+    const low = Math.floor(min / step) * step;
+    const high = Math.ceil(max / step) * step;
+    const values = [];
+    for (let value = low; value <= high + step / 2; value += step) values.push(value);
+    return { low, high, values };
+  }
+
+  function chartTooltip(box) {
+    let tip = box.querySelector(".chart-tip");
+    if (!tip) {
+      tip = document.createElement("div");
+      tip.className = "chart-tip";
+      tip.hidden = true;
+      box.append(tip);
+    }
+    return tip;
+  }
+
+  function showTip(box, tip, lines, x, y) {
+    tip.replaceChildren(...lines.map((line, index) => {
+      const row = document.createElement(index === 0 ? "strong" : "span");
+      row.textContent = line;
+      return row;
+    }));
+    tip.hidden = false;
+    const width = box.clientWidth;
+    tip.style.left = `${Math.min(Math.max(x + 12, 4), width - tip.offsetWidth - 4)}px`;
+    tip.style.top = `${Math.max(y - tip.offsetHeight - 10, 4)}px`;
+  }
+
+  function drawFrame(svg, scale, { width, height, left, right, top, bottom }) {
+    const y = (value) => top + (height - top - bottom) * (1 - (value - scale.low) / (scale.high - scale.low || 1));
+    for (const value of scale.values) {
+      svg.append(svgEl("line", { x1: left, x2: width - right, y1: y(value), y2: y(value), class: value === 0 ? "axis-zero" : "grid" }));
+      svg.append(svgEl("text", { x: left - 8, y: y(value) + 4, class: "axis-label", "text-anchor": "end" }, displayCompactMoney(value)));
+    }
+    return y;
+  }
+
+  const EVENT_NAMES = {
+    inicio_sessao: "Início", trabalhar: "Trabalhou", estudar: "Estudou", investir: "Investiu", resgatar: "Resgatou",
+    compra_aprovada: "Comprou", venda_aprovada: "Vendeu", compra_recusada: "Compra recusada", venda_recusada: "Venda recusada",
+    fim_rodada: "Fim da rodada", vida_perdida: "Perdeu uma vida", falencia: "Perdeu o jogo", fim_jogo: "Fim do jogo",
+  };
+
+  function drawTimelineChart(points) {
+    const box = $("#timeline-chart");
+    box.replaceChildren();
+    if (points.length < 2) {
+      box.textContent = "Poucas jogadas para desenhar o gráfico.";
+      return;
+    }
+    const size = { width: 640, height: 240, left: 66, right: 14, top: 12, bottom: 26 };
+    const svg = svgEl("svg", { viewBox: `0 0 ${size.width} ${size.height}`, role: "img", "aria-label": "Dinheiro e investimento a cada jogada" });
+    const values = points.flatMap((point) => [point.balance, point.invested]);
+    const scale = niceScale(Math.min(...values), Math.max(...values));
+    const y = drawFrame(svg, scale, size);
+    const x = (index) => size.left + ((size.width - size.left - size.right) * index) / (points.length - 1);
+    const path = (key) => points.map((point, index) => `${index ? "L" : "M"} ${x(index).toFixed(1)} ${y(point[key]).toFixed(1)}`).join(" ");
+    svg.append(svgEl("path", { d: path("invested"), class: "series-line invested" }));
+    svg.append(svgEl("path", { d: path("balance"), class: "series-line balance" }));
+    points.forEach((point, index) => {
+      if (point.undone || point.event === "falencia") svg.append(svgEl("circle", { cx: x(index), cy: y(point.balance), r: 5, class: "risk-point" }));
+    });
+    // Rodadas no eixo de baixo.
+    let lastRound = 0;
+    points.forEach((point, index) => {
+      if (point.round !== lastRound && (point.round === 1 || point.round % 2 === 1)) {
+        svg.append(svgEl("text", { x: x(index), y: size.height - 6, class: "axis-label", "text-anchor": "middle" }, `R${point.round}`));
+      }
+      lastRound = point.round;
+    });
+    const cross = svgEl("line", { y1: size.top, y2: size.height - size.bottom, class: "crosshair", visibility: "hidden" });
+    const dotBalance = svgEl("circle", { r: 4.5, class: "hover-dot balance", visibility: "hidden" });
+    const dotInvested = svgEl("circle", { r: 4.5, class: "hover-dot invested", visibility: "hidden" });
+    svg.append(cross, dotInvested, dotBalance);
+    const hit = svgEl("rect", { x: size.left, y: 0, width: size.width - size.left - size.right, height: size.height, fill: "transparent" });
+    svg.append(hit);
+    box.append(svg);
+    const tip = chartTooltip(box);
+    const move = (event) => {
+      const rect = svg.getBoundingClientRect();
+      const svgX = ((event.clientX - rect.left) / rect.width) * size.width;
+      const index = Math.round(((svgX - size.left) / (size.width - size.left - size.right)) * (points.length - 1));
+      const point = points[Math.min(Math.max(index, 0), points.length - 1)];
+      const at = Math.min(Math.max(index, 0), points.length - 1);
+      cross.setAttribute("x1", x(at));
+      cross.setAttribute("x2", x(at));
+      dotBalance.setAttribute("cx", x(at));
+      dotBalance.setAttribute("cy", y(point.balance));
+      dotInvested.setAttribute("cx", x(at));
+      dotInvested.setAttribute("cy", y(point.invested));
+      [cross, dotBalance, dotInvested].forEach((element) => element.setAttribute("visibility", "visible"));
+      showTip(box, tip, [
+        `${EVENT_NAMES[point.event] || point.event}${point.undone ? " (desfeita)" : ""} · rodada ${point.round}`,
+        `Dinheiro: ${displayMoney(point.balance)}`,
+        `Investido: ${displayMoney(point.invested)}`,
+      ], (x(at) / size.width) * rect.width, (y(point.balance) / size.height) * rect.height);
+    };
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerleave", () => {
+      tip.hidden = true;
+      [cross, dotBalance, dotInvested].forEach((element) => element.setAttribute("visibility", "hidden"));
+    });
+  }
+
+  function drawTrendChart(analyses) {
+    const box = $("#trend-chart");
+    box.replaceChildren();
+    if (!analyses.length) return;
+    const size = { width: 900, height: 200, left: 66, right: 10, top: 12, bottom: 26 };
+    const svg = svgEl("svg", { viewBox: `0 0 ${size.width} ${size.height}`, role: "img", "aria-label": "Patrimônio final de cada partida" });
+    const values = analyses.map((entry) => entry.analysis.netWorth);
+    const scale = niceScale(Math.min(...values), Math.max(...values));
+    const y = drawFrame(svg, scale, size);
+    const slot = (size.width - size.left - size.right) / analyses.length;
+    const barWidth = Math.max(4, Math.min(38, slot - 4));
+    const tip = chartTooltip(box);
+    analyses.forEach((entry, index) => {
+      const { analysis } = entry;
+      const cx = size.left + slot * index + slot / 2;
+      const top = Math.min(y(analysis.netWorth), y(0));
+      const height = Math.max(2, Math.abs(y(analysis.netWorth) - y(0)));
+      const bar = svgEl("rect", {
+        x: cx - barWidth / 2, y: top, width: barWidth, height, rx: Math.min(4, barWidth / 2),
+        class: `trend-bar ${analysis.result}${entry.meta.key === students.sessionKey ? " selected" : ""}`,
+      });
+      svg.append(bar);
+      if (analyses.length <= 24) {
+        const mark = analysis.result === "venceu" ? "★" : analysis.result === "faliu" ? "✕" : "…";
+        svg.append(svgEl("text", { x: cx, y: size.height - 6, class: "axis-label", "text-anchor": "middle" }, `${index + 1}${mark}`));
+      }
+      const hit = svgEl("rect", { x: cx - slot / 2, y: 0, width: slot, height: size.height, fill: "transparent", class: "trend-hit" });
+      hit.addEventListener("pointerenter", () => {
+        const rect = svg.getBoundingClientRect();
+        showTip(box, tip, [
+          `Partida ${index + 1} · ${formatDateTime(analysis.startedAt)}`,
+          `${RESULT_LABEL[analysis.result]} · rodada ${analysis.roundReached}`,
+          `Patrimônio: ${displayMoney(analysis.netWorth)}`,
+        ], (cx / size.width) * rect.width, (top / size.height) * rect.height);
+      });
+      hit.addEventListener("pointerleave", () => { tip.hidden = true; });
+      hit.addEventListener("click", () => {
+        renderSessionDetail(entry);
+        drawTrendChart(analyses);
+      });
+      svg.append(hit);
+    });
+    box.prepend(svg);
+    $("#trend-legend").textContent = "★ venceu · ✕ perdeu · … não terminou";
+  }
+
+  // ---------- Modo demonstração: ensina a jogar com uma partida de exemplo ----------
+  // Cada passo manda eventos de mentira pelo mesmo caminho da caixa de verdade
+  // (recordPayload), então a tela reage igual: barras piscam, vida perdida
+  // aparece etc. A partida de verdade fica guardada e volta no fim; o que a
+  // caixa mandar nesse meio-tempo espera numa fila.
+  function buildTutorialSteps() {
+    const game = {
+      saldo: 15000, salario: 6400, investido: 0, fixos: 4000, unicos: 0,
+      mask: 0, rodada: 1, jogada: 1, vidas: 3,
+    };
+    const emit = (event, changes = {}, itemId = 0) => {
+      Object.assign(game, changes);
+      return {
+        event, item_id: itemId, status: "ok",
+        rodada: game.rodada, jogada: game.jogada, vidas: game.vidas,
+        saldo_centavos: game.saldo * 100,
+        salario_centavos: game.salario * 100,
+        valor_investido_centavos: game.investido * 100,
+        rendimento_centavos: Math.floor(game.investido / 400) * 100 * 100,
+        gastos_fixos_centavos: game.fixos * 100,
+        gastos_unicos_centavos: game.unicos * 100,
+        inventario_mask: game.mask,
+      };
+    };
+    // Trabalhar/estudar: a FPGA manda a jogada que acabou de ser feita.
+    const play = (event, changes) => {
+      const payload = emit(event, changes);
+      game.jogada = game.jogada >= 3 ? 1 : game.jogada + 1;
+      return payload;
+    };
+    return [
+      {
+        title: "Vamos aprender a jogar!",
+        text: "Vou mostrar um jogo de exemplo, um passo de cada vez. Aperte Próximo (ou a seta →) para continuar.",
+        events: [],
+      },
+      {
+        button: "INICIAR", focus: ".turn-banner",
+        title: "Aperte INICIAR na caixa",
+        text: "A faixa verde mostra o seu dinheiro (R$ 15 mil), o custo de vida, a rodada, a jogada e as suas 3 vidas ❤️.",
+        events: [emit("inicio_sessao")],
+      },
+      {
+        focus: ".now-panel",
+        title: "O que você pode fazer agora",
+        text: "Esta lista mostra o que cada botão da caixa faz agora. Ela não tem botões: você sempre aperta o botão na caixa.",
+        events: [],
+      },
+      {
+        button: "TRABALHAR", focus: ".stats-panel",
+        title: "TRABALHAR",
+        text: "Você recebe o salário (+ R$ 6,4 mil) e paga o custo de vida (− R$ 4 mil). Sobram R$ 2,4 mil. Trabalhar usa 1 jogada.",
+        events: [play("trabalhar", { saldo: 17400 })],
+      },
+      {
+        button: "ESTUDAR", focus: ".stats-panel",
+        title: "ESTUDAR",
+        text: "Estudar não custa nada além do custo de vida, e o seu salário sobe R$ 4 mil para sempre. Um 🧠 acende. Estudar usa 1 jogada.",
+        events: [play("estudar", { saldo: 13400, salario: 10400 })],
+      },
+      {
+        button: "INVESTIR", focus: ".stats-panel",
+        title: "INVESTIR",
+        text: "Você guarda R$ 10 mil. No fim de cada rodada, o dinheiro guardado rende 25%. INVESTIR não usa jogada. RESGATAR traz o dinheiro de volta.",
+        events: [emit("investir", { saldo: 3400, investido: 10000 })],
+      },
+      {
+        focus: "#selector-panel",
+        title: "Gire o seletor",
+        text: "O seletor escolhe um item da loja. A tela mostra o preço. Em vermelho: você não tem dinheiro para ele. Se comprar, perde 1 vida.",
+        events: [emit("seletor_item", {}, 7)],
+      },
+      {
+        button: "TRABALHAR", focus: ".turn-banner",
+        title: "Fim da rodada",
+        text: "Depois da 3ª jogada, a rodada acaba (1 rodada = 1 ano). O investimento rendeu 25%: R$ 10 mil viraram R$ 12,5 mil.",
+        events: [
+          play("trabalhar", { saldo: 9800 }),
+          emit("fim_rodada", { rodada: 2, jogada: 1, investido: 12500 }),
+        ],
+      },
+      {
+        button: "COMPRAR", focus: "#inventory-panel",
+        title: "COMPRAR",
+        text: "Com o seletor nos Jogos (R$ 8 mil), aperte COMPRAR. O item vai para Seus itens. Carros e casas também aumentam o custo de vida.",
+        events: [
+          emit("seletor_item", {}, 8),
+          emit("compra_aprovada", { saldo: 1800, mask: 128, unicos: 8000 }, 8),
+        ],
+      },
+      {
+        button: "COMPRAR", focus: ".turn-lives",
+        title: "Cuidado com o dinheiro",
+        text: "Comprar o carro (R$ 60 mil) com R$ 1,8 mil deixa o dinheiro negativo. Você perde 1 vida e a jogada é desfeita. Sem vidas, o jogo acaba.",
+        events: [
+          emit("seletor_item", {}, 1),
+          emit("compra_aprovada", { saldo: -58200, mask: 129, fixos: 7600, unicos: 68000 }, 1),
+          emit("vida_perdida", { saldo: 1800, mask: 128, fixos: 4000, unicos: 8000, vidas: 2 }),
+        ],
+      },
+      {
+        button: "VENDER", focus: ".stats-panel",
+        title: "VENDER",
+        text: "Gire o seletor até um item seu e aperte VENDER: o preço volta para o seu dinheiro.",
+        events: [
+          emit("seletor_item", {}, 8),
+          emit("venda_aprovada", { saldo: 9800, mask: 0, unicos: 0 }, 8),
+        ],
+      },
+      {
+        button: "INICIAR",
+        title: "Pronto! Agora é com você",
+        text: "O jogo tem 15 rodadas. Chegue ao fim sem perder as 3 vidas para vencer. Aperte INICIAR na caixa para jogar de verdade.",
+        events: [],
+        last: true,
+      },
+    ];
+  }
+  const TUTORIAL_STEPS = buildTutorialSteps();
+
+  const TUTORIAL_FIELDS = [
+    "balance", "salary", "investments", "yield", "fixedExpenses", "uniqueExpenses", "round", "move",
+    "lives", "selectorItem", "gameResult", "events", "history", "inventory", "metricAvailable",
+  ];
+
+  function resetTutorialBoard() {
+    Object.assign(state, {
+      ...demoInitial,
+      selectorItem: null,
+      gameResult: null,
+      events: [],
+      history: [],
+      inventory: [],
+    });
+    state.metricAvailable = Object.fromEntries(Object.keys(state.metricAvailable).map((key) => [key, false]));
+    lastShownMove = null;
+    setGameResult(null);
+    hideLifeLost();
+  }
+
+  function startTutorial() {
+    if (tutorial.active) return;
+    tutorial.snapshot = JSON.parse(JSON.stringify(Object.fromEntries(TUTORIAL_FIELDS.map((key) => [key, state[key]]))));
+    tutorial.queue = [];
+    tutorial.active = true;
+    document.body.classList.add("tutorial-on");
+    $("#game-end-overlay").hidden = true;
+    stopConfetti();
+    if (professorMode) activateTab("game");
+    $("#tutorial-coach").hidden = false;
+    $("#tutorial-progress").replaceChildren(...TUTORIAL_STEPS.map(() => document.createElement("i")));
+    tutorialGo(0);
+  }
+
+  function tutorialGo(step) {
+    if (!tutorial.active) return;
+    if (step >= TUTORIAL_STEPS.length) {
+      stopTutorial();
+      return;
+    }
+    tutorial.step = Math.max(0, step);
+    // Refaz a partida de exemplo até o passo atual: voltar e avançar dão sempre
+    // o mesmo resultado. Só os eventos do passo atual animam.
+    resetTutorialBoard();
+    TUTORIAL_STEPS.forEach((entry, index) => {
+      if (index > tutorial.step) return;
+      for (const payload of entry.events) recordPayload({ ...payload }, "demo", index < tutorial.step);
+    });
+    render();
+    const current = TUTORIAL_STEPS[tutorial.step];
+    $("#tutorial-step").textContent = `${tutorial.step + 1} de ${TUTORIAL_STEPS.length}`;
+    $("#tutorial-title").textContent = current.title;
+    $("#tutorial-text").textContent = current.text;
+    const cap = $("#tutorial-cap");
+    cap.hidden = !current.button;
+    cap.textContent = current.button || "";
+    cap.style.setProperty("--cap", BUTTON_COLORS[current.button] || "transparent");
+    cap.classList.toggle("dark-cap", ["TRABALHAR", "INVESTIR", "RESGATAR", "VENDER", "INICIAR"].includes(current.button));
+    [...$("#tutorial-progress").children].forEach((dot, index) => dot.classList.toggle("on", index <= tutorial.step));
+    $("#tutorial-back").disabled = tutorial.step === 0;
+    $("#tutorial-next").textContent = current.last ? "Começar a jogar" : "Próximo →";
+    document.querySelectorAll(".tutorial-focus").forEach((element) => element.classList.remove("tutorial-focus"));
+    const target = current.focus ? $(current.focus) : null;
+    if (target) {
+      target.classList.add("tutorial-focus");
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    if ($("#life-lost-overlay").hidden) $("#tutorial-next").focus();
+  }
+
+  function stopTutorial() {
+    if (!tutorial.active) return;
+    document.querySelectorAll(".tutorial-focus").forEach((element) => element.classList.remove("tutorial-focus"));
+    hideLifeLost();
+    tutorial.active = false;
+    document.body.classList.remove("tutorial-on");
+    $("#tutorial-coach").hidden = true;
+    Object.assign(state, tutorial.snapshot);
+    tutorial.snapshot = null;
+    lastShownMove = null;
+    render();
+    setGameResult(state.gameResult);
+    // O que a caixa mandou durante a demonstração entra agora, na ordem.
+    const pending = tutorial.queue;
+    tutorial.queue = [];
+    pending.forEach(handleBackendPayload);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!state.playerName && !professorMode) openNameDialog(true);
+  }
+
   // ---------- Nome do jogador ----------
   function openNameDialog(required) {
     const dialog = $("#name-dialog");
@@ -1210,6 +1858,7 @@
     persistPreferences();
     $("#player-name-input").value = name;
     render();
+    syncPlayerName();
   }
 
   function openSettings() {
@@ -1297,12 +1946,7 @@
         setFeedback("Mensagem ignorada: esperado um objeto JSON do backend.", "error");
         return;
       }
-      if (["snapshot", "event"].includes(payload.type) && payload.data &&
-          typeof payload.data === "object" && !Array.isArray(payload.data)) {
-        recordPayload(payload.data, "backend", payload.type === "snapshot");
-      } else {
-        recordPayload(payload, "backend");
-      }
+      handleBackendPayload(payload);
     });
     socket.addEventListener("error", () => {
       handleConnectionError(new Error("Não foi possível conectar ao WebSocket do backend."));
@@ -1322,6 +1966,67 @@
         if (state.reconnectEnabled) connectBackend(endpoint);
       }, delay);
     });
+  }
+
+  function handleBackendPayload(payload) {
+    // Durante a demonstração, o jogo de verdade espera numa fila.
+    if (tutorial.active) {
+      tutorial.queue.push(payload);
+      return;
+    }
+    const data = payload.data && typeof payload.data === "object" && !Array.isArray(payload.data) ? payload.data : null;
+    if (payload.type === "session_meta") {
+      if (data) handleSessionMeta(data);
+      return;
+    }
+    if (payload.type === "card") {
+      if (data) handleCardRead(data);
+      return;
+    }
+    if (["snapshot", "event"].includes(payload.type) && data) {
+      recordPayload(data, "backend", payload.type === "snapshot");
+    } else {
+      recordPayload(payload, "backend");
+    }
+  }
+
+  // ---------- Nome do jogador no backend ----------
+  // O nome fica salvo neste navegador e é enviado para cada partida nova, para
+  // o professor saber de quem é cada partida. Só a tela do jogador envia.
+  const apiBase = /^https?:$/.test(window.location.protocol) ? window.location.origin : "http://localhost:3000";
+
+  function syncPlayerName() {
+    if (professorMode || tutorial.active || !state.playerName || !state.sessionKey) return;
+    if (state.mode !== "connected") return;
+    const signature = `${state.sessionKey}|${state.playerName}`;
+    if (state.syncedName === signature) return;
+    state.syncedName = signature;
+    fetch(`${apiBase}/api/sessions/${encodeURIComponent(state.sessionKey)}/player`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: state.playerName }),
+    }).then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    }).catch((error) => {
+      console.warn("Não foi possível salvar o nome do jogador no backend.", error);
+      state.syncedName = ""; // tenta de novo no próximo evento
+    });
+  }
+
+  function handleSessionMeta(meta) {
+    if (typeof meta.key === "string") state.sessionKey = meta.key;
+    if (meta.player_name && meta.player_name === state.playerName) {
+      state.syncedName = `${state.sessionKey}|${state.playerName}`;
+      return;
+    }
+    syncPlayerName();
+  }
+
+  // Cartão que já tem um nome: o jogador passa a ser o dono do cartão.
+  function handleCardRead(card) {
+    if (professorMode || !card.name_from_card || !card.card_name || card.card_name === state.playerName) return;
+    savePlayerName(card.card_name);
+    showToast(`Cartão reconhecido. Olá, ${card.card_name}!`);
   }
 
   function disconnectTelemetry() {
@@ -1410,6 +2115,24 @@
     $("#player-avatar").addEventListener("click", () => openNameDialog(false));
     $("#player-chip").addEventListener("click", () => openNameDialog(false));
     $("#name-dialog-cancel").addEventListener("click", () => $("#name-dialog").close());
+    $("#player-name-tag").addEventListener("click", () => openNameDialog(false));
+    $("#name-dialog-tutorial").addEventListener("click", () => {
+      $("#name-dialog").close();
+      startTutorial();
+    });
+    $("#open-tutorial").addEventListener("click", startTutorial);
+    $("#tutorial-next").addEventListener("click", () => tutorialGo(tutorial.step + 1));
+    $("#tutorial-back").addEventListener("click", () => tutorialGo(tutorial.step - 1));
+    $("#tutorial-exit").addEventListener("click", stopTutorial);
+    document.addEventListener("keydown", (event) => {
+      if (!tutorial.active || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === "ArrowRight") tutorialGo(tutorial.step + 1);
+      else if (event.key === "ArrowLeft") tutorialGo(tutorial.step - 1);
+      else if (event.key === "Escape" && $("#life-lost-overlay").hidden) stopTutorial();
+    });
+    $("#student-select").addEventListener("change", (event) => selectStudent(event.target.value));
+    $("#students-hide-empty").addEventListener("change", () => renderStudentOptions());
+    $("#students-refresh").addEventListener("click", () => loadStudents(true));
     $("#name-dialog").addEventListener("cancel", (event) => {
       // Sem nome salvo, o jogador precisa digitar um antes de começar.
       if ($("#name-dialog").dataset.required === "true" || !state.playerName) event.preventDefault();
@@ -1492,7 +2215,8 @@
     if (!savedSession) persistSession();
     connectBackend(defaultBackendUrl());
     // Usa o nome da sessão anterior; só pergunta se ainda não houver um.
-    if (!state.playerName) openNameDialog(true);
+    // O professor não precisa de nome; o aluno, sim.
+    if (!state.playerName && !professorMode) openNameDialog(true);
   }
 
   initialize();
