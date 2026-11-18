@@ -19,7 +19,8 @@ module processador_acao (
 );
 // Estudar nao custa dinheiro: a jogada so paga o custo de vida (APLICA_DESPESA).
 wire signed [20:0] custo_estudo = 20'd0;        // 0 (antes 12.000)
-wire signed [20:0] investimento = 20'd10;       // 1.000
+// INVESTIR guarda e RESGATAR devolve 10.000 por vez (1.000 era pouco).
+wire signed [20:0] investimento = 20'd100;      // 10.000 (antes 1.000)
 wire signed [20:0] incremento_salario = 20'd40; // 4.000
 
 reg signed [20:0] precos_item [0:9]; //feito em reg se quiser implementar algo alteravel

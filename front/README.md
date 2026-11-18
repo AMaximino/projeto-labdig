@@ -44,7 +44,7 @@ cada ícone colorido é um nível atingido e os demais ficam escuros.
 |---|---|---|
 | **Dinheiro** 💰 | um 💰 por jogada de contas que o dinheiro paga (as contas saem a cada TRABALHAR ou ESTUDAR); os 💰 tremem quando não dá para pagar a próxima | TRABALHAR, RESGATAR, VENDER |
 | **Estudo** 🧠 | um 🧠 por nível; nível = (salário − R$ 6,4 mil) ÷ R$ 4 mil, com o salário atual. Estudar não custa dinheiro: a jogada só paga o custo de vida | ESTUDAR |
-| **Investimento** 🏦 | um 🏦 a cada R$ 1 mil guardado e quanto rende na próxima rodada | INVESTIR e o rendimento de 25% por rodada |
+| **Investimento** 🏦 | 20 🏦 em 2 fileiras; cada 🏦 = R$ 10 mil guardados, e o quanto rende na próxima rodada | INVESTIR (guarda R$ 10 mil por vez) e o rendimento de 25% por rodada; RESGATAR devolve R$ 10 mil por vez |
 | **Rodada** (na faixa verde) | 15 blocos: a rodada atual (1 rodada = 1 ano; 1 jogada = 1 quadrimestre) | cada fim de rodada |
 
 Na hora da jogada, a barra que mudou pisca e mostra quanto mudou ("+1 nível",
@@ -56,7 +56,9 @@ jogada (1 jogada = 1 quadrimestre, 3 por rodada) e as vidas.
 
 "O que você pode fazer agora?" avisa no topo que a lista **não tem botões**: o
 jogador aperta o botão na caixa. As linhas não têm moldura de botão nem cursor
-de clique. A lista mostra só as ações possíveis, com a cor da capa
+de clique. A linha VENDER (verde) aparece sempre: vende o item que está no seletor, se
+for do jogador; se não, diz para girar o seletor até um item seu. A lista mostra
+as ações com a cor da capa
 do botão da caixa (TRABALHAR azul, ESTUDAR branco, INVESTIR preto, RESGATAR
 vermelho, COMPRAR amarelo, VENDER verde). Uma ação que deixaria o dinheiro
 negativo aparece em vermelho: "Se estudar agora, você PERDE".

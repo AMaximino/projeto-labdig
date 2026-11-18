@@ -320,8 +320,8 @@ module circuito_caixa_semana4_tb;
         aperta(B_TRABALHAR);                      // 326
         confere_saldo(326, "mais duas jogadas de TRABALHAR");
         aperta(B_INVESTIR);
-        confere_saldo(316, "INVESTIR retira 10 do saldo");
-        confere(investido == 10, "valor investido = 10");
+        confere_saldo(226, "INVESTIR retira 100 (R$ 10 mil) do saldo");
+        confere(investido == 100, "valor investido = 100");
         confere_evento(8'd4, 4'd0, "evento 04 (investir)");
         aperta(B_RESGATAR);
         confere_saldo(326, "RESGATAR devolve o investimento");
@@ -366,17 +366,17 @@ module circuito_caixa_semana4_tb;
         confere(vidas == 2 && estado == ESPERA_ACAO && !perdeu, "perde 1 vida e continua (2 vidas)");
         espera_jogo(4);
         confere_evento(8'd15, 4'd0, "evento 15 (vida perdida)");
-        // 8b: falha no custo de vida. Compra o item 7 (120) e investe ate sobrar
-        // 36; ESTUDAR paga 40 de custo de vida: 36 - 40 = -4. A jogada e desfeita:
-        // saldo, salario e jogada voltam; perde mais 1 vida.
+        // 8b: falha no custo de vida. Compra o item 7 (120) e investe 100 ate
+        // sobrar 26; ESTUDAR paga 40 de custo de vida: 26 - 40 = -14. A jogada e
+        // desfeita: saldo, salario e jogada voltam; perde mais 1 vida.
         gira_seletor(7);
         aperta(B_COMPRAR);                        // 246 - 120 = 126
-        for (i = 0; i < 9; i = i + 1) aperta(B_INVESTIR);  // 126 - 90 = 36
-        confere_saldo(36, "saldo menor que o custo de vida");
+        aperta(B_INVESTIR);                       // 126 - 100 = 26
+        confere_saldo(26, "saldo menor que o custo de vida");
         jogada_antes = jogada;
         salario_antes = salario;
         aperta(B_ESTUDAR);
-        confere_saldo(36, "ESTUDAR que fale no custo de vida e desfeito");
+        confere_saldo(26, "ESTUDAR que fale no custo de vida e desfeito");
         confere(salario == salario_antes, "aumento de salario do estudo desfeito");
         confere(jogada == jogada_antes, "jogada nao avanca: o jogador repete a jogada");
         confere(vidas == 1 && estado == ESPERA_ACAO && !perdeu, "perde 1 vida e continua (1 vida)");
@@ -384,8 +384,8 @@ module circuito_caixa_semana4_tb;
         confere_evento(8'd15, 4'd0, "evento 15 (vida perdida)");
         // 8c: 3a falha: falencia de verdade.
         gira_seletor(1);
-        aperta(B_COMPRAR);                        // 36 - 600 = -564
-        confere_saldo(-564, "3a falha deixa o saldo negativo");
+        aperta(B_COMPRAR);                        // 26 - 600 = -574
+        confere_saldo(-574, "3a falha deixa o saldo negativo");
         confere(indicador_itens == 10'b00_1100_0001, "LEDs dos itens 1, 7 e 8 acesos");
         confere(estado == FIM_FALENCIA && perdeu, "LED FALIU aceso (FIM_FALENCIA)");
         confere(!terminou, "LED FIM DO JOGO apagado na falencia");

@@ -20,7 +20,7 @@
   ];
   // Regras da FPGA (fpga/rtl/inicializador.v e processador_acao.v), em reais.
   // Estudar não custa dinheiro: a jogada só paga o custo de vida.
-  const RULES = { baseSalary: 6400, studyCost: 0, studyRaise: 4000, investStep: 1000, rounds: 15, lives: 3 };
+  const RULES = { baseSalary: 6400, studyCost: 0, studyRaise: 4000, investStep: 10000, rounds: 15, lives: 3 };
   // Cor da capa de cada botão da caixa: a tela usa a mesma cor do botão.
   const BUTTON_COLORS = {
     TRABALHAR: "#2F6DB5", ESTUDAR: "#F4F4F0", INVESTIR: "#2A2A2A", RESGATAR: "#C9433A",
@@ -381,6 +381,8 @@
   // um nível atingido; os demais ficam escuros.
   const STAT_ICONS = { dinheiro: "💰", estudo: "🧠", investimento: "🏦" };
   const STAT_SLOTS = 10;
+  // Investimento: cada 🏦 = R$ 10 mil guardados; 20 bancos (2 fileiras de 10).
+  const INVEST_SLOTS = 20;
 
   function fillTrack(selector, filled, total, danger = false, symbol = "") {
     const track = $(selector);
@@ -426,13 +428,13 @@
       $("#stat-estudo-text").textContent = `Nível ${value.level} · salário ${displayCompactMoney(state.salary)}`;
     }
 
-    // Investimento: um 🏦 a cada R$ 1 mil guardado.
+    // Investimento: um 🏦 a cada R$ 10 mil guardados.
     if (value.invested === null) {
-      fillTrack("#stat-investimento-track", 0, STAT_SLOTS, false, STAT_ICONS.investimento);
+      fillTrack("#stat-investimento-track", 0, INVEST_SLOTS, false, STAT_ICONS.investimento);
       $("#stat-investimento-text").textContent = "Aguardando o jogo";
     } else {
-      fillTrack("#stat-investimento-track", Math.min(Math.floor(value.invested / RULES.investStep), STAT_SLOTS),
-        STAT_SLOTS, false, STAT_ICONS.investimento);
+      fillTrack("#stat-investimento-track", Math.min(Math.floor(value.invested / RULES.investStep), INVEST_SLOTS),
+        INVEST_SLOTS, false, STAT_ICONS.investimento);
       $("#stat-investimento-text").textContent = value.invested > 0
         ? `${displayCompactMoney(value.invested)} guardado · rende + ${displayCompactMoney(nextYield())} por rodada`
         : "Nada guardado ainda";
@@ -530,20 +532,30 @@
       : nowItem("ESTUDAR", `Salário + ${money(RULES.studyRaise)}${billsText}`, "ok", "usa 1 jogada"));
     items.push(loses(RULES.investStep)
       ? nowItem("INVESTIR", riskText("investir"), "risk")
-      : nowItem("INVESTIR", `Guarda ${money(RULES.investStep)}, que rende todo fim de rodada`));
+      : nowItem("INVESTIR", `Guarda ${money(RULES.investStep)}, que rende 25% todo fim de rodada`));
     if (state.metricAvailable.investments && state.investments > 0) {
       items.push(nowItem("RESGATAR", `+ ${money(Math.min(RULES.investStep, state.investments))} volta para o dinheiro`));
     }
     const selected = catalog.find((item) => item.id === state.selectorItem);
+    const ownsSelected = selected && state.inventory.includes(selected.id);
     if (!selected) {
       items.push(nowItem("COMPRAR", "Gire o seletor para escolher um item", "hint"));
-    } else if (state.inventory.includes(selected.id)) {
-      items.push(nowItem("VENDER", `${selected.name}: + ${money(selected.price)}`));
+    } else if (ownsSelected) {
+      items.push(nowItem("COMPRAR", `Você já tem ${selected.name}`, "hint"));
     } else if (loses(selected.price)) {
       items.push(nowItem("COMPRAR", `${selected.name}: ${riskText("comprar").toLowerCase()}`, "risk"));
     } else {
       items.push(nowItem("COMPRAR", `${selected.name}: − ${money(selected.price)}${selected.expense
         ? ` e + ${money(selected.expense)} de conta por jogada` : ""}`));
+    }
+    // VENDER aparece sempre: vende o item que está no seletor, se for seu.
+    if (ownsSelected) {
+      items.push(nowItem("VENDER", `${selected.name}: + ${money(selected.price)}${selected.expense
+        ? ` e o custo de vida cai ${money(selected.expense)}` : ""}`));
+    } else {
+      items.push(nowItem("VENDER", state.inventory.length
+        ? "Gire o seletor até um item seu para vender"
+        : "Você ainda não tem itens para vender", "hint"));
     }
     list.replaceChildren(...items);
   }
