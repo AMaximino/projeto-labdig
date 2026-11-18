@@ -25,6 +25,8 @@ modelagem/  gabaritos de furação e modelo 3D da caixa de MDF
 - [`modelagem/`](modelagem/README.md): gabaritos de furação (PDF/DXF) e modelo
   3D (STEP para Fusion 360) da caixa.
 - [`docs/`](docs/): documentação que envolve mais de uma parte do sistema:
+  - [`FEEDBACK_ESPECIALISTA.md`](docs/FEEDBACK_ESPECIALISTA.md): transcrição e
+    resumo do feedback da especialista e o que mudou no jogo por causa dele.
   - [`COMO_JOGAR.md`](docs/COMO_JOGAR.md): passo a passo para subir o circuito
     completo e jogar.
   - [`GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md`](docs/GUIA_IMPLEMENTACAO_FISICA_E_INTERFACE.md):
