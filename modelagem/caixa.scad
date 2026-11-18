@@ -143,8 +143,8 @@ BOTOES = [
     ["ESTUDAR",   acao_x("acao_1",  1), ACAO_Y, CAPA_BRANCO,   "acao_1"],
     ["INVESTIR",  acao_x("acao_2", -1), ACAO_Y, CAPA_PRETO,    "acao_2"],
     ["RESGATAR",  acao_x("acao_2",  1), ACAO_Y, CAPA_VERMELHO, "acao_2"],
-    ["COMPRAR",   acao_x("acao_3", -1), ACAO_Y, CAPA_VERDE,    "acao_3"],
-    ["VENDER",    acao_x("acao_3",  1), ACAO_Y, CAPA_AMARELO,  "acao_3"],
+    ["COMPRAR",   acao_x("acao_3", -1), ACAO_Y, CAPA_AMARELO,  "acao_3"],
+    ["VENDER",    acao_x("acao_3",  1), ACAO_Y, CAPA_VERDE,    "acao_3"],
     ["INICIAR",   PARTIDA_X, INICIAR_Y, CAPA_VERDE,    "partida"],
     ["RESET",     PARTIDA_X, RESET_Y,   CAPA_VERMELHO, "partida"],
 ];

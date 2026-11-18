@@ -3,8 +3,8 @@ TRABALHAR;botão 12x12 + capa;Trabalho e estudo;167.0;228.0;Ø13;capa azul;traba
 ESTUDAR;botão 12x12 + capa;Trabalho e estudo;205.0;228.0;Ø13;capa branco;estudar;PIN_G12;GPIO_1_D33
 INVESTIR;botão 12x12 + capa;Investimentos;251.0;228.0;Ø13;capa preto;investir;PIN_G15;GPIO_1_D31
 RESGATAR;botão 12x12 + capa;Investimentos;289.0;228.0;Ø13;capa vermelho;resgatar;PIN_F12;GPIO_1_D29
-COMPRAR;botão 12x12 + capa;Compras;335.0;228.0;Ø13;capa verde;comprar;PIN_E16;GPIO_1_D25
-VENDER;botão 12x12 + capa;Compras;373.0;228.0;Ø13;capa amarelo;vender;PIN_F15;GPIO_1_D27
+COMPRAR;botão 12x12 + capa;Compras;335.0;228.0;Ø13;capa amarelo;comprar;PIN_E16;GPIO_1_D25
+VENDER;botão 12x12 + capa;Compras;373.0;228.0;Ø13;capa verde;vender;PIN_F15;GPIO_1_D27
 INICIAR;botão 12x12 + capa;Partida;359.5;120.0;Ø13;capa verde;iniciar;PIN_E14;GPIO_1_D23
 RESET;botão 12x12 + capa;Partida;359.5;60.0;Ø13;capa vermelho;reset;PIN_B15;GPIO_1_D21
 SELETOR posição 1 (carro compacto);chave rotativa 1 polo x 10+ posições;Escolha o item;97.0;95.0;Ø10;botão lilás;seletor_item[0] (ativo em 0);PIN_J13;GPIO_1_D18

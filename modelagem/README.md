@@ -87,7 +87,7 @@ WSL/Ubuntu, `sudo apt install openscad`.
 | **Logotipo** | branco | logo do Aventura Financeira Evolution |
 | **Trabalho e estudo** | azul pastel `#DCEAF7` | TRABALHAR (azul), ESTUDAR (branca); "USA 1 JOGADA" |
 | **Investimentos** | verde pastel `#DCF0E2` | INVESTIR (preta), RESGATAR (vermelha); "NÃO USA JOGADA" |
-| **Compras** | pêssego `#FCE3D3` | COMPRAR (verde), VENDER (amarela); "NÃO USA JOGADA" |
+| **Compras** | pêssego `#FCE3D3` | COMPRAR (amarela), VENDER (verde); "NÃO USA JOGADA" |
 
 As cores das capas são as da pinagem da Semana 3, então não é preciso refazer
 a fiação. Os fundos pastel atendem ao requisito CONFORTO_SENSORIAL, e o ícone com
