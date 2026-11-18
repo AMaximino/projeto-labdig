@@ -1086,6 +1086,7 @@
       ? "Resta 1 vida. Cuidado: na próxima vez, você perde o jogo."
       : `Restam ${state.lives} vidas`;
     $("#life-lost-overlay").hidden = false;
+    $("#life-lost-close").focus();
     window.clearTimeout(lifeLostTimer);
     lifeLostTimer = window.setTimeout(hideLifeLost, 8000);
   }
@@ -1424,6 +1425,11 @@
       savePlayerName(name);
       $("#name-dialog").close();
       showToast(`Boa partida, ${name}!`);
+    });
+    // Pop-up de vida perdida: fecha pelo botão, pela tecla Esc ou sozinho em 8 s.
+    $("#life-lost-close").addEventListener("click", hideLifeLost);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !$("#life-lost-overlay").hidden) hideLifeLost();
     });
     $("#game-end-close").addEventListener("click", () => {
       $("#game-end-overlay").hidden = true;

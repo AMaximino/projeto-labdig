@@ -79,7 +79,7 @@ e o fim da rodada), então o jogador consegue ler cada um.
 O jogador tem **3 vidas** (❤️❤️❤️ na faixa verde, à direita da jogada). Quando
 uma jogada deixa o saldo negativo e ainda há vida, a FPGA desfaz a jogada e
 manda `vida_perdida` com as vidas que restam (campo `vidas`). O painel mostra um
-aviso grande, que some sozinho em 8 s: "Você perdeu uma vida. Você gastou mais
+aviso grande, que fecha no botão **Fechar** (ou Esc) e também some sozinho em 8 s: "Você perdeu uma vida. Você gastou mais
 dinheiro do que tinha. Por isso, você volta uma jogada." Os avisos de risco
 dizem "Se comprar agora, você perde 1 vida" e, na última vida, "você PERDE o
 jogo". Na 3ª falha, a FPGA manda `falencia` e aparece a tela de fim de jogo.
