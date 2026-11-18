@@ -34,6 +34,41 @@ sozinho:
 modelagem/.venv/bin/python modelagem/caixa.py
 ```
 
+## Modelo em OpenSCAD (`caixa.scad`)
+
+O mesmo modelo está em [`caixa.scad`](caixa.scad), para alterar o projeto
+editando código no OpenSCAD: medidas, encaixes de dedo, furos, adesivos e
+componentes. Os parâmetros ficam no topo do arquivo e aparecem também no
+*Customizer* do OpenSCAD (*Window → Customizer*). Ao abrir, o arquivo roda as
+mesmas conferências do `caixa.py` (margens, furos dentro dos adesivos,
+distância do RC522 etc.) e para com uma mensagem se alguma falhar.
+
+Os contornos de corte gerados pelo `.scad` são idênticos aos do `caixa.py`
+(conferido vértice a vértice nas 12 peças). Se mudar uma medida no `.scad`,
+mude também no `caixa.py` antes de gerar as chapas, os adesivos e o STEP.
+
+| Modo (`MODO`) | O que mostra |
+|---|---|
+| `montagem` | caixa montada em 3D; `ABRIR=150` levanta a tampa |
+| `pecas` | as 12 peças de MDF em 2D, com o nome de cada uma |
+| `corte` | contorno de corte da peça `PECA`, com o kerf compensado (exportar DXF/SVG) |
+| `gravacao` | linhas gravadas da peça `PECA` (onde colar os adesivos) |
+
+Pela linha de comando, na pasta `modelagem/`:
+
+```sh
+openscad -o saida/caixa_scad.stl caixa.scad
+openscad -D 'ABRIR=160' --autocenter --viewall -o saida/previa_scad_aberta.png caixa.scad
+openscad -D 'MODO="corte"' -D 'PECA="tampa_topo"' -o tampa_topo.dxf caixa.scad
+```
+
+| Fechada | Aberta |
+|---|---|
+| ![Caixa fechada](saida/previa_scad_fechada.png) | ![Caixa aberta](saida/previa_scad_aberta.png) |
+
+Instalação: no Windows, baixar em <https://openscad.org/downloads.html>; no
+WSL/Ubuntu, `sudo apt install openscad`.
+
 ## Ilustrações do jogo na caixa
 
 - **Logotipo** (`front/images/logo.jpe`, o mesmo do painel web): um adesivo de
