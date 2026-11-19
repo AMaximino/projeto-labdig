@@ -1,15 +1,21 @@
 # Manual do jogador
 
-Folha de 2 páginas A4 (frente e verso) para imprimir e entregar aos jogadores.
+## Livro de regras (livrinho, recomendado)
 
-- **Imprimir:** `manual-jogador.pdf`, em A4, frente e verso, colorido, escala 100%.
-- **Editar:** mude `manual.html` e gere o PDF de novo no Chrome
-  (Imprimir → Salvar como PDF, margens "Nenhuma", com "Gráficos de plano de
-  fundo" ligado) ou pela linha de comando:
+Livrinho de 8 páginas A5, no estilo de manual de jogo de tabuleiro.
 
-  ```sh
-  chrome --headless --no-pdf-header-footer --print-to-pdf=manual-jogador.pdf manual.html
-  ```
+- **Imprimir:** `livrinho_impressao.pdf`, que tem 2 folhas A4 já na ordem do
+  livrinho. Imprima colorido, em escala 100% (sem "ajustar à página"), frente e
+  verso **virando pela borda curta**. Dobre as duas folhas juntas ao meio, com a
+  capa para fora, e grampeie na dobra.
+- **Ler na tela:** `livrinho.pdf` (páginas na ordem normal).
+- **Editar:** mude `livrinho.html` e rode
+  `python3 manual-jogador/gerar_livrinho.py <caminho do chrome>`, que gera os
+  dois PDFs. O número de páginas precisa ser múltiplo de 4.
+
+## Folha de regras (versão antiga)
+
+`manual-jogador.pdf`: 2 páginas A4 (frente e verso), gerado de `manual.html`.
 
 Os textos seguem o feedback da especialista: frases curtas e literais, uma
 ação por botão, cores iguais às capas dos botões e aos adesivos da tampa. Os
