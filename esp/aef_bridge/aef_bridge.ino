@@ -92,6 +92,8 @@ static constexpr char MQTT_TOPIC[] = AEF_MQTT_TOPIC;
 static constexpr char MQTT_CARD_TOPIC[] = AEF_MQTT_CARD_TOPIC;
 static constexpr uint32_t RFID_POLL_MS = 120;
 static constexpr uint32_t RFID_REMOVE_MS = 300;
+static constexpr uint32_t RFID_HEALTH_MS = 5000;  // checagem do RC522
+uint32_t lastRfidHealthCheck = 0;
 
 struct QueuedMessage {
   char payload[JSON_CAPACITY];
@@ -194,6 +196,19 @@ void serviceRfid() {
   if (now - lastRfidPoll < RFID_POLL_MS) return;
   lastRfidPoll = now;
 
+  // O RC522 pode travar depois de uma oscilacao de energia ou interferencia
+  // (VersionReg passa a responder 0x00 ou 0xFF). A cada 5 s, sem cartao no
+  // leitor, confere e reinicia o leitor se for preciso.
+  if (!cardLatched && now - lastRfidHealthCheck >= RFID_HEALTH_MS) {
+    lastRfidHealthCheck = now;
+    const byte version = rfid.PCD_ReadRegister(MFRC522::VersionReg);
+    if (version == 0x00 || version == 0xFF) {
+      LOG("[RFID] RC522 sem resposta (VersionReg=0x%02X); reiniciando o leitor\n", version);
+      rfid.PCD_Init();
+      return;
+    }
+  }
+
   if (!cardLatched) {
     if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial()) return;
     uidToHex(rfid.uid, latchedUid, sizeof(latchedUid));
@@ -231,7 +246,11 @@ void serviceRfid() {
     rfid.PICC_HaltA();
     return;
   }
-  if (status == MFRC522::STATUS_TIMEOUT) {
+  // Qualquer outra resposta (timeout, erro de CRC, leitura parcial com o
+  // cartao na borda ou atraves do MDF) conta como "sem cartao". Antes so o
+  // timeout liberava o leitor, e um erro repetido deixava o cartao "preso":
+  // a ESP ignorava todas as leituras seguintes ate ser reiniciada.
+  {
     if (noCardSince == 0) noCardSince = now;
     if (now - noCardSince >= RFID_REMOVE_MS) {
       LOG("[RFID] cartao removido, leitor liberado\n");
