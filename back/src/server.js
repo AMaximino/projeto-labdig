@@ -23,6 +23,7 @@ const MIME_TYPES = {
   ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml",
   ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
   ".jpe": "image/jpeg", ".ico": "image/x-icon", ".pdf": "application/pdf",
+  ".mp4": "video/mp4",
 };
 const maxEventsPerSession = 5000;
 const sessions = new Map();
@@ -164,7 +165,8 @@ function handleHttpRequest(request, response) {
       url.pathname !== "/ws/telemetria") {
     let requestedPath;
     try {
-      requestedPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
+      // Pasta (ex.: /cenario/) abre o index.html dela.
+      requestedPath = decodeURIComponent(url.pathname.endsWith("/") ? `${url.pathname}index.html` : url.pathname);
     } catch {
       jsonResponse(response, 400, { error: "Caminho inválido." });
       return;
@@ -175,7 +177,14 @@ function handleHttpRequest(request, response) {
       return;
     }
     try {
-      if (!statSync(filePath).isFile()) throw new Error("not a file");
+      const info = statSync(filePath);
+      if (info.isDirectory() && !url.pathname.endsWith("/")) {
+        // /cenario -> /cenario/ (abre o index.html da pasta)
+        response.writeHead(301, { location: `${url.pathname}/${url.search}` });
+        response.end();
+        return;
+      }
+      if (!info.isFile()) throw new Error("not a file");
       response.writeHead(200, {
         "content-type": MIME_TYPES[extname(filePath).toLowerCase()] || "application/octet-stream",
         "cache-control": "no-cache",
