@@ -1,5 +1,5 @@
 Archive Project report for circuito_jogo_financeiro
-Tue Nov 17 07:31:15 2026
+Thu Nov 19 14:37:31 2026
 Quartus Prime Version 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 
 
@@ -36,7 +36,7 @@ on the Quartus Prime software download page.
 +----------------------------------------------------------------+
 ; Archive Project Summary                                        ;
 +------------------------+---------------------------------------+
-; Archive Project Status ; Successful - Tue Nov 17 07:31:15 2026 ;
+; Archive Project Status ; Successful - Thu Nov 19 14:37:31 2026 ;
 ; Revision Name          ; circuito_jogo_financeiro              ;
 ; Top-level Entity Name  ; circuito_jogo_financeiro              ;
 ; Family                 ; Cyclone V                             ;
@@ -51,19 +51,19 @@ Info: File Set 'Source control' contains:
     Info: Automatically detected source files
 Warning: Hierarchical Platform Designer systems and custom IP components(_hw.tcl and associated files) are not archived by the Quartus Archiver
 Info: Archive will store files relative to the closest common parent directory
-Info (13213): Using common directory C:/Users/Sophia/documents/projeto-labdig/fpga/
+Info (13213): Using common directory C:/Users/Sophia/Documents/projeto-labdig/fpga/
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
-Info: Generated archive 'projeto_labdig_semana_4.qar'
+Info: Generated archive 'projeto_labdig_semana_5.qar'
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
 Info: Generated report 'circuito_jogo_financeiro.archive.rpt'
 Info (23030): Evaluation of Tcl script c:/intelfpga_lite/24.1std/quartus/common/tcl/apps/qpm/qar.tcl was successful
 Info: Quartus Prime Shell was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4913 megabytes
-    Info: Processing ended: Tue Nov 17 07:31:15 2026
-    Info: Elapsed time: 00:00:10
-    Info: Total CPU time (on all processors): 00:00:04
+    Info: Peak virtual memory: 4897 megabytes
+    Info: Processing ended: Thu Nov 19 14:37:31 2026
+    Info: Elapsed time: 00:00:08
+    Info: Total CPU time (on all processors): 00:00:02
 
 
 +------------------------------------------------------------------------------+
@@ -90,25 +90,25 @@ Info: Quartus Prime Shell was successful. 0 errors, 1 warning
 ; ../rtl/sel_valor.v                                                           ;
 ; ../rtl/telemetria_uart.v                                                     ;
 ; ../rtl/unidade_controle.v                                                    ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/bin2bcd.v                  ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/contador_modulo_n.v        ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/dec7seg.v                  ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display6digitos.v          ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v      ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/edge_detector.v            ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/fluxo_dados.v              ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v     ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/inicializador.v            ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/multiplexador.v            ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_acao.v         ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/processador_evento.v       ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/registrador_n.v            ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/rfid_uart_rx.v             ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_dinheiro.v             ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/sel_valor.v                ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/telemetria_uart.v          ;
-; C:/Users/Sophia/documents/projeto-labdig/fpga/rtl/unidade_controle.v         ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/bin2bcd.v                  ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/contador_modulo_n.v        ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/dec7seg.v                  ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/display6digitos.v          ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v      ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/edge_detector.v            ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/fluxo_dados.v              ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v     ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/inicializador.v            ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/multiplexador.v            ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/processador_acao.v         ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/processador_evento.v       ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/registrador_n.v            ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/rfid_uart_rx.v             ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/sel_dinheiro.v             ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/sel_valor.v                ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/telemetria_uart.v          ;
+; C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/unidade_controle.v         ;
 ; circuito_jogo_financeiro.qsf                                                 ;
 ; circuito_jogo_financeiro_assignment_defaults.qdf                             ;
 ; projeto_labdig.qpf                                                           ;
