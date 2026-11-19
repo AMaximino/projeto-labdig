@@ -225,6 +225,8 @@
   function eventPresentation(event) {
     const value = (event.event || event.label || "").toLowerCase();
     const item = event.itemName ? ` ${event.itemName}` : "";
+    // RESGATAR sem nada investido: a FPGA não muda nada (soma R$ 0).
+    if (event.empty) return { icon: "!", className: "refused", label: "Nada para resgatar" };
     if (/vida_perdida/.test(value)) return { icon: "💔", className: "refused", label: "Você perdeu uma vida" };
     if (/recus|insuficiente|rejeitad|negad/.test(value)) {
       return /vend/.test(value)
@@ -675,6 +677,7 @@
 
   function moveAmountText(event) {
     if (/vida_perdida/.test(event.event || "")) return "Você volta uma jogada";
+    if (event.empty) return "Você não tem dinheiro investido";
     return typeof event.amount === "number" && event.amount !== 0
       ? `${event.amount > 0 ? "+" : "−"} ${displayCompactMoney(Math.abs(event.amount))}`
       : "";
@@ -1025,6 +1028,7 @@
       time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
     };
 
+    const investedBefore = state.metricAvailable.investments ? state.investments : undefined;
     if (balance !== undefined) state.metricAvailable.balance = true;
     for (const [property, keys] of Object.entries({
       salary: { real: ["salario", "salary", "renda"], cents: ["salario_centavos", "salary_cents"] },
@@ -1037,6 +1041,16 @@
       if (value !== undefined) {
         state[property] = value;
         state.metricAvailable[property] = true;
+      }
+    }
+    // RESGATAR com o investimento zerado não traz dinheiro: a FPGA mantém o
+    // saldo. O painel mostra "Nada para resgatar" em vez de "Você resgatou".
+    if (/resgat/.test(lowerCode)) {
+      const investedNow = readMoney(nested, ["investido", "valor_investido"], ["valor_investido_centavos"]);
+      const nothingBefore = investedBefore === 0 || (investedBefore === undefined && investedNow === 0);
+      if (amount === 0 || (nothingBefore && (investedNow === undefined || investedNow === 0))) {
+        event.empty = true;
+        event.amount = 0;
       }
     }
     const livesValue = Number(firstValue(nested, ["vidas", "lives"]));

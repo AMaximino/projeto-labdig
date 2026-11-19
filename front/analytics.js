@@ -81,6 +81,8 @@
         return;
       }
       if (code === "vida_perdida" || code === "falencia") livesLost += 1;
+      // RESGATAR sem nada investido não muda nada na FPGA: não conta como resgate.
+      if (code === "resgatar" && !(previous.valor_investido_centavos > 0) && index > 0) return;
       if (code in counts && !undone.has(index)) counts[code] += 1;
       if (ACTIONS.includes(code) || code === "compra_recusada" || code === "venda_recusada") {
         const at = timeOf(event);

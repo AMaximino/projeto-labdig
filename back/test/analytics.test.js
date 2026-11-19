@@ -76,3 +76,15 @@ test("resume as partidas do aluno e gera frases para o professor", () => {
   assert.ok(titles.includes("Gastou mais do que tinha"));
   assert.equal(analytics.studentLabel({ player_name: null, card_uid: "ABCD1234" }), "Cartão ABCD1234");
 });
+
+test("RESGATAR sem nada investido não conta como resgate", () => {
+  seq = 0;
+  const s = analytics.analyzeSession([
+    event("inicio_sessao"),
+    event("resgatar"),
+    event("investir", { saldo_centavos: 500000, valor_investido_centavos: 1000000 }),
+    event("resgatar", { saldo_centavos: 1500000, valor_investido_centavos: 0 }),
+  ], catalog);
+  assert.equal(s.counts.resgatar, 1);
+  assert.equal(s.counts.investir, 1);
+});
