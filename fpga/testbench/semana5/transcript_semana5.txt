@@ -1,0 +1,307 @@
+Reading C:/intelFPGA/18.1/modelsim_ase/tcl/vsim/pref.tcl
+
+# 10.5b
+
+# do fpga/testbench/semana5/run_semana5.do
+# Model Technology ModelSim - Intel FPGA Edition vmap 10.5b Lib Mapping Utility 2016.10 Oct  5 2016
+# vmap work work 
+# Copying C:/intelFPGA/18.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/rtl/bin2bcd.v fpga/rtl/circuito_jogo_financeiro.v fpga/rtl/contador_modulo_n.v fpga/rtl/dec7seg.v fpga/rtl/display6digitos.v fpga/rtl/display_bcd_4dig_cc.v fpga/rtl/edge_detector.v fpga/rtl/fluxo_dados.v fpga/rtl/i2s_master_clock_gen.v fpga/rtl/inicializador.v fpga/rtl/multiplexador.v fpga/rtl/processador_acao.v fpga/rtl/processador_evento.v fpga/rtl/registrador_n.v fpga/rtl/rfid_uart_rx.v fpga/rtl/sel_dinheiro.v fpga/rtl/sel_valor.v fpga/rtl/telemetria_uart.v fpga/rtl/unidade_controle.v 
+# -- Compiling module bin2bcd
+# -- Compiling module circuito_jogo_financeiro
+# -- Compiling module contador_modulo_n
+# -- Compiling module dec7seg
+# -- Compiling module display6digitos
+# -- Compiling module display_bcd_4dig_cc
+# -- Compiling module edge_detector
+# -- Compiling module fluxo_dados
+# -- Compiling module i2s_master_clock_gen
+# -- Compiling module inicializador
+# -- Compiling module multiplexador
+# -- Compiling module processador_acao
+# -- Compiling module processador_evento
+# -- Compiling module registrador_n
+# -- Compiling module rfid_uart_rx
+# -- Compiling module sel_dinheiro
+# -- Compiling module sel_valor
+# -- Compiling module telemetria_uart
+# -- Compiling module unidade_controle
+# 
+# Top level modules:
+# 	circuito_jogo_financeiro
+# End time: 14:35:55 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/testbench/processador_acao_tb.v 
+# -- Compiling module processador_acao_tb
+# 
+# Top level modules:
+# 	processador_acao_tb
+# End time: 14:35:55 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/testbench/rfid_uart_rx_tb.v 
+# -- Compiling module rfid_uart_rx_tb
+# 
+# Top level modules:
+# 	rfid_uart_rx_tb
+# End time: 14:35:55 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/testbench/telemetria_uart_tb.v 
+# -- Compiling module telemetria_uart_tb
+# 
+# Top level modules:
+# 	telemetria_uart_tb
+# End time: 14:35:55 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/testbench/unidade_controle_moore_tb.v 
+# -- Compiling module unidade_controle_moore_tb
+# 
+# Top level modules:
+# 	unidade_controle_moore_tb
+# End time: 14:35:55 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:55 on Nov 19,2026
+# vlog -sv fpga/testbench/seletor_item_telemetria_tb.v 
+# -- Compiling module seletor_item_telemetria_tb
+# 
+# Top level modules:
+# 	seletor_item_telemetria_tb
+# End time: 14:35:56 on Nov 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:56 on Nov 19,2026
+# vlog -sv fpga/testbench/circuito_jogo_financeiro_tb1.v 
+# -- Compiling module circuito_jogo_financeiro_tb1
+# 
+# Top level modules:
+# 	circuito_jogo_financeiro_tb1
+# End time: 14:35:56 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:56 on Nov 19,2026
+# vlog -sv fpga/testbench/semana3/unidade_controle_semana3_tb.v 
+# -- Compiling module unidade_controle_semana3_tb
+# 
+# Top level modules:
+# 	unidade_controle_semana3_tb
+# End time: 14:35:56 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:56 on Nov 19,2026
+# vlog -sv fpga/testbench/semana3/rfid_uart_rx_semana3_tb.v 
+# -- Compiling module rfid_uart_rx_semana3_tb
+# 
+# Top level modules:
+# 	rfid_uart_rx_semana3_tb
+# End time: 14:35:56 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 14:35:56 on Nov 19,2026
+# vlog -sv fpga/testbench/semana4/circuito_caixa_semana4_tb.v 
+# -- Compiling module circuito_caixa_semana4_tb
+# 
+# Top level modules:
+# 	circuito_caixa_semana4_tb
+# End time: 14:35:56 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.processador_acao_tb 
+# Start time: 14:35:58 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.processador_acao_tb
+# Loading work.processador_acao
+# Compra sem saldo aceita com saldo negativo; compra valida aceita; repetida recusada.
+# ** Note: $finish    : fpga/testbench/processador_acao_tb.v(62)
+#    Time: 3 ns  Iteration: 0  Instance: /processador_acao_tb
+# Break in Module processador_acao_tb at fpga/testbench/processador_acao_tb.v line 62
+# Stopped at fpga/testbench/processador_acao_tb.v line 62
+# End time: 14:35:59 on Nov 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.rfid_uart_rx_tb 
+# Start time: 14:35:59 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.rfid_uart_rx_tb
+# Loading work.rfid_uart_rx
+# PASS RFID UART command parsing and acknowledge latch
+# ** Note: $finish    : fpga/testbench/rfid_uart_rx_tb.v(68)
+#    Time: 33830 ns  Iteration: 1  Instance: /rfid_uart_rx_tb
+# Break in Module rfid_uart_rx_tb at fpga/testbench/rfid_uart_rx_tb.v line 68
+# Stopped at fpga/testbench/rfid_uart_rx_tb.v line 68
+# End time: 14:35:59 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.rfid_uart_rx_semana3_tb 
+# Start time: 14:35:59 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.rfid_uart_rx_semana3_tb
+# Loading work.rfid_uart_rx
+# PASS Semana 3: RFID command range, pending latch and acknowledge
+# ** Note: $finish    : fpga/testbench/semana3/rfid_uart_rx_semana3_tb.v(106)
+#    Time: 114230 ns  Iteration: 1  Instance: /rfid_uart_rx_semana3_tb
+# Break in Module rfid_uart_rx_semana3_tb at fpga/testbench/semana3/rfid_uart_rx_semana3_tb.v line 106
+# Stopped at fpga/testbench/semana3/rfid_uart_rx_semana3_tb.v line 106
+# End time: 14:36:00 on Nov 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.seletor_item_telemetria_tb 
+# Start time: 14:36:00 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.seletor_item_telemetria_tb
+# Loading work.fluxo_dados
+# Loading work.edge_detector
+# Loading work.registrador_n
+# Loading work.sel_dinheiro
+# Loading work.bin2bcd
+# Loading work.processador_acao
+# Loading work.processador_evento
+# Loading work.inicializador
+# Loading work.sel_valor
+# Loading work.multiplexador
+# Loading work.contador_modulo_n
+# ** Warning: (vsim-3017) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Too few port connections. Expected 54, found 32.
+#    Time: 0 ps  Iteration: 0  Instance: /seletor_item_telemetria_tb/dut File: fpga/rtl/fluxo_dados.v
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'perdeVida'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'fim_falencia'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'fim_jogo'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'fim_perdeu'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'fim_rodada'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'acao_pulso'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'eh_jogada'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'display_pulso'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'contagem'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'rodada'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'ultima_rodada'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'dinheiro'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'itens_out'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'tem_vida'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_lives'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_status'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'rfid_ack'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_balance'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_salary'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_investment'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_fixed_expenses'.
+# ** Warning: (vsim-3722) fpga/testbench/seletor_item_telemetria_tb.v(20): [TFMPC] - Missing connection for port 'telemetry_unique_expenses'.
+# PASS seletor_item: estabilidade, bounce, posicao invalida, ESPERA_ACAO e reenvio apos init.
+# ** Note: $finish    : fpga/testbench/seletor_item_telemetria_tb.v(115)
+#    Time: 5265 ns  Iteration: 1  Instance: /seletor_item_telemetria_tb
+# Break in Module seletor_item_telemetria_tb at fpga/testbench/seletor_item_telemetria_tb.v line 115
+# Stopped at fpga/testbench/seletor_item_telemetria_tb.v line 115
+# End time: 14:36:00 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 23
+# vsim -onfinish stop work.telemetria_uart_tb 
+# Start time: 14:36:00 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.telemetria_uart_tb
+# Loading work.telemetria_uart
+# UART framing (AEF2, com vidas) and queued event sequence verified.
+# ** Note: $finish    : fpga/testbench/telemetria_uart_tb.v(107)
+#    Time: 157755 ns  Iteration: 0  Instance: /telemetria_uart_tb
+# Break in Module telemetria_uart_tb at fpga/testbench/telemetria_uart_tb.v line 107
+# Stopped at fpga/testbench/telemetria_uart_tb.v line 107
+# End time: 14:36:00 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.unidade_controle_moore_tb 
+# Start time: 14:36:00 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.unidade_controle_moore_tb
+# Loading work.unidade_controle
+# ** Warning: (vsim-3017) fpga/testbench/unidade_controle_moore_tb.v(39): [TFMPC] - Too few port connections. Expected 32, found 31.
+#    Time: 0 ps  Iteration: 0  Instance: /unidade_controle_moore_tb/dut File: fpga/rtl/unidade_controle.v
+# ** Warning: (vsim-3722) fpga/testbench/unidade_controle_moore_tb.v(39): [TFMPC] - Missing connection for port 'perdeVida'.
+# Moore outputs remain state-based; named states keep separate transitions.
+# ** Note: $finish    : fpga/testbench/unidade_controle_moore_tb.v(97)
+#    Time: 16 ns  Iteration: 0  Instance: /unidade_controle_moore_tb
+# Break in Module unidade_controle_moore_tb at fpga/testbench/unidade_controle_moore_tb.v line 97
+# Stopped at fpga/testbench/unidade_controle_moore_tb.v line 97
+# End time: 14:36:01 on Nov 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 2
+# vsim -onfinish stop work.unidade_controle_semana3_tb 
+# Start time: 14:36:01 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.unidade_controle_semana3_tb
+# Loading work.unidade_controle
+# PASS Semana 3: game FSM action, display, round and terminal paths
+# ** Note: $finish    : fpga/testbench/semana3/unidade_controle_semana3_tb.v(287)
+#    Time: 806 ns  Iteration: 0  Instance: /unidade_controle_semana3_tb
+# Break in Module unidade_controle_semana3_tb at fpga/testbench/semana3/unidade_controle_semana3_tb.v line 287
+# Stopped at fpga/testbench/semana3/unidade_controle_semana3_tb.v line 287
+# End time: 14:36:01 on Nov 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -onfinish stop work.circuito_jogo_financeiro_tb1 
+# Start time: 14:36:01 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.circuito_jogo_financeiro_tb1
+# Loading work.circuito_jogo_financeiro
+# Loading work.rfid_uart_rx
+# Loading work.i2s_master_clock_gen
+# Loading work.fluxo_dados
+# Loading work.edge_detector
+# Loading work.registrador_n
+# Loading work.sel_dinheiro
+# Loading work.bin2bcd
+# Loading work.processador_acao
+# Loading work.processador_evento
+# Loading work.inicializador
+# Loading work.sel_valor
+# Loading work.multiplexador
+# Loading work.contador_modulo_n
+# Loading work.telemetria_uart
+# Loading work.unidade_controle
+# Loading work.display6digitos
+# Loading work.dec7seg
+# Loading work.display_bcd_4dig_cc
+# ** Warning: (vsim-3017) fpga/testbench/circuito_jogo_financeiro_tb1.v(42): [TFMPC] - Too few port connections. Expected 21, found 19.
+#    Time: 0 ns  Iteration: 0  Instance: /circuito_jogo_financeiro_tb1/dut File: fpga/rtl/circuito_jogo_financeiro.v
+# ** Warning: (vsim-3722) fpga/testbench/circuito_jogo_financeiro_tb1.v(42): [TFMPC] - Missing connection for port 'rfid_rx'.
+# ** Warning: (vsim-3722) fpga/testbench/circuito_jogo_financeiro_tb1.v(42): [TFMPC] - Missing connection for port 'uart_tx'.
+# Inicio da simulacao
+# Fim da simulacao
+# ** Note: $stop    : fpga/testbench/circuito_jogo_financeiro_tb1.v(294)
+#    Time: 1034000110 ns  Iteration: 0  Instance: /circuito_jogo_financeiro_tb1
+# Break in Module circuito_jogo_financeiro_tb1 at fpga/testbench/circuito_jogo_financeiro_tb1.v line 294
+# Stopped at fpga/testbench/circuito_jogo_financeiro_tb1.v line 294
+# End time: 14:37:11 on Nov 19,2026, Elapsed time: 0:01:10
+# Errors: 0, Warnings: 3
+# vsim -onfinish stop work.circuito_caixa_semana4_tb 
+# Start time: 14:37:11 on Nov 19,2026
+# Loading sv_std.std
+# Loading work.circuito_caixa_semana4_tb
+# Loading work.circuito_jogo_financeiro
+# Loading work.rfid_uart_rx
+# Loading work.i2s_master_clock_gen
+# Loading work.fluxo_dados
+# Loading work.edge_detector
+# Loading work.registrador_n
+# Loading work.sel_dinheiro
+# Loading work.bin2bcd
+# Loading work.processador_acao
+# Loading work.processador_evento
+# Loading work.inicializador
+# Loading work.sel_valor
+# Loading work.multiplexador
+# Loading work.contador_modulo_n
+# Loading work.telemetria_uart
+# Loading work.unidade_controle
+# Loading work.display6digitos
+# Loading work.dec7seg
+# Loading work.display_bcd_4dig_cc
+# Semana 4 - interface fisica da caixa (circuito_jogo_financeiro)
+#   AVISO [caso 9] evento 12 enviado com a UC no estado 00100 (ESPERA_ACAO),
+#         antes da ultima jogada; o painel mostra o fim uma jogada antes do LED
+#   verificacoes: 78, avisos: 1, eventos de telemetria: 97, bytes na uart_tx: 520
+# PASS Semana 4: interface fisica da caixa (casos 1 a 9)
+# ** Note: $finish    : fpga/testbench/semana4/circuito_caixa_semana4_tb.v(441)
+#    Time: 18544970 ns  Iteration: 2  Instance: /circuito_caixa_semana4_tb
+# Break in Module circuito_caixa_semana4_tb at fpga/testbench/semana4/circuito_caixa_semana4_tb.v line 441
+# Stopped at fpga/testbench/semana4/circuito_caixa_semana4_tb.v line 441
+# End time: 14:37:13 on Nov 19,2026, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 0

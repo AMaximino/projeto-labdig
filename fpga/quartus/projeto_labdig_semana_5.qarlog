@@ -1,0 +1,33 @@
+Quartus Prime Archive log --	C:/Users/Sophia/Documents/projeto-labdig/fpga/quartus/projeto_labdig_semana_5.qarlog
+
+Archive:	C:/Users/Sophia/Documents/projeto-labdig/fpga/quartus/projeto_labdig_semana_5.qar
+Date:		Thu Nov 19 14:37:31 2026
+Quartus Prime		24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+
+	=========== Files Selected: ===========
+C:/Users/Sophia/Documents/projeto-labdig/fpga/quartus/circuito_jogo_financeiro.qsf
+C:/Users/Sophia/Documents/projeto-labdig/fpga/quartus/circuito_jogo_financeiro_assignment_defaults.qdf
+C:/Users/Sophia/Documents/projeto-labdig/fpga/quartus/projeto_labdig.qpf
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/bin2bcd.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/circuito_jogo_financeiro.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/contador_modulo_n.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/dec7seg.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/display6digitos.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/display_bcd_4dig_cc.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/edge_detector.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/fluxo_dados.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/i2s_master_clock_gen.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/inicializador.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/multiplexador.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/processador_acao.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/processador_evento.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/registrador_n.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/rfid_uart_rx.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/sel_dinheiro.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/sel_valor.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/telemetria_uart.v
+C:/Users/Sophia/Documents/projeto-labdig/fpga/rtl/unidade_controle.v
+	======= Total: 22 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
