@@ -1389,3 +1389,111 @@ body.tutorial-on .life-lost-overlay { z-index: 50; }
   .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .detail-columns, .insights-list { grid-template-columns: 1fr; }
 }
+
+/* ---------- Modo jogador: tudo numa tela só, sem rolagem ----------
+   A partida é um "palco" de 810 px de altura (e 1200–1800 px de largura) que
+   o app.js escala (--fit) para caber inteiro na janela, como a tela de um jogo. O modo professor continua
+   com a página normal, que rola. */
+body:not(.modo-professor) { height: 100vh; overflow: hidden; }
+body:not(.modo-professor) .app-shell { height: 100vh; min-height: 0; }
+body:not(.modo-professor) .main-content { display: flex; height: 100vh; min-height: 0; flex-direction: column; }
+body:not(.modo-professor) .topbar { position: relative; height: 60px; flex: none; }
+body:not(.modo-professor) .topbar-logo { width: 58px; height: 50px; }
+body:not(.modo-professor) .page-content { position: relative; flex: 1; width: 100%; min-height: 0; max-width: none; margin: 0; padding: 0; overflow: hidden; }
+body:not(.modo-professor) .game-screen {
+  position: absolute; top: 50%; left: 50%; width: 1440px; height: 810px; /* width: app.js */ padding: 16px 20px 20px;
+  transform: translate(-50%, -50%) scale(var(--fit, 1)); transform-origin: center;
+  display: grid; gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 1fr);
+  grid-template-rows: 118px minmax(0, 1.55fr) minmax(0, 1fr);
+  grid-template-areas: "banner banner banner" "now selector stats" "bills moves side";
+}
+body:not(.modo-professor) .now-row,
+body:not(.modo-professor) .game-columns,
+body:not(.modo-professor) .inventory-column { display: contents; }
+body:not(.modo-professor) .game-screen > *,
+body:not(.modo-professor) .now-row > *,
+body:not(.modo-professor) .game-columns > *,
+body:not(.modo-professor) .inventory-column > * { min-width: 0; min-height: 0; margin: 0; }
+
+/* Faixa de cima */
+body:not(.modo-professor) .turn-banner { grid-area: banner; min-height: 0; height: 118px; padding: 12px 34px; gap: 30px;
+  grid-template-columns: 1.15fr 1fr 1.25fr 1.15fr .95fr; }
+body:not(.modo-professor) .turn-label { margin-bottom: 5px; font-size: 12px; }
+body:not(.modo-professor) .turn-money { min-height: 0; padding: 10px 16px; }
+body:not(.modo-professor) .turn-money > strong { font-size: 38px; }
+body:not(.modo-professor) .turn-cost { padding: 10px 14px; }
+body:not(.modo-professor) .turn-cost > strong { font-size: 26px; }
+body:not(.modo-professor) .turn-move-row strong { font-size: 44px; }
+body:not(.modo-professor) .turn-move-row span { font-size: 20px; }
+body:not(.modo-professor) .turn-note { margin-top: 4px; font-size: 11px; }
+body:not(.modo-professor) .journey-track { margin-top: 6px; }
+body:not(.modo-professor) .move-progress { margin-top: 8px; }
+body:not(.modo-professor) .turn-lives .lives-track i { font-size: 32px; }
+
+/* Painéis: cada um ocupa a sua célula e nunca cresce além dela */
+body:not(.modo-professor) .now-panel { grid-area: now; }
+body:not(.modo-professor) .bills-panel { grid-area: bills; }
+body:not(.modo-professor) .selector-panel { grid-area: selector; }
+body:not(.modo-professor) .play-column { grid-area: moves; }
+body:not(.modo-professor) .stats-panel { grid-area: stats; }
+body:not(.modo-professor) .inventory-panel { grid-area: side; }
+body:not(.modo-professor) .now-panel,
+body:not(.modo-professor) .bills-panel,
+body:not(.modo-professor) .stats-panel,
+body:not(.modo-professor) .selector-panel,
+body:not(.modo-professor) .play-column,
+body:not(.modo-professor) .inventory-panel { overflow: hidden; padding: 14px 16px; border: 2px solid #e5e3d5; border-radius: 15px; background: #fffef9; box-shadow: 0 4px 0 rgb(53 74 40 / 6%); }
+body:not(.modo-professor) .now-panel h2,
+body:not(.modo-professor) .stats-panel h2,
+body:not(.modo-professor) .game-section-heading h1,
+body:not(.modo-professor) .panel-heading h2 { margin: 0 0 8px; font-size: 19px; }
+body:not(.modo-professor) .game-section-heading,
+body:not(.modo-professor) .panel-heading { margin-bottom: 8px; }
+body:not(.modo-professor) .panel-heading p { font-size: 12px; }
+
+/* O que você pode fazer agora? */
+body:not(.modo-professor) .now-note { margin: 0 0 6px; padding: 6px 10px; font-size: 12px; }
+body:not(.modo-professor) .now-list { gap: 0; }
+body:not(.modo-professor) .now-item { padding: 5px 6px; gap: 9px; }
+body:not(.modo-professor) .now-item strong,
+body:not(.modo-professor) .now-text { font-size: 13.5px; }
+
+/* Seletor: item atual em cima, as 10 posições em 2 fileiras */
+body:not(.modo-professor) .selector-panel { display: flex; flex-direction: column; gap: 10px; border-color: #e5d896; background: #fffdf3; }
+body:not(.modo-professor) .selector-current { flex: none; padding: 8px 12px; }
+body:not(.modo-professor) .selector-current-image { width: 64px; height: 64px; }
+body:not(.modo-professor) .selector-name { font-size: 20px; }
+body:not(.modo-professor) .selector-price { font-size: 16px; }
+body:not(.modo-professor) .selector-dial { flex: 1; min-height: 0; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); align-items: stretch; gap: 7px; }
+body:not(.modo-professor) .selector-slot { padding: 5px 3px 4px; gap: 2px; align-content: center; }
+body:not(.modo-professor) .selector-slot img { max-width: 40px; }
+body:not(.modo-professor) .selector-slot-number { top: 3px; left: 4px; width: 17px; height: 17px; }
+body:not(.modo-professor) .selector-slot-name { min-height: 0; font-size: 10px; -webkit-line-clamp: 1; }
+body:not(.modo-professor) .selector-slot.current { transform: scale(1.03); }
+
+/* Seu progresso */
+body:not(.modo-professor) .stats-panel { display: grid; align-content: start; gap: 10px; }
+body:not(.modo-professor) .stat-head { margin-bottom: 4px; }
+body:not(.modo-professor) .stat-head strong { font-size: 15px; }
+body:not(.modo-professor) .stat-text { font-size: 12px; }
+body:not(.modo-professor) .stat-legend { margin: -2px 0 3px; font-size: 11px; }
+body:not(.modo-professor) .stats-panel .stat-track.icons { flex-wrap: wrap; row-gap: 0; }
+body:not(.modo-professor) .stats-panel .stat-track.icons i { font-size: 20px; }
+
+/* Últimas jogadas: as mais recentes; o que não couber fica escondido */
+body:not(.modo-professor) .play-column { display: flex; flex-direction: column; }
+body:not(.modo-professor) .last-move-card { flex: none; min-height: 0; padding: 12px 14px; gap: 12px; border-radius: 13px; }
+body:not(.modo-professor) .last-move-icon { width: 44px; height: 44px; font-size: 21px; border-radius: 14px; }
+body:not(.modo-professor) .last-move-copy strong { font-size: 16px; }
+body:not(.modo-professor) .last-move-copy > span:last-child { font-size: 12px; line-height: 1.35; }
+body:not(.modo-professor) .recent-moves { flex: 1; min-height: 0; overflow: hidden; margin-top: 8px; gap: 5px; align-content: start; }
+body:not(.modo-professor) .recent-move { padding: 6px 10px; }
+body:not(.modo-professor) .recent-move strong,
+body:not(.modo-professor) .recent-move > span:last-child { font-size: 13px; }
+
+/* Itens e pagamentos */
+body:not(.modo-professor) .inventory-content { min-height: 0; max-height: calc(100% - 40px); overflow: hidden; padding: 8px; }
+body:not(.modo-professor) .bills-list { gap: 4px; margin-bottom: 8px; }
+body:not(.modo-professor) .bills-list li { font-size: 13px; }
+body:not(.modo-professor) .inventory-content { max-height: calc(100% - 36px); }

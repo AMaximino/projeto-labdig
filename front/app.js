@@ -539,8 +539,11 @@
     items.push(loses(RULES.investStep)
       ? nowItem("INVESTIR", riskText("investir"), "risk")
       : nowItem("INVESTIR", `Guarda ${money(RULES.investStep)}, que rende 25% todo fim de rodada`));
+    // RESGATAR aparece sempre (botão vermelho, entre INVESTIR e COMPRAR).
     if (state.metricAvailable.investments && state.investments > 0) {
       items.push(nowItem("RESGATAR", `+ ${money(Math.min(RULES.investStep, state.investments))} volta para o dinheiro`));
+    } else {
+      items.push(nowItem("RESGATAR", "Você ainda não tem dinheiro investido para resgatar", "hint"));
     }
     const selected = catalog.find((item) => item.id === state.selectorItem);
     const ownsSelected = selected && state.inventory.includes(selected.id);
@@ -861,6 +864,32 @@
     document.body.classList.toggle("modo-professor", enabled);
     // O jogador só vê a tela da partida.
     if (!enabled) activateTab("game");
+    fitStage();
+  }
+
+  // Modo jogador: a partida é um palco de 1440 × 810 px (styles.css) escalado
+  // para caber inteiro na janela, sem rolagem.
+  // A altura é fixa (810 px); a largura acompanha a janela entre 1200 e
+  // 1800 px, para aproveitar telas mais largas sem deixar faixas vazias.
+  const STAGE = { minWidth: 1200, maxWidth: 1800, height: 810 };
+  function fitStage() {
+    const area = document.querySelector(".page-content");
+    const stage = document.querySelector(".game-screen");
+    if (!area || !stage) return;
+    if (professorMode) {
+      stage.style.removeProperty("--fit");
+      stage.style.removeProperty("width");
+      return;
+    }
+    const scale = Math.max(0.3, Math.min(area.clientWidth / STAGE.minWidth, area.clientHeight / STAGE.height));
+    const width = Math.min(STAGE.maxWidth, Math.max(STAGE.minWidth, area.clientWidth / scale));
+    stage.style.width = `${Math.floor(width)}px`;
+    stage.style.setProperty("--fit", String(scale));
+  }
+  window.addEventListener("resize", fitStage);
+  if (window.ResizeObserver) {
+    const area = document.querySelector(".page-content");
+    if (area) new ResizeObserver(fitStage).observe(area);
   }
 
   function activateTab(tabName, scrollTarget) {

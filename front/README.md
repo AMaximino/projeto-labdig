@@ -26,6 +26,16 @@ textos são curtos e literais ("Você trabalhou", "+ R$ 6,4 mil", "Se comprar,
 você PERDE"). Isso segue o feedback da especialista: mostrar só o que
 interessa, não ter nada que pareça clicável sem ser, e cortar texto.
 
+A tela do jogador **não rola**: tudo cabe numa tela só, como num jogo. A
+partida é montada como um "palco" de 810 px de altura e 1200–1800 px de
+largura (`fitStage()` em `app.js`, regras "Modo jogador: tudo numa tela só" em
+`styles.css`), que aumenta ou diminui para caber inteiro na janela. O layout
+tem a faixa de cima (dinheiro, custo de vida, rodada, jogada, vidas) e duas
+fileiras de três painéis: "O que você pode fazer agora?", a loja/seletor e "Seu
+progresso"; depois "Pagamentos", "Últimas jogadas" e "Seus itens". Nas
+últimas jogadas, as mais antigas que não couberem ficam escondidas. O modo
+professor continua com a página normal, que rola.
+
 Na barra do topo, o jogador vê dois botões: **▶ Como jogar** (modo
 demonstração) e o **nome dele** (com "Trocar").
 
