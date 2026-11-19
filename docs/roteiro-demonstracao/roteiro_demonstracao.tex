@@ -1,0 +1,259 @@
+% Roteiro da demonstração ao vivo — Aventura Financeira Evolution
+% Compilar:  pdflatex roteiro_demonstracao.tex   (duas vezes, por causa das referências)
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[a4paper,margin=2cm,top=2.2cm,bottom=2.2cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{tabularx,booktabs,array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{fontawesome5}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+% Cores do painel
+\definecolor{verde}{HTML}{1D4E43}
+\definecolor{verdeclaro}{HTML}{DCF0E2}
+\definecolor{amarelo}{HTML}{F2B84B}
+\definecolor{creme}{HTML}{FBF6EA}
+\definecolor{lilas}{HTML}{ECE5F6}
+\definecolor{rosa}{HTML}{FBE4E1}
+\definecolor{azulc}{HTML}{DCEAF7}
+\definecolor{tinta}{HTML}{172F2B}
+\definecolor{capaAzul}{HTML}{2F6DB5}
+\definecolor{capaBranca}{HTML}{F4F4F0}
+\definecolor{capaPreta}{HTML}{2A2A2A}
+\definecolor{capaVermelha}{HTML}{C9433A}
+\definecolor{capaAmarela}{HTML}{F1C232}
+\definecolor{capaVerde}{HTML}{3E9A52}
+
+\newcommand{\capa}[1]{\tikz[baseline=-0.6ex]\draw[black!45,fill=#1,rounded corners=1.2pt] (0,0) rectangle (0.3,0.3);}
+\newcommand{\botao}[2]{\capa{#1}\,\textbf{#2}}
+\newcommand{\fala}[1]{\par\smallskip\noindent\textcolor{verde}{\faComment[regular]}\ \textit{``#1''}\par}
+
+\titleformat{\section}{\Large\bfseries\color{verde}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{verde}}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2em}{0.5em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small\color{verde}\textbf{Aventura Financeira Evolution} · Roteiro da demonstração}
+\rhead{\small\color{tinta!70}PCS3635 · Bancada BA6 · Turma 6}
+\cfoot{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newtcolorbox{passo}[2]{enhanced,breakable,colback=white,colframe=verde!35,
+  coltitle=white,colbacktitle=verde,fonttitle=\bfseries,
+  title={#1 \hfill \normalfont\small #2},arc=2mm,boxrule=0.6pt,left=3mm,right=3mm,top=2mm,bottom=2mm}
+\newtcolorbox{dica}{colback=amarelo!18,colframe=amarelo!80!black,arc=2mm,boxrule=0.5pt,left=3mm,right=3mm}
+\newtcolorbox{alerta}{colback=rosa,colframe=capaVermelha!70,arc=2mm,boxrule=0.5pt,left=3mm,right=3mm}
+
+\setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=1pt,topsep=2pt}
+
+\begin{document}
+
+\begin{tcolorbox}[colback=verde,colframe=verde,coltext=white,arc=3mm,left=5mm,right=5mm,top=4mm,bottom=4mm]
+  {\Huge\bfseries Roteiro da demonstração}\par\medskip
+  {\large Aventura Financeira Evolution · apresentação final para a banca}\par\smallskip
+  {\small Gabriel Lopes Prodossimo (15453560) · Luís Felipe Melegari Pinton (14592219) · Sophia Soares Mariano (15511213)}
+\end{tcolorbox}
+
+\noindent A demonstração mostra, em cerca de \textbf{8 minutos}, todas as funcionalidades do projeto numa única
+partida real. A ordem foi escolhida para que cada ação mostre uma coisa nova na tela e para que o
+``erro de propósito'' (a perda de uma vida) aconteça quando a banca já entendeu as regras. Os valores
+abaixo são os que a FPGA calcula a partir do início da partida: se a sequência for seguida, a tela vai
+mostrar exatamente esses números.
+
+\section{Divisão das falas e do tempo}
+
+\begin{center}
+\rowcolors{2}{creme}{white}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}l X l r@{}}
+\toprule
+\rowcolor{verdeclaro}Bloco & O que mostra & Quem & Tempo\\
+\midrule
+0 & Preparação, antes da banca chegar & todos & 30 min antes\\
+1 & A caixa e o livro de regras & Sophia & 0:40\\
+2 & Identificação do jogador e modo ``Como jogar'' & Luís & 1:00\\
+3 & Trabalhar, estudar e investir (rodada 1) & Luís & 2:00\\
+4 & Loja, seletor, cartão RFID e venda (rodada 2) & Luís & 1:30\\
+5 & Erro de propósito: saldo negativo e 3 vidas & Luís & 1:00\\
+6 & Modo professor: análise do aluno & Gabriel & 1:20\\
+7 & Bastidores técnicos (só se a banca perguntar) & Gabriel & ---\\
+8 & Fechamento: a banca joga & Sophia & 0:30\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent Durante a demonstração, \textbf{Luís} aperta os botões e narra; \textbf{Gabriel} cuida do computador e do projetor;
+\textbf{Sophia} apresenta a caixa e conduz a abertura e o fechamento. Os nomes são uma sugestão.
+
+\section{Preparação (30 minutos antes)}
+
+\begin{enumerate}
+  \item PC na rede \textbf{LAB\_DIGITAL} (2,4\,GHz, a mesma da ESP32) e redirecionamento da porta 1883 conferido.
+  \item Broker ativo e backend rodando: \texttt{npm --prefix back start}. Conferir \texttt{localhost:3000/health}
+        com \texttt{"mqtt\_connected":true}.
+  \item DE0-CV programada com o \texttt{.sof} final (3 vidas) e ESP32 ligada. Apertar um botão e ver o evento chegar no painel.
+  \item Navegador com duas abas, em tela cheia (F11):
+        \begin{itemize}
+          \item aba 1: \texttt{http://localhost:3000} (modo jogador);
+          \item aba 2: \texttt{http://localhost:3000/?professor} (modo professor, já na aba ``Análise do aluno'').
+        \end{itemize}
+  \item Na mesa: a caixa fechada, o \textbf{cartão RFID}, dois \textbf{livros de regras} impressos e o \textbf{vídeo de demonstração}
+        aberto num terceiro aplicativo, como reserva.
+  \item Apertar \botao{capaAzul}{RESET} e depois deixar a caixa parada, sem apertar \botao{capaBranca}{INICIAR}.
+        Girar o seletor até uma posição vazia ou até o item 1.
+\end{enumerate}
+
+\begin{dica}
+\faLightbulb[regular]\ \textbf{Ensaie a sequência inteira pelo menos uma vez antes.} A demonstração depende da ordem dos botões:
+pular uma ação muda os valores e a compra que deveria dar errado pode dar certo.
+\end{dica}
+
+\section{Roteiro passo a passo}
+
+\begin{passo}{1. A caixa e o livro de regras}{Sophia · 0:40}
+\textbf{Fazer:} levantar a caixa, mostrar a tampa e entregar um livro de regras à banca.
+\fala{Esta é a caixa. Cada botão faz uma coisa só e tem o nome escrito por extenso. Este livrinho tem as regras em 8 páginas,
+com as mesmas cores dos botões, para quem prefere ler antes de jogar.}
+\textbf{Mostra:} USABILIDADE\_LITERAL e CONFORTO\_SENSORIAL (cores pastel, nada piscando).
+\end{passo}
+
+\begin{passo}{2. Quem está jogando? e o modo ``Como jogar''}{Luís · 1:00}
+\textbf{Fazer:}
+\begin{enumerate}
+  \item Clicar em \textbf{Trocar}, no topo, e digitar o nome de um professor da banca.
+  \item Clicar em \textbf{\faPlay\ Como jogar} e passar 3 ou 4 dos 12 passos, mostrando o destaque em cada parte da tela.
+  \item Clicar em \textbf{Sair da demonstração}.
+\end{enumerate}
+\fala{O jogador se identifica uma vez e o nome fica salvo. Antes de jogar, ele pode ver uma partida de exemplo, passo a passo,
+sem mexer no jogo de verdade. Previsibilidade é importante para o nosso público.}
+\textbf{Mostra:} identificação do jogador (sessão associada ao nome no backend) e modo demonstração.
+\end{passo}
+
+\begin{passo}{3. Rodada 1: trabalhar, estudar e investir}{Luís · 2:00}
+\textbf{Fazer, nesta ordem, explicando cada resultado na tela:}
+
+\smallskip
+\rowcolors{2}{white}{creme}
+\begin{tabularx}{\linewidth}{@{}l X r@{}}
+\toprule
+\rowcolor{verdeclaro}Botão & O que aparece na tela & Saldo\\
+\midrule
+\botao{capaBranca}{INICIAR} & ``Jogo começou''; R\$\,15 mil, rodada 1 de 15, jogada 1 de 3, 3 corações & 15.000\\
+\botao{capaAzul}{TRABALHAR} & ``Você trabalhou e pagou o custo de vida'': $+$6,4 mil $-$ 4 mil; jogada 2 de 3 & 17.400\\
+\botao{capaBranca}{ESTUDAR} & O 1º cérebro acende e pisca ``$+$1 nível''; salário passa a R\$\,10,4 mil; jogada 3 de 3 & 13.400\\
+\botao{capaVermelha}{RESGATAR} & ``Nada para resgatar: você não tem dinheiro investido''. Nada muda & 13.400\\
+\botao{capaPreta}{INVESTIR} & O 1º banco acende: R\$\,10 mil guardados. Não gasta jogada & 3.400\\
+\botao{capaAzul}{TRABALHAR} & $+$10,4 mil $-$ 4 mil; fim da rodada: o investimento rende 25\% (R\$\,12,5 mil guardados) & 9.800\\
+\bottomrule
+\end{tabularx}
+
+\fala{Reparem que cada ação aparece na hora, com uma frase literal: ``Você trabalhou'', ``mais 6,4 mil''. Estudar não custa
+dinheiro e o cérebro acende na mesma hora: a recompensa é imediata. E se eu tento resgatar sem ter investido, o jogo
+explica que não há nada para resgatar.}
+\textbf{Mostra:} SALDO\_INICIAL, SELECAO\_COMPRA (botões), FEEDBACK\_IMEDIATO, ``O que você pode fazer agora?'' e barras de progresso.
+\end{passo}
+
+\begin{passo}{4. Rodada 2: loja, seletor, cartão e venda}{Luís · 1:30}
+\textbf{Fazer:}
+\begin{enumerate}
+  \item Girar o seletor até a posição \textbf{8 (Jogos, R\$\,8 mil)}. A loja mostra o item, o preço e ``COMPRAR: sobra R\$\,1,8 mil''.
+  \item Encostar o \textbf{cartão} no leitor e tirar. ``Você comprou Jogos'': saldo R\$\,1,8 mil; Jogos aparece em ``Seus itens''.
+  \item Com o seletor ainda no 8, apertar \botao{capaVerde}{VENDER}. ``Você vendeu Jogos'': saldo volta a R\$\,9,8 mil.
+\end{enumerate}
+\fala{Comprar é o mesmo gesto do mercado: escolho o item e encosto o cartão. Antes de comprar, a tela já diz quanto vai sobrar.
+O cartão só confirma; não existe cobrança de verdade.}
+\textbf{Mostra:} DETECCAO\_PAGAMENTO (RC522 $\rightarrow$ ESP32 $\rightarrow$ FPGA), seletor de item (evento 14) e inventário.
+\end{passo}
+
+\begin{passo}{5. Erro de propósito: saldo negativo e as 3 vidas}{Luís · 1:00}
+\textbf{Fazer:} girar o seletor até a posição \textbf{1 (Carro pequeno, R\$\,60 mil)}. A loja avisa em vermelho que a compra
+tira uma vida. Encostar o cartão mesmo assim.
+
+\textbf{Resultado:} aviso ``Você perdeu uma vida'', com a explicação; a FPGA desfaz a compra (saldo volta a R\$\,9,8 mil)
+e restam 2 corações. Fechar o aviso no botão \textbf{Fechar}.
+\fala{Errar aqui é seguro. Se uma jogada deixa o dinheiro negativo, o jogo desfaz a jogada, tira uma vida e explica o que
+aconteceu. Só na terceira vez o jogo termina. Para quem tem aversão ao risco, isso faz diferença.}
+\textbf{Mostra:} ALERTA\_RECUSA revisado (estado PERDE\_VIDA na FPGA, evento 15) e ``O que você pode fazer agora?'' em vermelho.
+\end{passo}
+
+\begin{passo}{6. Modo professor: análise do aluno}{Gabriel · 1:20}
+\textbf{Fazer:} trocar para a aba 2 (ou apertar Ctrl+Alt+P) e, em ``Análise do aluno'', escolher o nome digitado no passo 2.
+Clicar em \textbf{Atualizar}.
+\begin{itemize}
+  \item Mostrar os indicadores: partidas, melhor patrimônio, rodada média, vidas perdidas e jogadas de estudo.
+  \item Abrir a partida que acabou de ser jogada: decisões, linha do tempo e observações automáticas
+        (por exemplo, a jogada que deixou o saldo negativo).
+  \item Se der tempo, mostrar a aba \textbf{Estatísticas} e o histórico de eventos.
+\end{itemize}
+\fala{Tudo o que tiramos da tela do jogador veio para cá. O professor, o terapeuta ou a família vê como o aluno joga,
+partida a partida, sem precisar adivinhar onde está a dificuldade.}
+\textbf{Mostra:} LOG\_SESSAO (histórico em JSON Lines no backend) e DISPLAY\_DASHBOARD.
+\end{passo}
+
+\begin{passo}{7. Bastidores técnicos (só se a banca perguntar)}{Gabriel}
+\begin{itemize}
+  \item Abrir a tampa e mostrar a DE0-CV, a ESP32 e o RC522.
+  \item Explicar a cadeia: cartão $\rightarrow$ RC522 $\rightarrow$ ESP32 $\rightarrow$ UART $\rightarrow$ FPGA
+        $\rightarrow$ UART (quadro AEF2) $\rightarrow$ ESP32 $\rightarrow$ MQTT $\rightarrow$ backend $\rightarrow$ painel.
+  \item A FPGA é a única autoridade sobre saldo, inventário, vidas e regras: o painel só mostra.
+  \item No modo professor, o número de sequência de cada evento mostra que nenhum quadro foi perdido (COM\_UART\_TX e TELEMETRIA\_MQTT).
+\end{itemize}
+\end{passo}
+
+\begin{passo}{8. Fechamento: a banca joga}{Sophia · 0:30}
+\textbf{Fazer:} apertar \botao{capaAzul}{RESET} e \botao{capaBranca}{INICIAR} e oferecer a caixa e o livro de regras à banca.
+\fala{A caixa está pronta para vocês. Quem quiser jogar, pode começar pelo livrinho ou pelo ``Como jogar''.}
+\end{passo}
+
+\section{Se algo der errado}
+
+\begin{center}
+\rowcolors{2}{rosa!60}{white}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.6cm} X@{}}
+\toprule
+\rowcolor{rosa}Problema & O que fazer, sem parar a apresentação\\
+\midrule
+O painel não atualiza ao apertar um botão & Gabriel recarrega a página (F5). Se continuar, mostrar o \textbf{Como jogar}, que funciona sem a caixa.\\
+O cartão não é lido & Usar o botão \botao{capaAmarela}{COMPRAR}, que compra o item do seletor. Depois, tentar o cartão de novo, mais perto do leitor.\\
+A compra do Carro pequeno deu certo (sem perder vida) & A sequência foi alterada. Girar até a \textbf{Casa grande} (posição 6, R\$\,1,9 milhão) e comprar.\\
+O Wi-Fi caiu ou a ESP32 não conecta & Seguir a demonstração no \textbf{Como jogar} e mostrar o vídeo de demonstração para a parte do cartão.\\
+A FPGA parece travada & Apertar \botao{capaAzul}{RESET} e \botao{capaBranca}{INICIAR}. Recomeçar do passo 3.\\
+Pergunta que ninguém sabe responder & ``Boa pergunta: ainda não testamos isso.'' Honestidade vale mais que improviso.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Funcionalidades e requisitos mostrados}
+
+\begin{center}
+\rowcolors{2}{verdeclaro!50}{white}
+\begin{tabularx}{\linewidth}{@{}l l X c@{}}
+\toprule
+\rowcolor{verdeclaro}Requisito & Tipo & Onde aparece na demonstração & Passo\\
+\midrule
+SALDO\_INICIAL & RF & INICIAR: R\$\,15 mil, salário R\$\,6,4 mil, 3 vidas & 3\\
+SELECAO\_COMPRA & RF & Botões de ação e seletor de item & 3, 4\\
+DETECCAO\_PAGAMENTO & RF & Cartão RFID compra o item do seletor & 4, 5\\
+COM\_UART\_TX & RF & Cada ação chega ao painel pela UART e pela ESP32 & 3--5, 7\\
+TELEMETRIA\_MQTT & RF & Eventos publicados e numerados no modo professor & 6, 7\\
+DISPLAY\_DASHBOARD & RF & Painel do jogador em uma tela só & 2--5\\
+LOG\_SESSAO & RF & Análise do aluno e histórico & 6\\
+ALERTA\_RECUSA & RF & Saldo negativo: jogada desfeita e 1 vida a menos & 5\\
+FEEDBACK\_IMEDIATO & RNF & Cada ação aparece no painel em até 1\,s & 3--5\\
+CONFORTO\_SENSORIAL & RNF & Cores pastel, nada piscando, sem rolagem & 1--5\\
+USABILIDADE\_LITERAL & RNF & Frases literais, nomes nos botões, livro de regras & 1--5\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\end{document}
