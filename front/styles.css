@@ -1260,7 +1260,8 @@ body:not(.modo-professor) .page-content { max-width: 1280px; margin-right: auto;
 .now-note { display: block; }
 
 /* Investimento: 20 🏦 (cada um = R$ 10 mil), em 2 fileiras de 10 */
-.stat[data-stat="investimento"] .stat-track.icons { display: grid; grid-auto-flow: row; grid-template-columns: repeat(10, max-content); gap: 3px; }
+.stat[data-stat="investimento"] .stat-track.icons,
+.stat[data-stat="estudo"] .stat-track.icons { display: grid; grid-auto-flow: row; grid-template-columns: repeat(10, max-content); gap: 3px; }
 .stat-legend { display: block; margin: -2px 0 5px; color: #6a6248; font-size: 12px; font-weight: 700; }
 .life-lost-close { min-height: 46px; margin-top: 6px; padding: 0 28px; border-radius: 11px; background: #c0392b; color: #fff; font-size: 16px; font-weight: 800; cursor: pointer; }
 .life-lost-close:hover { background: #a93226; }
@@ -1397,15 +1398,19 @@ body.tutorial-on .life-lost-overlay { z-index: 50; }
 body:not(.modo-professor) { height: 100vh; overflow: hidden; }
 body:not(.modo-professor) .app-shell { height: 100vh; min-height: 0; }
 body:not(.modo-professor) .main-content { display: flex; height: 100vh; min-height: 0; flex-direction: column; }
-body:not(.modo-professor) .topbar { position: relative; height: 60px; flex: none; }
-body:not(.modo-professor) .topbar-logo { width: 58px; height: 50px; }
+body:not(.modo-professor) .topbar { position: relative; height: 48px; flex: none; border-bottom-width: 1px; }
+body:not(.modo-professor) .topbar-logo { width: 46px; height: 40px; border-radius: 9px; }
+body:not(.modo-professor) .topbar-brand strong { font-size: 16px; }
+body:not(.modo-professor) .topbar .tutorial-button,
+body:not(.modo-professor) .topbar .player-tag { height: 36px; min-height: 36px; padding-top: 0; padding-bottom: 0; }
+body:not(.modo-professor) .topbar .player-tag strong { font-size: 16px; }
 body:not(.modo-professor) .page-content { position: relative; flex: 1; width: 100%; min-height: 0; max-width: none; margin: 0; padding: 0; overflow: hidden; }
 body:not(.modo-professor) .game-screen {
   position: absolute; top: 50%; left: 50%; width: 1440px; height: 810px; /* width: app.js */ padding: 16px 20px 20px;
   transform: translate(-50%, -50%) scale(var(--fit, 1)); transform-origin: center;
   display: grid; gap: 14px;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 1fr);
-  grid-template-rows: 118px minmax(0, 1.55fr) minmax(0, 1fr);
+  grid-template-rows: 96px 382px minmax(0, 1fr);
   grid-template-areas: "banner banner banner" "now selector stats" "bills moves side";
 }
 body:not(.modo-professor) .now-row,
@@ -1417,19 +1422,19 @@ body:not(.modo-professor) .game-columns > *,
 body:not(.modo-professor) .inventory-column > * { min-width: 0; min-height: 0; margin: 0; }
 
 /* Faixa de cima */
-body:not(.modo-professor) .turn-banner { grid-area: banner; min-height: 0; height: 118px; padding: 12px 34px; gap: 30px;
+body:not(.modo-professor) .turn-banner { grid-area: banner; min-height: 0; height: 96px; padding: 8px 34px; gap: 30px;
   grid-template-columns: 1.15fr 1fr 1.25fr 1.15fr .95fr; }
-body:not(.modo-professor) .turn-label { margin-bottom: 5px; font-size: 12px; }
-body:not(.modo-professor) .turn-money { min-height: 0; padding: 10px 16px; }
-body:not(.modo-professor) .turn-money > strong { font-size: 38px; }
-body:not(.modo-professor) .turn-cost { padding: 10px 14px; }
-body:not(.modo-professor) .turn-cost > strong { font-size: 26px; }
-body:not(.modo-professor) .turn-move-row strong { font-size: 44px; }
-body:not(.modo-professor) .turn-move-row span { font-size: 20px; }
-body:not(.modo-professor) .turn-note { margin-top: 4px; font-size: 11px; }
-body:not(.modo-professor) .journey-track { margin-top: 6px; }
-body:not(.modo-professor) .move-progress { margin-top: 8px; }
-body:not(.modo-professor) .turn-lives .lives-track i { font-size: 32px; }
+body:not(.modo-professor) .turn-label { margin-bottom: 3px; font-size: 11px; }
+body:not(.modo-professor) .turn-money { min-height: 0; padding: 7px 16px; }
+body:not(.modo-professor) .turn-money > strong { font-size: 34px; }
+body:not(.modo-professor) .turn-cost { padding: 7px 14px; }
+body:not(.modo-professor) .turn-cost > strong { font-size: 24px; }
+body:not(.modo-professor) .turn-move-row strong { font-size: 36px; }
+body:not(.modo-professor) .turn-move-row span { font-size: 18px; }
+body:not(.modo-professor) .turn-note { margin-top: 3px; font-size: 11px; }
+body:not(.modo-professor) .journey-track { margin-top: 5px; }
+body:not(.modo-professor) .move-progress { margin-top: 6px; }
+body:not(.modo-professor) .turn-lives .lives-track i { font-size: 28px; }
 
 /* Painéis: cada um ocupa a sua célula e nunca cresce além dela */
 body:not(.modo-professor) .now-panel { grid-area: now; }

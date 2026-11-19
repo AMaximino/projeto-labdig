@@ -24,7 +24,7 @@
   // Cor da capa de cada botão da caixa: a tela usa a mesma cor do botão.
   const BUTTON_COLORS = {
     TRABALHAR: "#2F6DB5", ESTUDAR: "#F4F4F0", INVESTIR: "#2A2A2A", RESGATAR: "#C9433A",
-    COMPRAR: "#F1C232", VENDER: "#3E9A52", INICIAR: "#3E9A52",
+    COMPRAR: "#F1C232", VENDER: "#3E9A52", INICIAR: "#F4F4F0", RESET: "#2F6DB5",
   };
   const demoInitial = {
     balance: 15000,
@@ -389,6 +389,8 @@
   const STAT_SLOTS = 10;
   // Investimento: cada 🏦 = R$ 10 mil guardados; 20 bancos (2 fileiras de 10).
   const INVEST_SLOTS = 20;
+  // Estudo: 20 cérebros (2 fileiras de 10).
+  const STUDY_SLOTS = 20;
 
   function fillTrack(selector, filled, total, danger = false, symbol = "") {
     const track = $(selector);
@@ -427,10 +429,10 @@
 
     // Estudo: cada ESTUDAR acende um 🧠 e sobe o salário (o nível sai do salário).
     if (value.level === null) {
-      fillTrack("#stat-estudo-track", 0, STAT_SLOTS, false, STAT_ICONS.estudo);
+      fillTrack("#stat-estudo-track", 0, STUDY_SLOTS, false, STAT_ICONS.estudo);
       $("#stat-estudo-text").textContent = "Aguardando o jogo";
     } else {
-      fillTrack("#stat-estudo-track", Math.min(value.level, STAT_SLOTS), STAT_SLOTS, false, STAT_ICONS.estudo);
+      fillTrack("#stat-estudo-track", Math.min(value.level, STUDY_SLOTS), STUDY_SLOTS, false, STAT_ICONS.estudo);
       $("#stat-estudo-text").textContent = `Nível ${value.level} · salário ${displayCompactMoney(state.salary)}`;
     }
 
@@ -1832,7 +1834,7 @@
     cap.hidden = !current.button;
     cap.textContent = current.button || "";
     cap.style.setProperty("--cap", BUTTON_COLORS[current.button] || "transparent");
-    cap.classList.toggle("dark-cap", ["TRABALHAR", "INVESTIR", "RESGATAR", "VENDER", "INICIAR"].includes(current.button));
+    cap.classList.toggle("dark-cap", ["TRABALHAR", "INVESTIR", "RESGATAR", "VENDER", "RESET"].includes(current.button));
     [...$("#tutorial-progress").children].forEach((dot, index) => dot.classList.toggle("on", index <= tutorial.step));
     $("#tutorial-back").disabled = tutorial.step === 0;
     $("#tutorial-next").textContent = current.last ? "Começar a jogar" : "Próximo →";
